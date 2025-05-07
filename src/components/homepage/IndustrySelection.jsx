@@ -7,8 +7,8 @@ const IndustrySelection = () => {
       <h2 className="text-lg mb-8 text-[#EEEEEE]">Select your industry first</h2>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-        {industryData?.map((industry, index) => (
-          <IndustryCard key={index} icon={industry.icon} name={industry.name} />
+        {industryData?.map((industry) => (
+          <IndustryCard key={industry.id} id={industry.id} icon={industry.icon} name={industry.name} />
         ))}
       </div>
     </div>
