@@ -10,7 +10,7 @@ const WelcomeSection = () => {
               Hi! I can help narrow down CBCT options for you without selling to you :)
             </h1>
             <p className="text-[#4aa6a4] text-2xl mb-8">I'll ask you Qs to guide us. You can ask me Qs too.</p>
-            <button className="bg-white text-[#030d13] font-medium py-3 px-8 rounded-full hover:bg-gray-100 transition-colors">
+            <button className="bg-white text-[#030d13] cursor-pointer font-medium py-3 px-8 rounded-full hover:bg-gray-100 transition-colors">
               Get Started
             </button>
           </div>

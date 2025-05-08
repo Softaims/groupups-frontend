@@ -11,7 +11,7 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/:industryId" element={<EquipmentSelectionPage />} />
         <Route path="/404" element={<NotFoundPage />} />
-        <Route path="/chatbot-landing-page/:equipmentId" element={<ChatbotLandingPage />} />
+        <Route path="/:industryId/:equipmentId" element={<ChatbotLandingPage />} />
       </Routes>
     </Router>
   );
