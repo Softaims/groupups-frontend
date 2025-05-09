@@ -1,5 +1,5 @@
-import { X, Globe, Video, PlayCircle } from "lucide-react";
-import { productData } from "../../constants/productsData";
+import { X, Globe } from "lucide-react";
+import { productData, goodFitReason } from "../../constants/productsData";
 import VideoIcon from "../../../public/icons/VideoIcon";
 import GoodFitIcon from "../../../public/icons/GoodFitIcon";
 import FOVIcon from "../../../public/icons/FOVIcon";
@@ -21,7 +21,7 @@ const ProductRecommendationInterface = () => {
                 <X className="w-8 h-8 bg-[#1D403F]/40 rounded-full p-2" />
               </button>
             </div>
-            <p className="text-[#A0A0A0] text-xs md:text-sm leading-relaxed">{"ABCWKJDS"}</p>
+            <p className="text-[#A0A0A0] text-xs md:text-sm leading-relaxed">{goodFitReason}</p>
             <div className="mt-4 flex justify-end">
               <button className="bg-[#4AA6A4] text-white px-3 md:px-4 py-1.5 md:py-2 rounded-lg text-xs md:text-sm hover:bg-[#3d8d8b] transition-colors">
                 View Demo
@@ -46,7 +46,7 @@ const ProductRecommendationInterface = () => {
 
               <div className="flex-1">
                 <div className="flex justify-between items-start mb-3">
-                  <h3 className="font-medium text-base text-[#FFFFFF] md:text-lg">{product.title}</h3>
+                  <h3 className="font-medium text-base text-[#FFFFFF] md:text-lg mr-6">{product.title}</h3>
                 </div>
 
                 <div className="space-y-2 text-xs md:text-sm text-gray-400">

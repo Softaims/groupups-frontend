@@ -19,11 +19,11 @@ export const ChatbotPage = () => {
       {/* For Large Screens */}
       <div className="hidden md:block flex-1 overflow-hidden">
         <ResizablePanelGroup direction="horizontal" className="h-full">
-          <ResizablePanel defaultSize={50} minSize={30}>
+          <ResizablePanel defaultSize={30} minSize={30}>
             <ChatInterface />
           </ResizablePanel>
           <ResizableHandle className="w-1 bg-[#002121]/30" />
-          <ResizablePanel defaultSize={50} minSize={30}>
+          <ResizablePanel defaultSize={70} minSize={50}>
             <ProductRecommendationInterface />
           </ResizablePanel>
         </ResizablePanelGroup>
