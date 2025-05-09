@@ -16,7 +16,7 @@ export const ChatbotLandingPage = () => {
   return (
     <div className="min-h-screen bg-[#041018] flex flex-col">
       <Header />
-      <WelcomeSection equipmentId={equipmentId} />
+      <WelcomeSection equipment={selectedEquipment} industry={selectedIndustry} />
       <BrandingPanel />
     </div>
   );

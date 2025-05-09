@@ -1,11 +1,9 @@
-import { useState, useRef, useEffect } from "react";
-import { chatData } from "../../constants/chatData";
+import { useRef, useEffect } from "react";
 import Message from "./Message";
 import SendMessageForm from "./SendMessageForm";
 import HeaderMd from "../global/HeaderMd";
 
-const ChatInterface = () => {
-  const [messages, setMessages] = useState(chatData);
+const ChatInterface = ({ messages, setMessages }) => {
   const chatScrollRef = useRef(null);
   useEffect(() => {
     chatScrollRef.current?.scrollIntoView({ behavior: "smooth" });

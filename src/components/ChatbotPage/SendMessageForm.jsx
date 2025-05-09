@@ -3,6 +3,7 @@ import { useState } from "react";
 
 const SendMessageForm = ({ messages, setMessages }) => {
   const [inputValue, setInputValue] = useState("");
+
   const sendMessage = (e) => {
     e.preventDefault();
     if (inputValue.trim()) {
@@ -10,6 +11,14 @@ const SendMessageForm = ({ messages, setMessages }) => {
       setInputValue("");
     }
   };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage(e);
+    }
+  };
+
   return (
     <form onSubmit={sendMessage} className="p-3 md:p-4">
       <div className="relative">
@@ -17,6 +26,7 @@ const SendMessageForm = ({ messages, setMessages }) => {
           rows={3}
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
+          onKeyDown={handleKeyDown}
           placeholder="Write anything you want"
           className="w-full resize-none bg-[#ffffff]/5 text-white rounded-3xl py-3 px-4 pr-12 focus:outline-none placeholder:text-[#ffffff]/19 text-sm"
         />
