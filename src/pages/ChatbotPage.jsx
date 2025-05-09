@@ -36,7 +36,7 @@ export const ChatbotPage = () => {
             <ChatInterface messages={messages} setMessages={setMessages} />
           </ResizablePanel>
           <ResizableHandle className="w-1 bg-[#002121]/30" />
-          <ResizablePanel defaultSize={70} minSize={50}>
+          <ResizablePanel defaultSize={70} minSize={40}>
             <ProductRecommendationInterface messagesLength={messages?.length} />
           </ResizablePanel>
         </ResizablePanelGroup>
