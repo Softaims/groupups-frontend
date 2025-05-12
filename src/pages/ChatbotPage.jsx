@@ -1,18 +1,33 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ChatInterface from "../components/ChatbotPage/ChatInterface";
 import ProductRecommendationInterface from "../components/ChatbotPage/ProductRecommendationInterface";
 import { ResizablePanelGroup, ResizableHandle, ResizablePanel } from "../components/ui/Resizable";
 import { useParams, Navigate } from "react-router-dom";
 import { industryData } from "../constants/industriesData";
-import { chatData } from "../constants/chatData";
-
+import socket from "../../lib/socket";
 export const ChatbotPage = () => {
   const { industryId } = useParams();
   const { equipmentId } = useParams();
-  const [messages, setMessages] = useState(chatData);
+  const [messages, setMessages] = useState([]);
 
   const selectedIndustry = industryData?.find((industry) => industry.id === industryId);
   const selectedEquipment = selectedIndustry?.equipments?.find((equipment) => equipment.id == equipmentId);
+
+  useEffect(() => {
+    if (!selectedEquipment || !socket) return;
+    console.log("asking llm now");
+    socket?.emit("sendMessage", { type: selectedEquipment.id, messages: [] });
+  }, [selectedEquipment]);
+
+  useEffect(() => {
+    socket.on("receiveMessage", (message) => {
+      setMessages([...messages, message]);
+    });
+
+    return () => {
+      socket.off("receiveMessage");
+    };
+  }, [messages, setMessages]);
 
   if (!selectedIndustry || !selectedEquipment) {
     return <Navigate to={"/404"} />;

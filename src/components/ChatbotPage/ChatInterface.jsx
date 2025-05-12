@@ -5,9 +5,11 @@ import HeaderMd from "../global/HeaderMd";
 
 const ChatInterface = ({ messages, setMessages }) => {
   const chatScrollRef = useRef(null);
+
   useEffect(() => {
     chatScrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
   return (
     <div className="w-full flex flex-col h-full border-r border-[#024544]/30">
       <HeaderMd />
