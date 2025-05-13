@@ -4,12 +4,13 @@ import { ResizablePanelGroup, ResizableHandle, ResizablePanel } from "../compone
 import { useParams, Navigate } from "react-router-dom";
 import { industryData } from "../constants/industriesData";
 import { useChatSocket } from "../hooks/useChatSocket";
+
 export const ChatbotPage = () => {
   const { industryId } = useParams();
   const { equipmentId } = useParams();
-  useChatSocket(equipmentId);
   const selectedIndustry = industryData?.find((industry) => industry.id === industryId);
   const selectedEquipment = selectedIndustry?.equipments?.find((equipment) => equipment.id == equipmentId);
+  useChatSocket(selectedEquipment);
 
   if (!selectedIndustry || !selectedEquipment) {
     return <Navigate to={"/404"} />;
