@@ -1,7 +1,5 @@
-import { productData, goodFitReason } from "../../constants/productsData";
-import GoodFitReason from "./GoodFitReason";
+import { goodFitReason, productData } from "../../constants/productsData";
 import ProductCard from "./ProductCard";
-import SkeletonGoodFitReason from "./SkeletonGoodFitReason";
 import SkeletonProductCard from "./SkeletonProductCard";
 import { useChatStore } from "../../store/chatStore";
 
@@ -16,10 +14,12 @@ const ProductRecommendationInterface = () => {
             {chatCompletionPercent === 100 ? "Here are the products that are the right fit for your needs." : `Analyzing your needs`}
           </h2>
 
-          {chatCompletionPercent === 100 ? <GoodFitReason goodFitReason={goodFitReason} /> : <SkeletonGoodFitReason />}
-
           {productData?.map((product) =>
-            chatCompletionPercent === 100 ? <ProductCard key={product.id} product={product} /> : <SkeletonProductCard key={product.id} />
+            chatCompletionPercent === 100 ? (
+              <ProductCard key={product.id} product={product} whyGoodFit={goodFitReason} />
+            ) : (
+              <SkeletonProductCard key={product.id} />
+            )
           )}
         </div>
       </div>
