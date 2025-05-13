@@ -1,13 +1,21 @@
 import { ArrowUp } from "lucide-react";
 import { useState } from "react";
+import socket from "../../lib/socket";
+import { useParams } from "react-router-dom";
+import { useChatStore } from "../../store/chatStore";
 
-const SendMessageForm = ({ messages, setMessages }) => {
+const SendMessageForm = () => {
   const [inputValue, setInputValue] = useState("");
+  const { equipmentId } = useParams();
+  const messages = useChatStore((state) => state.messages);
+  const addMessage = useChatStore((state) => state.addMessage);
 
   const sendMessage = (e) => {
     e.preventDefault();
     if (inputValue.trim()) {
-      setMessages([...messages, { sender: "user", text: inputValue }]);
+      socket?.emit("sendMessage", { type: equipmentId, messages: [...messages, { role: "user", content: inputValue }] });
+      addMessage({ role: "user", content: inputValue });
+      addMessage({ role: "assistant", content: "loading" });
       setInputValue("");
     }
   };
