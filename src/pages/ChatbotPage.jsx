@@ -1,33 +1,15 @@
-import { useState, useEffect } from "react";
 import ChatInterface from "../components/ChatbotPage/ChatInterface";
 import ProductRecommendationInterface from "../components/ChatbotPage/ProductRecommendationInterface";
 import { ResizablePanelGroup, ResizableHandle, ResizablePanel } from "../components/ui/Resizable";
 import { useParams, Navigate } from "react-router-dom";
 import { industryData } from "../constants/industriesData";
-import socket from "../../lib/socket";
+import { useChatSocket } from "../hooks/useChatSocket";
 export const ChatbotPage = () => {
   const { industryId } = useParams();
   const { equipmentId } = useParams();
-  const [messages, setMessages] = useState([]);
-
+  useChatSocket(equipmentId);
   const selectedIndustry = industryData?.find((industry) => industry.id === industryId);
   const selectedEquipment = selectedIndustry?.equipments?.find((equipment) => equipment.id == equipmentId);
-
-  useEffect(() => {
-    if (!selectedEquipment || !socket) return;
-    console.log("asking llm now");
-    socket?.emit("sendMessage", { type: selectedEquipment.id, messages: [] });
-  }, [selectedEquipment]);
-
-  useEffect(() => {
-    socket.on("receiveMessage", (message) => {
-      setMessages([...messages, message]);
-    });
-
-    return () => {
-      socket.off("receiveMessage");
-    };
-  }, [messages, setMessages]);
 
   if (!selectedIndustry || !selectedEquipment) {
     return <Navigate to={"/404"} />;
@@ -37,10 +19,10 @@ export const ChatbotPage = () => {
       {/* For Smaller Screens */}
       <div className="flex flex-col md:hidden flex-1 overflow-hidden">
         <div className="h-1/2 overflow-hidden border-b border-[#024544]/30">
-          <ChatInterface messages={messages} setMessages={setMessages} />
+          <ChatInterface />
         </div>
         <div className="h-1/2 overflow-hidden">
-          <ProductRecommendationInterface messagesLength={messages?.length} />
+          <ProductRecommendationInterface />
         </div>
       </div>
 
@@ -48,11 +30,11 @@ export const ChatbotPage = () => {
       <div className="hidden md:block flex-1 overflow-hidden">
         <ResizablePanelGroup direction="horizontal" className="h-full">
           <ResizablePanel defaultSize={30} minSize={30}>
-            <ChatInterface messages={messages} setMessages={setMessages} />
+            <ChatInterface />
           </ResizablePanel>
           <ResizableHandle className="w-1 bg-[#002121]/30" />
           <ResizablePanel defaultSize={70} minSize={40}>
-            <ProductRecommendationInterface messagesLength={messages?.length} />
+            <ProductRecommendationInterface />
           </ResizablePanel>
         </ResizablePanelGroup>
       </div>
