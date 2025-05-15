@@ -5,6 +5,7 @@ import AdminResetPasswordPage from "../pages/admin/AdminResetPasswordPage";
 import AdminDashboardPage from "../pages/admin/AdminDashboardPage";
 import NotFoundPage from "../pages/NotFoundPage";
 import ProtectedRoute from "../components/global/ProtectedRoute";
+
 const AdminRoutes = () => (
   <Routes>
     <Route path="login" element={<AdminLoginPage />} />

@@ -2,13 +2,26 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { LogOut, Menu, X } from "lucide-react";
 import { adminSidebarItems } from "../../../constants/adminSidebarItems";
-
+import ConfirmationModal from "../../global/ConfirmationModal";
+import api from "../../../utils/apiClient";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 export const AdminSidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
-
+  const [showLogoutConfirmation, setShowLogoutConfirmation] = useState(false);
+  const navigate = useNavigate();
   const isActive = (path) => {
     return location.pathname === path;
+  };
+
+  const handleLogout = async () => {
+    try {
+      await api.post("/logout");
+      navigate("/admin/login");
+    } catch (error) {
+      toast.error(error.message);
+    }
   };
 
   return (
@@ -16,7 +29,7 @@ export const AdminSidebar = () => {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="fixed top-4 left-4 z-50 md:hidden bg-[#1a1e24] p-2 rounded-md shadow-md text-white"
+          className="w-full fixed top-0 left-0 z-50 md:hidden bg-[#1a1e24] p-2 shadow-md text-white"
         >
           <Menu size={20} />
         </button>
@@ -63,11 +76,26 @@ export const AdminSidebar = () => {
         </nav>
 
         <div className="absolute bottom-0 w-full p-4 border-t border-[#1a1e24]">
-          <button className="flex items-center gap-3 px-3 py-2 rounded-md text-sm text-gray-300 hover:bg-[#1a1e24] hover:text-[#3CBFAE] w-full">
+          <button
+            onClick={() => {
+              setShowLogoutConfirmation(true);
+            }}
+            className="flex items-center gap-3 px-3 py-2 rounded-md text-sm text-gray-300 hover:bg-[#1a1e24] hover:text-[#3CBFAE] w-full"
+          >
             <LogOut size={18} />
             <span>Logout</span>
           </button>
         </div>
+
+        {showLogoutConfirmation && (
+          <ConfirmationModal
+            isOpen={showLogoutConfirmation}
+            onClose={() => setShowLogoutConfirmation(false)}
+            onConfirm={handleLogout}
+            title="Confirm Logout"
+            message="Are you sure you want to logout?"
+          />
+        )}
       </aside>
     </>
   );

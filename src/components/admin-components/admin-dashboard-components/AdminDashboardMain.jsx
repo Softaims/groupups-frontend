@@ -1,6 +1,8 @@
 import { Building2, Cpu, HelpCircle, MessageSquare, Plus, Search, Bell } from "lucide-react";
 import StatsCard from "./StatsCard";
 import RecentActivityTable from "./RecentActivityTable";
+import IndustryInteractionsChart from "./IndustryInteractionChart";
+import EquipmentInteractionsChart from "./EquipmentInteractionChart";
 const AdminDashboardMain = () => {
   const stats = [
     { title: "Total Industries", value: "12", icon: Building2, change: "+2 added this month" },
@@ -47,6 +49,28 @@ const AdminDashboardMain = () => {
       icon: MessageSquare,
     },
   ];
+  const industryData = {
+    overall: {
+      labels: ["Dental", "Veterinarian", "Vision Professional"],
+      values: [143, 55, 40],
+    },
+    lastWeek: {
+      labels: ["Dental", "Veterinarian", "Vision Professional"],
+      values: [42, 18, 12],
+    },
+  };
+
+  // Equipment interaction data
+  const equipmentData = {
+    overall: {
+      labels: ["CBCT", "Dental Chairs", "2D Pano", "X-Ray Machine", "Ultrasound"],
+      values: [85, 62, 45, 38, 25],
+    },
+    lastWeek: {
+      labels: ["CBCT", "Dental Chairs", "2D Pano", "X-Ray Machine", "Ultrasound"],
+      values: [24, 18, 12, 10, 8],
+    },
+  };
 
   return (
     <main className="flex-1 p-4 md:p-6 md:ml-64 w-full transition-all duration-300 pt-16 md:pt-6">
@@ -80,6 +104,10 @@ const AdminDashboardMain = () => {
           ))}
         </div>
 
+        <div className="flex flex-col space-y-6 md:space-y-0 md:grid md:grid-cols-2 md:gap-6">
+          <IndustryInteractionsChart data={industryData} />
+          <EquipmentInteractionsChart data={equipmentData} />
+        </div>
         <RecentActivityTable activities={activities} />
       </div>
     </main>
