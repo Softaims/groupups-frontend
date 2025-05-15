@@ -4,12 +4,15 @@ import { toast } from "react-toastify";
 import Header from "../../components/global/Header";
 import TextInput from "../../components/ui/TextInput";
 import { adminResetPasswordSchema } from "../../validations/adminResetPasswordSchema";
+import api from "../../utils/apiClient";
+import { validateForm } from "../../utils/validateForm";
+import { useNavigate } from "react-router-dom";
 
 const AdminResetPasswordPage = () => {
   const [searchParams] = useSearchParams();
   const email = searchParams.get("email") || "";
   const token = searchParams.get("token") || "";
-
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     password: "",
     confirmPassword: "",
@@ -31,33 +34,24 @@ const AdminResetPasswordPage = () => {
     }
   };
 
-  const validateForm = () => {
-    const result = adminResetPasswordSchema.safeParse(formData);
-    if (!result.success) {
-      const fieldErrors = {};
-      result.error.errors.forEach((err) => {
-        fieldErrors[err.path[0]] = err.message;
-      });
-      return fieldErrors;
-    }
-    return {};
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const validationErrors = validateForm();
+    const validationErrors = validateForm(adminResetPasswordSchema, formData);
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
     }
-
     setIsSubmitting(true);
     try {
-      // Optional: redirect to login after 2 seconds
-      // setTimeout(() => navigate("/admin/login"), 2000);
+      await api.post("/reset-password", { password: formData.password, email, token });
+      toast.success("Password updated successfully");
+      setTimeout(() => {
+        toast.dismiss();
+        navigate("/admin/login");
+      }, 2000);
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Something went wrong.");
+      toast.error(error.message);
     } finally {
       setIsSubmitting(false);
     }

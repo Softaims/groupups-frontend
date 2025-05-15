@@ -3,11 +3,18 @@ import { Link } from "react-router-dom";
 import Header from "../../components/global/Header";
 import TextInput from "../../components/ui/TextInput";
 import { adminLoginSchema } from "../../validations/adminLoginSchema";
+import api from "../../utils/apiClient";
+import { toast } from "react-toastify";
+import { validateForm } from "../../utils/validateForm";
+import { useNavigate } from "react-router-dom";
+import { useUserStore } from "../../store/userStore";
 
 const AdminLogin = () => {
+  const { setUser } = useUserStore();
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -24,31 +31,28 @@ const AdminLogin = () => {
     }
   };
 
-  const validateForm = () => {
-    const result = adminLoginSchema.safeParse(formData);
-    if (!result.success) {
-      const fieldErrors = {};
-      result.error.errors.forEach((err) => {
-        fieldErrors[err.path[0]] = err.message;
-      });
-      return fieldErrors;
-    }
-    return {};
-  };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const validationErrors = validateForm();
+    const validationErrors = validateForm(adminLoginSchema, formData);
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
     }
-
     setIsSubmitting(true);
-    setTimeout(() => {
-      console.log("Login submitted:", formData);
+    try {
+      const response = await api.post("/login", formData);
+      setUser(response.user);
+      toast.success("Login Successful");
+      setTimeout(() => {
+        toast.dismiss();
+        navigate("/admin/dashboard");
+      }, 2000);
+    } catch (error) {
+      toast.error(error.message);
+      console.log("error is", error);
+    } finally {
       setIsSubmitting(false);
-    }, 1500);
+    }
   };
 
   return (

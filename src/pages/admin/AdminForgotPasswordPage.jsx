@@ -3,40 +3,49 @@ import { Link } from "react-router-dom";
 import Header from "../../components/global/Header";
 import TextInput from "../../components/ui/TextInput";
 import { adminForgotPasswordSchema } from "../../validations/adminForgotPasswordSchema";
+import { validateForm } from "../../utils/validateForm";
+import api from "../../utils/apiClient";
+import { toast } from "react-toastify";
+import LoaderIcon from "../../../public/icons/LoaderIcon";
 
 const AdminForgotPasswordPage = () => {
-  const [email, setEmail] = useState("");
-  const [error, setError] = useState("");
+  const [formData, setFormData] = useState({ email: "" });
+  const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
   const handleChange = (e) => {
-    setEmail(e.target.value);
-    if (error) setError("");
-  };
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
 
-  const validateForm = () => {
-    const result = adminForgotPasswordSchema.safeParse({ email });
-    if (!result.success) {
-      return result.error.errors[0].message;
+    if (errors[name]) {
+      setErrors({
+        ...errors,
+        [name]: "",
+      });
     }
-    return "";
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const validationError = validateForm();
-    if (validationError) {
-      setError(validationError);
+    const validationErrors = validateForm(adminForgotPasswordSchema, formData);
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
       return;
     }
-
     setIsSubmitting(true);
-    setTimeout(() => {
-      console.log("Reset email submitted:", email);
-      setIsSubmitting(false);
+    setIsSubmitting(true);
+    try {
+      await api.post("/forgot-password", formData);
       setSubmitted(true);
-    }, 1500);
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -59,10 +68,10 @@ const AdminForgotPasswordPage = () => {
                 label="Email"
                 type="email"
                 name="email"
-                value={email}
+                value={formData.email}
                 onChange={handleChange}
                 placeholder="Enter your email"
-                error={error}
+                error={errors.email}
               />
 
               <div className="flex items-center justify-between">
@@ -74,20 +83,9 @@ const AdminForgotPasswordPage = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-3 px-4 bg-[#4aa6a4] hover:bg-[#3d8a88] text-white font-medium rounded-md transition duration-300 flex justify-center items-center"
+                className="cursor-pointer w-full py-3 px-4 bg-[#4aa6a4] hover:bg-[#3d8a88] text-white font-medium rounded-md transition duration-300 flex justify-center items-center"
               >
-                {isSubmitting ? (
-                  <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
-                  </svg>
-                ) : (
-                  "Send Reset Link"
-                )}
+                {isSubmitting ? <LoaderIcon /> : "Send Reset Link"}
               </button>
             </form>
           )}
