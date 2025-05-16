@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 import { adminEquipments, adminIndustries } from "../../../constants/adminEquipmentIndustryData";
 import AdminEquipmentHeader from "./AdminEquipmentHeader";
 import EquipmentSearchFilter from "./EquipmentSearchFilter";
+import SkeletonEquipmentTable from "./SkeletonEquipmentTable";
 
 const AdminEquipmentMain = () => {
   const [equipment, setEquipment] = useState(adminEquipments);
@@ -125,6 +126,7 @@ const AdminEquipmentMain = () => {
             industries={adminIndustries}
           />
           <EquipmentTable equipment={filteredEquipment} onEdit={handleEdit} onDelete={handleDelete} />
+          {/* <SkeletonEquipmentTable /> */}
         </div>
       </div>
 

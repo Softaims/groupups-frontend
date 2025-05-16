@@ -2,6 +2,7 @@ import { Children, useEffect } from "react";
 import { useUserStore } from "../../store/userStore";
 import api from "../../utils/apiClient";
 import { useNavigate } from "react-router-dom";
+import SkeletonAdminPage from "../../pages/admin/SkeletonAdminPage";
 
 const ProtectedRoute = ({ children }) => {
   const { user, setUser, clearUser } = useUserStore();
@@ -24,6 +25,8 @@ const ProtectedRoute = ({ children }) => {
 
   if (user) {
     return children;
+  } else {
+    return <SkeletonAdminPage />;
   }
 };
 

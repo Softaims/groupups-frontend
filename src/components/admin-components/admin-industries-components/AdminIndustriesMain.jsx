@@ -7,6 +7,7 @@ import { initialIndustries } from "../../../constants/initialIndustries";
 import { toast } from "react-toastify";
 import { adminIndustrySchema } from "../../../validations/adminIndustrySchema";
 import { validateForm } from "../../../utils/validateForm";
+import SkeletonIndustryCard from "./SkeletonIndustryCard";
 
 const AdminIndustriesMain = () => {
   const [industries, setIndustries] = useState(initialIndustries);
