@@ -1,0 +1,89 @@
+import { Trash2, Upload } from "lucide-react";
+
+const IndustryModal = ({
+  isOpen,
+  onClose,
+  onSubmit,
+  formData,
+  onFormChange,
+  onImageChange,
+  previewImage,
+  onRemoveImage,
+  isEditMode,
+}) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+      <div className="bg-[#1a1e24] rounded-lg border border-[#2a2e34] w-full max-w-md">
+        <div className="p-6">
+          <h2 className="text-xl font-semibold text-white mb-4">{isEditMode ? "Edit Industry" : "Add New Industry"}</h2>
+          <form onSubmit={onSubmit} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-1">Industry Name</label>
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={onFormChange}
+                className="w-full rounded-md bg-[#0f1216] border border-[#2a2e34] px-3 py-2 text-white focus:outline-none focus:border-[#3CBFAE]"
+                placeholder="Enter industry name"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-1">Industry Image</label>
+              <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-[#2a2e34] border-dashed rounded-md">
+                <div className="space-y-1 text-center">
+                  {previewImage ? (
+                    <div className="relative">
+                      <img src={previewImage} alt="Preview" className="mx-auto h-32 w-32 object-cover rounded-md" />
+                      <button
+                        type="button"
+                        onClick={onRemoveImage}
+                        className="absolute -top-2 -right-2 p-1 bg-red-500 rounded-full hover:bg-red-600"
+                      >
+                        <Trash2 size={16} className="text-white" />
+                      </button>
+                    </div>
+                  ) : (
+                    <>
+                      <Upload className="mx-auto h-12 w-12 text-gray-400" />
+                      <div className="flex text-sm text-gray-400">
+                        <label
+                          htmlFor="image-upload"
+                          className="relative cursor-pointer rounded-md font-medium text-[#3CBFAE] hover:text-[#35a99a] focus-within:outline-none"
+                        >
+                          <span>Upload a file</span>
+                          <input
+                            id="image-upload"
+                            name="image"
+                            type="file"
+                            accept="image/*"
+                            className="sr-only"
+                            onChange={onImageChange}
+                          />
+                        </label>
+                        <p className="pl-1">or drag and drop</p>
+                      </div>
+                      <p className="text-xs text-gray-400">PNG, JPG, GIF up to 10MB</p>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+            <div className="flex justify-end gap-3 mt-6">
+              <button type="button" onClick={onClose} className="px-4 py-2 text-gray-300 hover:text-white">
+                Cancel
+              </button>
+              <button type="submit" className="px-4 py-2 bg-[#3CBFAE] hover:bg-[#35a99a] text-white rounded-md">
+                {isEditMode ? "Save Changes" : "Add Industry"}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default IndustryModal; 
