@@ -1,0 +1,71 @@
+import { X } from "lucide-react";
+
+const EquipmentModal = ({
+  isOpen,
+  onClose,
+  onSubmit,
+  formData,
+  onFormChange,
+  errors,
+  isEditMode,
+  industries,
+}) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+      <div className="bg-[#1a1e24] rounded-lg border border-[#2a2e34] w-full max-w-md">
+        <div className="p-6">
+          <h2 className="text-xl font-semibold text-white mb-4">{isEditMode ? "Edit Equipment" : "Add New Equipment"}</h2>
+          <form onSubmit={onSubmit} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-1">Industry</label>
+              <select
+                name="industryId"
+                value={formData.industryId}
+                onChange={onFormChange}
+                className={`w-full rounded-md bg-[#0f1216] border ${
+                  errors.industryId ? "border-red-500" : "border-[#2a2e34]"
+                } px-3 py-2 text-white focus:outline-none focus:border-[#3CBFAE] cursor-pointer`}
+              >
+                <option value="">Select an industry</option>
+                {industries.map((industry) => (
+                  <option key={industry.id} value={industry.id}>
+                    {industry.name}
+                  </option>
+                ))}
+              </select>
+              {errors.industryId && <p className="mt-1 text-sm text-red-500">{errors.industryId}</p>}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-1">Equipment Name</label>
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={onFormChange}
+                className={`w-full rounded-md bg-[#0f1216] border ${
+                  errors.name ? "border-red-500" : "border-[#2a2e34]"
+                } px-3 py-2 text-white focus:outline-none focus:border-[#3CBFAE] cursor-text`}
+                placeholder="Enter equipment name"
+              />
+              {errors.name && <p className="mt-1 text-sm text-red-500">{errors.name}</p>}
+            </div>
+
+            <div className="flex justify-end gap-3 mt-6">
+              <button type="button" onClick={onClose} className="px-4 py-2 text-gray-300 hover:text-white cursor-pointer">
+                Cancel
+              </button>
+              <button type="submit" className="px-4 py-2 bg-[#3CBFAE] hover:bg-[#35a99a] text-white rounded-md cursor-pointer">
+                {isEditMode ? "Save Changes" : "Add Equipment"}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default EquipmentModal; 
