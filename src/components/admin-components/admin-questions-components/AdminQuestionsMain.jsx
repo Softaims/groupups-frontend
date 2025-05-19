@@ -2,18 +2,28 @@ import { useState, useEffect } from "react";
 import { Search, Plus, Cpu } from "lucide-react";
 import QuestionsList from "./QuestionsList";
 import QuestionForm from "./QuestionsForm";
-import DeleteConfirmationModal from "./DeleteConfirmationModal";
+import ConfirmationModal from "../../global/ConfirmationModal";
 import EquipmentSelector from "./EquipmentSelector";
 import EmptyState from "./EmptyState";
 
 const AdminQuestionsMain = () => {
   const [selectedEquipment, setSelectedEquipment] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedQuestion, setSelectedQuestion] = useState(null);
+  const [allQuestions, setAllQuestions] = useState([]);
   const [questions, setQuestions] = useState([]);
+  const [formData, setFormData] = useState({
+    questionText: "",
+    type: "open_ended",
+    required: false,
+    youtubeUrl: "",
+    options: [{ id: 1, text: "" }],
+    allowMultiple: false,
+    equipmentId: null,
+  });
+  const [formErrors, setFormErrors] = useState({});
 
   const industries = [
     { id: 1, name: "Dental" },
@@ -118,19 +128,21 @@ const AdminQuestionsMain = () => {
     },
   ];
 
-  // Update questions when equipment is selected
+  useEffect(() => {
+    setAllQuestions(sampleQuestions);
+  }, []);
+
   useEffect(() => {
     if (selectedEquipment) {
-      const filteredQuestions = sampleQuestions
+      const filteredQuestions = allQuestions
         .filter((q) => q.equipmentId === selectedEquipment.id)
         .sort((a, b) => a.priority - b.priority);
       setQuestions(filteredQuestions);
     } else {
       setQuestions([]);
     }
-  }, [selectedEquipment]);
+  }, [selectedEquipment, allQuestions]);
 
-  // Filter questions based on search query
   const filteredQuestions = questions.filter((q) => {
     return q.questionText.toLowerCase().includes(searchQuery.toLowerCase());
   });
@@ -139,36 +151,118 @@ const AdminQuestionsMain = () => {
     setSelectedEquipment(equipment);
   };
 
-  const handleAddQuestion = (questionData) => {
-    const newQuestion = {
-      id: Math.max(0, ...questions.map((q) => q.id)) + 1,
-      equipmentId: selectedEquipment.id,
-      ...questionData,
-      priority: questions.length + 1,
-      createdAt: new Date().toISOString(),
-    };
-
-    setQuestions([...questions, newQuestion]);
-    setIsAddModalOpen(false);
+  const handleFormChange = (field, value) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+    if (formErrors[field]) {
+      setFormErrors(prev => ({ ...prev, [field]: "" }));
+    }
   };
 
-  const handleEditQuestion = (questionData) => {
-    const updatedQuestions = questions.map((q) => (q.id === questionData.id ? { ...q, ...questionData } : q));
-    setQuestions(updatedQuestions);
-    setIsEditModalOpen(false);
+  const handleSubmit = (questionData) => {
+    if (questionData.id) {
+      // Edit mode
+      const updatedQuestions = allQuestions.map((q) => {
+        if (q.id === questionData.id) {
+          const updatedQuestion = {
+            ...q,
+            questionText: questionData.questionText,
+            type: questionData.type,
+            required: questionData.required,
+            youtubeUrl: questionData.youtubeUrl,
+            ...(questionData.type === "multiple_choice" && {
+              options: questionData.options,
+              allowMultiple: questionData.allowMultiple,
+            }),
+            ...(questionData.type !== "multiple_choice" && {
+              options: undefined,
+              allowMultiple: undefined,
+            }),
+          };
+          return updatedQuestion;
+        }
+        return q;
+      });
+      setAllQuestions(updatedQuestions);
+    } else {
+      // Add mode
+      const newQuestion = {
+        id: Math.max(0, ...allQuestions.map((q) => q.id)) + 1,
+        equipmentId: selectedEquipment.id,
+        ...questionData,
+        priority: questions.length + 1,
+        createdAt: new Date().toISOString(),
+      };
+      setAllQuestions([...allQuestions, newQuestion]);
+    }
+    handleCloseModal();
   };
 
   const handleDeleteQuestion = () => {
-    const updatedQuestions = questions.filter((q) => q.id !== selectedQuestion.id);
-    const reorderedQuestions = updatedQuestions.sort((a, b) => a.priority - b.priority).map((q, index) => ({ ...q, priority: index + 1 }));
+    const updatedQuestions = allQuestions.filter((q) => q.id !== selectedQuestion.id);
+    const reorderedQuestions = updatedQuestions
+      .filter((q) => q.equipmentId === selectedEquipment.id)
+      .sort((a, b) => a.priority - b.priority)
+      .map((q, index) => ({ ...q, priority: index + 1 }));
 
-    setQuestions(reorderedQuestions);
+    const finalQuestions = updatedQuestions.map((q) => {
+      if (q.equipmentId === selectedEquipment.id) {
+        const reorderedQ = reorderedQuestions.find((rq) => rq.id === q.id);
+        return reorderedQ ? { ...q, priority: reorderedQ.priority } : q;
+      }
+      return q;
+    });
+
+    setAllQuestions(finalQuestions);
     setIsDeleteModalOpen(false);
+    setSelectedQuestion(null);
   };
 
   const handleEditClick = (question) => {
     setSelectedQuestion(question);
-    setIsEditModalOpen(true);
+    setFormData({
+      id: question.id,
+      questionText: question.questionText || "",
+      type: question.type || "open_ended",
+      required: question.required || false,
+      youtubeUrl: question.youtubeUrl || "",
+      options: question.type === "multiple_choice" ? [...(question.options || [])] : [{ id: 1, text: "" }],
+      allowMultiple: question.type === "multiple_choice" ? question.allowMultiple || false : false,
+      equipmentId: selectedEquipment.id,
+    });
+    setIsFormModalOpen(true);
+  };
+
+  const handleAddClick = () => {
+    setSelectedQuestion(null);
+    setFormData({
+      questionText: "",
+      type: "open_ended",
+      required: false,
+      youtubeUrl: "",
+      options: [{ id: 1, text: "" }],
+      allowMultiple: false,
+      equipmentId: selectedEquipment.id,
+    });
+    setFormErrors({});
+    setIsFormModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsFormModalOpen(false);
+    setSelectedQuestion(null);
+    setFormData({
+      questionText: "",
+      type: "open_ended",
+      required: false,
+      youtubeUrl: "",
+      options: [{ id: 1, text: "" }],
+      allowMultiple: false,
+      equipmentId: null,
+    });
+    setFormErrors({});
   };
 
   const handleDeleteClick = (question) => {
@@ -177,11 +271,14 @@ const AdminQuestionsMain = () => {
   };
 
   const handleReorderQuestions = (reorderedQuestions) => {
-    const updatedQuestions = reorderedQuestions.map((q, index) => ({
-      ...q,
-      priority: index + 1,
-    }));
-    setQuestions(updatedQuestions);
+    const updatedQuestions = allQuestions.map((q) => {
+      if (q.equipmentId === selectedEquipment.id) {
+        const reorderedQ = reorderedQuestions.find((rq) => rq.id === q.id);
+        return reorderedQ ? { ...q, priority: reorderedQ.priority } : q;
+      }
+      return q;
+    });
+    setAllQuestions(updatedQuestions);
   };
 
   return (
@@ -196,7 +293,7 @@ const AdminQuestionsMain = () => {
           </div>
           <div className="flex flex-col sm:flex-row gap-2">
             <button
-              onClick={() => setIsAddModalOpen(true)}
+              onClick={handleAddClick}
               className="flex items-center justify-center gap-2 px-4 py-2 rounded-md bg-[#3CBFAE] text-white hover:bg-[#35a89a] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={!selectedEquipment}
             >
@@ -256,39 +353,37 @@ const AdminQuestionsMain = () => {
                 </button>
               </div>
             ) : (
-              <EmptyState onAddClick={() => setIsAddModalOpen(true)} />
+              <EmptyState onAddClick={() => setIsFormModalOpen(true)} />
             )}
           </div>
         )}
       </div>
 
-      {isAddModalOpen && selectedEquipment && (
+      {isFormModalOpen && selectedEquipment && (
         <QuestionForm
-          isOpen={isAddModalOpen}
-          onClose={() => setIsAddModalOpen(false)}
-          onSubmit={handleAddQuestion}
+          isOpen={isFormModalOpen}
+          onClose={handleCloseModal}
+          onSubmit={handleSubmit}
+          formData={formData}
+          onFormChange={handleFormChange}
+          errors={formErrors}
           equipment={selectedEquipment}
-          mode="add"
-        />
-      )}
-
-      {isEditModalOpen && selectedQuestion && (
-        <QuestionForm
-          isOpen={isEditModalOpen}
-          onClose={() => setIsEditModalOpen(false)}
-          onSubmit={handleEditQuestion}
-          equipment={selectedEquipment}
-          question={selectedQuestion}
-          mode="edit"
+          isEditMode={!!selectedQuestion}
         />
       )}
 
       {isDeleteModalOpen && selectedQuestion && (
-        <DeleteConfirmationModal
+        <ConfirmationModal
+          type="delete"
           isOpen={isDeleteModalOpen}
-          onClose={() => setIsDeleteModalOpen(false)}
+          onClose={() => {
+            setIsDeleteModalOpen(false);
+            setSelectedQuestion(null);
+          }}
           onConfirm={handleDeleteQuestion}
-          questionText={selectedQuestion.questionText}
+          title="Delete Question"
+          message={`Are you sure you want to delete this question? This action cannot be undone.`}
+          confirmText="Delete"
         />
       )}
     </main>

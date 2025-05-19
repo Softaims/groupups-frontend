@@ -1,116 +1,65 @@
-import { useState, useEffect } from "react";
-import { X, Plus, Trash2, Youtube, AlertCircle } from "lucide-react";
+import { X, Plus, Trash2, Youtube } from "lucide-react";
+import { adminQuestionSchema } from "../../../validations/adminQuestionSchema";
 
-const QuestionForm = ({ isOpen, onClose, onSubmit, equipment, question = null, mode = "add" }) => {
-  const [questionType, setQuestionType] = useState("open_ended");
-  const [questionText, setQuestionText] = useState("");
-  const [required, setRequired] = useState(false);
-  const [youtubeUrl, setYoutubeUrl] = useState("");
-  const [options, setOptions] = useState([{ id: 1, text: "" }]);
-  const [allowMultiple, setAllowMultiple] = useState(false);
-  const [error, setError] = useState("");
+const QuestionForm = ({ isOpen, onClose, onSubmit, formData, onFormChange, errors, equipment, isEditMode }) => {
+  if (!isOpen) return null;
 
-  useEffect(() => {
-    if (question) {
-      setQuestionType(question.type);
-      setQuestionText(question.questionText);
-      setRequired(question.required);
-      setYoutubeUrl(question.youtubeUrl || "");
-
-      if (question.type === "multiple_choice") {
-        setOptions(question.options || [{ id: 1, text: "" }]);
-        setAllowMultiple(question.allowMultiple || false);
-      } else {
-        setOptions([{ id: 1, text: "" }]);
-        setAllowMultiple(false);
-      }
-    } else {
-      // Reset form for new question
-      setQuestionType("open_ended");
-      setQuestionText("");
-      setRequired(false);
-      setYoutubeUrl("");
-      setOptions([{ id: 1, text: "" }]);
-      setAllowMultiple(false);
-    }
-  }, [question]);
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!questionText.trim()) {
-      setError("Question text is required");
-      return;
-    }
+    try {
+      const validationData = {
+        ...formData,
+        options: formData.type === "multiple_choice" ? formData.options.filter(opt => opt.text.trim() !== "") : undefined,
+        allowMultiple: formData.type === "multiple_choice" ? formData.allowMultiple : undefined,
+      };
 
-    if (questionType === "multiple_choice") {
-      // Check if we have at least two options for multiple choice
-      if (options.length < 2) {
-        setError("Multiple choice questions require at least two options");
-        return;
+      const validatedData = adminQuestionSchema.parse(validationData);
+      onSubmit(isEditMode ? { ...validatedData, id: formData.id } : validatedData);
+    } catch (error) {
+      if (error.errors) {
+        const formattedErrors = {};
+        error.errors.forEach((err) => {
+          formattedErrors[err.path[0]] = err.message;
+        });
+        onFormChange("errors", formattedErrors);
       }
-
-      // Check if all options have text
-      if (options.some((option) => !option.text.trim())) {
-        setError("All options must have text");
-        return;
-      }
     }
-
-    // Validate YouTube URL if provided
-    if (youtubeUrl && !isValidYoutubeUrl(youtubeUrl)) {
-      setError("Please enter a valid YouTube URL");
-      return;
-    }
-
-    const questionData = {
-      id: question?.id,
-      questionText,
-      type: questionType,
-      required,
-      ...(youtubeUrl ? { youtubeUrl } : {}),
-    };
-
-    if (questionType === "multiple_choice") {
-      questionData.options = options;
-      questionData.allowMultiple = allowMultiple;
-    }
-
-    onSubmit(questionData);
-
-    // Reset form
-    setError("");
   };
 
-  const isValidYoutubeUrl = (url) => {
-    const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$/;
-    return youtubeRegex.test(url);
+  const handleTypeChange = (type) => {
+    onFormChange("type", type);
+    onFormChange("options", type === "multiple_choice" 
+      ? (formData.options.length >= 2 ? formData.options : [{ id: 1, text: "" }, { id: 2, text: "" }])
+      : [{ id: 1, text: "" }]
+    );
+    onFormChange("allowMultiple", type === "multiple_choice" ? formData.allowMultiple : false);
   };
 
   const addOption = () => {
-    const newId = Math.max(0, ...options.map((o) => o.id)) + 1;
-    setOptions([...options, { id: newId, text: "" }]);
+    const newId = Math.max(0, ...formData.options.map(o => o.id)) + 1;
+    onFormChange("options", [...formData.options, { id: newId, text: "" }]);
   };
 
   const removeOption = (id) => {
-    if (options.length <= 2) {
-      setError("Multiple choice questions require at least two options");
+    if (formData.options.length <= 2) {
+      onFormChange("errors", { options: "Multiple choice questions require at least two options" });
       return;
     }
-    setOptions(options.filter((option) => option.id !== id));
+    onFormChange("options", formData.options.filter(option => option.id !== id));
   };
 
   const updateOption = (id, text) => {
-    setOptions(options.map((option) => (option.id === id ? { ...option, text } : option)));
+    onFormChange("options", formData.options.map(option => 
+      option.id === id ? { ...option, text } : option
+    ));
   };
-
-  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 overflow-y-auto">
       <div className="bg-[#1a1e24] rounded-lg border border-[#2a2e34] p-6 w-full max-w-2xl my-8 mx-4">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold text-white">{mode === "add" ? "Add New Question" : "Edit Question"}</h2>
+          <h2 className="text-xl font-bold text-white">{isEditMode ? "Edit Question" : "Add New Question"}</h2>
           <button onClick={onClose} className="text-gray-400 hover:text-white">
             <X className="h-5 w-5" />
           </button>
@@ -122,13 +71,6 @@ const QuestionForm = ({ isOpen, onClose, onSubmit, equipment, question = null, m
           </p>
         </div>
 
-        {error && (
-          <div className="mb-4 p-3 bg-red-900/30 border border-red-500 rounded-md text-red-400 text-sm flex items-start gap-2">
-            <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
-            <span>{error}</span>
-          </div>
-        )}
-
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label htmlFor="questionType" className="block mb-2 text-sm font-medium text-gray-300">
@@ -136,15 +78,18 @@ const QuestionForm = ({ isOpen, onClose, onSubmit, equipment, question = null, m
             </label>
             <select
               id="questionType"
-              className="w-full rounded-md bg-[#0c0f12] py-2 px-3 border border-[#2a2e34] focus:outline-none focus:border-[#3CBFAE] text-white"
-              value={questionType}
-              onChange={(e) => setQuestionType(e.target.value)}
+              className={`w-full rounded-md bg-[#0c0f12] py-2 px-3 border ${
+                errors?.type ? "border-red-500" : "border-[#2a2e34]"
+              } focus:outline-none focus:border-[#3CBFAE] text-white`}
+              value={formData.type}
+              onChange={(e) => handleTypeChange(e.target.value)}
             >
               <option value="open_ended">Open-ended Question</option>
               <option value="multiple_choice">Multiple Choice</option>
               <option value="statement">Statement (Acknowledge to Continue)</option>
               <option value="file_upload">File Upload</option>
             </select>
+            {errors?.type && <p className="mt-1 text-sm text-red-500">{errors.type}</p>}
           </div>
 
           <div className="mb-4">
@@ -154,14 +99,17 @@ const QuestionForm = ({ isOpen, onClose, onSubmit, equipment, question = null, m
             <textarea
               id="questionText"
               rows={3}
-              className="w-full rounded-md bg-[#0c0f12] py-2 px-3 border border-[#2a2e34] focus:outline-none focus:border-[#3CBFAE] text-white resize-none"
+              className={`w-full rounded-md bg-[#0c0f12] py-2 px-3 border ${
+                errors?.questionText ? "border-red-500" : "border-[#2a2e34]"
+              } focus:outline-none focus:border-[#3CBFAE] text-white resize-none`}
               placeholder="Enter question text"
-              value={questionText}
-              onChange={(e) => setQuestionText(e.target.value)}
+              value={formData.questionText}
+              onChange={(e) => onFormChange("questionText", e.target.value)}
             />
+            {errors?.questionText && <p className="mt-1 text-sm text-red-500">{errors.questionText}</p>}
           </div>
 
-          {questionType === "multiple_choice" && (
+          {formData.type === "multiple_choice" && (
             <div className="mb-4">
               <div className="flex justify-between items-center mb-2">
                 <label className="text-sm font-medium text-gray-300">Options</label>
@@ -171,11 +119,13 @@ const QuestionForm = ({ isOpen, onClose, onSubmit, equipment, question = null, m
               </div>
 
               <div className="space-y-2">
-                {options.map((option, index) => (
+                {formData.options.map((option, index) => (
                   <div key={option.id} className="flex items-center gap-2">
                     <input
                       type="text"
-                      className="flex-grow rounded-md bg-[#0c0f12] py-2 px-3 border border-[#2a2e34] focus:outline-none focus:border-[#3CBFAE] text-white"
+                      className={`flex-grow rounded-md bg-[#0c0f12] py-2 px-3 border ${
+                        errors?.options ? "border-red-500" : "border-[#2a2e34]"
+                      } focus:outline-none focus:border-[#3CBFAE] text-white`}
                       placeholder={`Option ${index + 1}`}
                       value={option.text}
                       onChange={(e) => updateOption(option.id, e.target.value)}
@@ -191,14 +141,15 @@ const QuestionForm = ({ isOpen, onClose, onSubmit, equipment, question = null, m
                   </div>
                 ))}
               </div>
+              {errors?.options && <p className="mt-1 text-sm text-red-500">{errors.options}</p>}
 
               <div className="mt-3">
                 <label className="inline-flex items-center">
                   <input
                     type="checkbox"
                     className="form-checkbox h-4 w-4 text-[#3CBFAE] border-[#2a2e34] rounded focus:ring-[#3CBFAE] bg-[#0c0f12]"
-                    checked={allowMultiple}
-                    onChange={(e) => setAllowMultiple(e.target.checked)}
+                    checked={formData.allowMultiple}
+                    onChange={(e) => onFormChange("allowMultiple", e.target.checked)}
                   />
                   <span className="ml-2 text-sm text-gray-300">Allow multiple selections</span>
                 </label>
@@ -211,8 +162,12 @@ const QuestionForm = ({ isOpen, onClose, onSubmit, equipment, question = null, m
               <label htmlFor="youtubeUrl" className="text-sm font-medium text-gray-300">
                 YouTube Video URL (Optional)
               </label>
-              {youtubeUrl && (
-                <button type="button" onClick={() => setYoutubeUrl("")} className="text-xs text-gray-400 hover:text-red-500">
+              {formData.youtubeUrl && (
+                <button
+                  type="button"
+                  onClick={() => onFormChange("youtubeUrl", "")}
+                  className="text-xs text-gray-400 hover:text-red-500"
+                >
                   Clear
                 </button>
               )}
@@ -222,12 +177,15 @@ const QuestionForm = ({ isOpen, onClose, onSubmit, equipment, question = null, m
               <input
                 type="text"
                 id="youtubeUrl"
-                className="flex-grow rounded-md bg-[#0c0f12] py-2 px-3 border border-[#2a2e34] focus:outline-none focus:border-[#3CBFAE] text-white"
+                className={`flex-grow rounded-md bg-[#0c0f12] py-2 px-3 border ${
+                  errors?.youtubeUrl ? "border-red-500" : "border-[#2a2e34]"
+                } focus:outline-none focus:border-[#3CBFAE] text-white`}
                 placeholder="https://www.youtube.com/watch?v=..."
-                value={youtubeUrl}
-                onChange={(e) => setYoutubeUrl(e.target.value)}
+                value={formData.youtubeUrl}
+                onChange={(e) => onFormChange("youtubeUrl", e.target.value)}
               />
             </div>
+            {errors?.youtubeUrl && <p className="mt-1 text-sm text-red-500">{errors.youtubeUrl}</p>}
             <p className="mt-1 text-xs text-gray-400">Add a YouTube video that will be shown with this question</p>
           </div>
 
@@ -236,8 +194,8 @@ const QuestionForm = ({ isOpen, onClose, onSubmit, equipment, question = null, m
               <input
                 type="checkbox"
                 className="form-checkbox h-4 w-4 text-[#3CBFAE] border-[#2a2e34] rounded focus:ring-[#3CBFAE] bg-[#0c0f12]"
-                checked={required}
-                onChange={(e) => setRequired(e.target.checked)}
+                checked={formData.required}
+                onChange={(e) => onFormChange("required", e.target.checked)}
               />
               <span className="ml-2 text-sm text-gray-300">Mark as required</span>
             </label>
@@ -252,7 +210,7 @@ const QuestionForm = ({ isOpen, onClose, onSubmit, equipment, question = null, m
               Cancel
             </button>
             <button type="submit" className="px-4 py-2 rounded-md bg-[#3CBFAE] text-white hover:bg-[#35a89a] transition-colors">
-              {mode === "add" ? "Add Question" : "Save Changes"}
+              {isEditMode ? "Save Changes" : "Add Question"}
             </button>
           </div>
         </form>
@@ -262,3 +220,4 @@ const QuestionForm = ({ isOpen, onClose, onSubmit, equipment, question = null, m
 };
 
 export default QuestionForm;
+
