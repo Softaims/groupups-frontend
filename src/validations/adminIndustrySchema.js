@@ -22,7 +22,7 @@ export const adminIndustrySchema = z.object({
     .refine(
       (file) => {
         if (file instanceof File) {
-          return file.size <= 10 * 1024 * 1024; // 10MB
+          return file.size <= 2 * 1024 * 1024; // 2MB
         }
         return true;
       },
@@ -30,4 +30,5 @@ export const adminIndustrySchema = z.object({
         message: "Image size must be less than 2MB",
       }
     ),
+  visibility: z.boolean().default(true),
 });

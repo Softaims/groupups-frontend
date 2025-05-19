@@ -11,12 +11,20 @@ export const useIndustries = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [formData, setFormData] = useState({ name: "", industry_image: null, visibility: true });
+  const [formData, setFormData] = useState({ 
+    name: "", 
+    industry_image: null, 
+    visibility: true 
+  });
   const [previewImage, setPreviewImage] = useState(null);
   const [formErrors, setFormErrors] = useState({});
 
   const handleAddNew = () => {
-    setFormData({ name: "", industry_image: null, visiblity: true });
+    setFormData({ 
+      name: "", 
+      industry_image: null, 
+      visibility: true 
+    });
     setPreviewImage(null);
     setFormErrors({});
     setShowAddModal(true);
@@ -73,10 +81,10 @@ export const useIndustries = () => {
   };
 
   const handleFormChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: type === "checkbox" ? checked : value,
     }));
     if (formErrors[name]) {
       setFormErrors((prev) => ({ ...prev, [name]: "" }));
@@ -126,7 +134,12 @@ export const useIndustries = () => {
         formDataToSend.append("name", formData.name);
         formDataToSend.append("visibility", formData.visibility);
         formDataToSend.append("industry_image", formData.industry_image);
-        const response = await api.post("/industry-equipment/create-industry", formDataToSend, {
+
+        const response = await api.post("/industry-equipment/create-industry", {
+          name: formData.name,
+          visibility: formData.visibility,
+          industry_image: formData.industry_image
+        }, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
@@ -142,7 +155,11 @@ export const useIndustries = () => {
           formDataToSend.append("industry_image", formData.industry_image);
         }
 
-        const response = await api.patch(`/industry-equipment/industries/${selectedIndustry.id}`, formDataToSend, {
+        const response = await api.patch(`/industry-equipment/industries/${selectedIndustry.id}`, {
+          name: formData.name,
+          visibility: formData.visibility,
+          ...(formData.industry_image instanceof File && { industry_image: formData.industry_image })
+        }, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
@@ -162,7 +179,11 @@ export const useIndustries = () => {
     setShowAddModal(false);
     setShowEditModal(false);
     setSelectedIndustry(null);
-    setFormData({ name: "", industry_image: null, visibility: true });
+    setFormData({ 
+      name: "", 
+      industry_image: null, 
+      visibility: true 
+    });
     setPreviewImage(null);
     setFormErrors({});
   };

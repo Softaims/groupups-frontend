@@ -46,7 +46,7 @@ const IndustryModal = ({
                 id="visibility"
                 name="visibility"
                 checked={formData.visibility}
-                onChange={(e) => onFormChange({ target: { name: "visibility", value: e.target.checked } })}
+                onChange={onFormChange}
                 className="form-checkbox h-4 w-4 text-[#3CBFAE] border-[#2a2e34] rounded focus:ring-[#3CBFAE] bg-[#0f1216]"
               />
               <label htmlFor="visibility" className="text-sm text-gray-300">

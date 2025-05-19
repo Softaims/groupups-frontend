@@ -4,29 +4,29 @@ import api from "../../utils/apiClient";
 import { useNavigate } from "react-router-dom";
 import SkeletonAdminPage from "../../pages/admin/SkeletonAdminPage";
 import { useIndustryEquipmentStore } from "../../store/industryEquipmentStore";
+
 const ProtectedRoute = ({ children }) => {
   const { user, setUser, clearUser } = useUserStore();
   const navigate = useNavigate();
   const { fetchIndustries, fetchEquipment } = useIndustryEquipmentStore();
 
   useEffect(() => {
-    const getMe = async () => {
+    const initialize = async () => {
       try {
         const response = await api.get("/get-me");
         setUser(response.data);
+        fetchIndustries();
+        fetchEquipment();
       } catch {
         clearUser();
         navigate("/admin/login");
       }
     };
+
     if (!user) {
-      getMe();
+      initialize();
     }
-    if (user) {
-      fetchIndustries();
-      fetchEquipment();
-    }
-  }, [clearUser, user, navigate, setUser, fetchIndustries, fetchEquipment]);
+  }, [user, setUser, clearUser, navigate, fetchIndustries, fetchEquipment]);
 
   if (user) {
     return children;

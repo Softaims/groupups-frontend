@@ -52,6 +52,7 @@ const AdminIndustriesMain = () => {
 
       {showDeleteModal && (
         <ConfirmationModal
+          type="delete"
           isOpen={showDeleteModal}
           onClose={handleCloseDeleteModal}
           onConfirm={confirmDelete}
