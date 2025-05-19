@@ -17,7 +17,7 @@ const AdminEquipmentMain = () => {
   const [selectedEquipment, setSelectedEquipment] = useState(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [formData, setFormData] = useState({ name: "", industryId: "" });
+  const [formData, setFormData] = useState({ name: "", industryId: "", isVisible: true });
   const [formErrors, setFormErrors] = useState({});
   const [selectedIndustry, setSelectedIndustry] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
@@ -25,6 +25,20 @@ const AdminEquipmentMain = () => {
   const handleDelete = (equipment) => {
     setSelectedEquipment(equipment);
     setShowDeleteModal(true);
+  };
+
+  const handleToggleVisibility = (equipment) => {
+    setEquipment(
+      equipment.map((i) =>
+        i.id === equipment.id
+          ? {
+              ...i,
+              isVisible: !i.isVisible,
+            }
+          : i
+      )
+    );
+    toast.success(`Equipment ${equipment.isVisible ? "hidden from" : "made visible to"} users`);
   };
 
   const confirmDelete = () => {
@@ -39,6 +53,7 @@ const AdminEquipmentMain = () => {
     setFormData({
       name: equipment.name,
       industryId: equipment.industryId,
+      isVisible: equipment.isVisible ?? true,
     });
     setShowEditModal(true);
     setFormErrors({});
@@ -71,6 +86,7 @@ const AdminEquipmentMain = () => {
         name: formData.name,
         industryId: formData.industryId,
         industryName: adminIndustries.find((i) => i.id === formData.industryId)?.name,
+        isVisible: formData.isVisible,
       };
       setEquipment([...equipment, newEquipment]);
       toast.success("Equipment added successfully");
@@ -83,6 +99,7 @@ const AdminEquipmentMain = () => {
                 name: formData.name,
                 industryId: formData.industryId,
                 industryName: adminIndustries.find((i) => i.id === formData.industryId)?.name,
+                isVisible: formData.isVisible,
               }
             : i
         )
@@ -97,12 +114,12 @@ const AdminEquipmentMain = () => {
     setShowAddModal(false);
     setShowEditModal(false);
     setSelectedEquipment(null);
-    setFormData({ name: "", industryId: "" });
+    setFormData({ name: "", industryId: "", isVisible: true });
     setFormErrors({});
   };
 
   const handleAddNew = () => {
-    setFormData({ name: "", industryId: "" });
+    setFormData({ name: "", industryId: "", isVisible: true });
     setFormErrors({});
     setShowAddModal(true);
   };
@@ -125,7 +142,12 @@ const AdminEquipmentMain = () => {
             onIndustryChange={(e) => setSelectedIndustry(e.target.value)}
             industries={adminIndustries}
           />
-          <EquipmentTable equipment={filteredEquipment} onEdit={handleEdit} onDelete={handleDelete} />
+          <EquipmentTable 
+            equipment={filteredEquipment} 
+            onEdit={handleEdit} 
+            onDelete={handleDelete} 
+            onToggleVisibility={handleToggleVisibility}
+          />
           {/* <SkeletonEquipmentTable /> */}
         </div>
       </div>

@@ -39,6 +39,21 @@ const IndustryModal = ({
               />
               {errors.name && <p className="mt-1 text-sm text-red-500">{errors.name}</p>}
             </div>
+
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="isVisible"
+                name="isVisible"
+                checked={formData.isVisible}
+                onChange={(e) => onFormChange({ target: { name: "isVisible", value: e.target.checked } })}
+                className="form-checkbox h-4 w-4 text-[#3CBFAE] border-[#2a2e34] rounded focus:ring-[#3CBFAE] bg-[#0f1216]"
+              />
+              <label htmlFor="isVisible" className="text-sm text-gray-300">
+                Make this industry visible to users
+              </label>
+            </div>
+
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-1">Industry Image</label>
               <div

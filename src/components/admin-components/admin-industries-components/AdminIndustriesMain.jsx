@@ -15,13 +15,27 @@ const AdminIndustriesMain = () => {
   const [selectedIndustry, setSelectedIndustry] = useState(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [formData, setFormData] = useState({ name: "", image: null });
+  const [formData, setFormData] = useState({ name: "", image: null, isVisible: true });
   const [previewImage, setPreviewImage] = useState(null);
   const [formErrors, setFormErrors] = useState({});
 
   const handleDelete = (industry) => {
     setSelectedIndustry(industry);
     setShowDeleteModal(true);
+  };
+
+  const handleToggleVisibility = (industry) => {
+    setIndustries(
+      industries.map((i) =>
+        i.id === industry.id
+          ? {
+              ...i,
+              isVisible: !i.isVisible,
+            }
+          : i
+      )
+    );
+    toast.success(`Industry ${industry.isVisible ? "hidden from" : "made visible to"} users`);
   };
 
   const confirmDelete = () => {
@@ -33,7 +47,11 @@ const AdminIndustriesMain = () => {
 
   const handleEdit = (industry) => {
     setSelectedIndustry(industry);
-    setFormData({ name: industry.name, image: null });
+    setFormData({ 
+      name: industry.name, 
+      image: null,
+      isVisible: industry.isVisible ?? true 
+    });
     setPreviewImage(industry.image);
     setShowEditModal(true);
     setFormErrors({});
@@ -79,6 +97,7 @@ const AdminIndustriesMain = () => {
     const validationErrors = validateForm(adminIndustrySchema, {
       name: formData.name,
       image: formData.image || previewImage,
+      isVisible: formData.isVisible,
     });
 
     if (Object.keys(validationErrors).length > 0) {
@@ -88,14 +107,26 @@ const AdminIndustriesMain = () => {
 
     if (showAddModal) {
       const newIndustry = {
-        id: industries.length + 1,
+        id: Date.now(),
         name: formData.name,
         image: previewImage,
+        isVisible: formData.isVisible,
       };
       setIndustries([...industries, newIndustry]);
       toast.success("Industry added successfully");
     } else {
-      setIndustries(industries.map((i) => (i.id === selectedIndustry.id ? { ...i, name: formData.name, image: previewImage } : i)));
+      setIndustries(
+        industries.map((i) =>
+          i.id === selectedIndustry.id
+            ? {
+                ...i,
+                name: formData.name,
+                image: previewImage,
+                isVisible: formData.isVisible,
+              }
+            : i
+        )
+      );
       toast.success("Industry updated successfully");
     }
 
@@ -106,13 +137,13 @@ const AdminIndustriesMain = () => {
     setShowAddModal(false);
     setShowEditModal(false);
     setSelectedIndustry(null);
-    setFormData({ name: "", image: null });
+    setFormData({ name: "", image: null, isVisible: true });
     setPreviewImage(null);
     setFormErrors({});
   };
 
   const handleAddNew = () => {
-    setFormData({ name: "", image: null });
+    setFormData({ name: "", image: null, isVisible: true });
     setPreviewImage(null);
     setFormErrors({});
     setShowAddModal(true);
@@ -125,7 +156,13 @@ const AdminIndustriesMain = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {industries.map((industry) => (
-            <IndustryCard key={industry.id} industry={industry} handleEdit={handleEdit} handleDelete={handleDelete} />
+            <IndustryCard
+              key={industry.id}
+              industry={industry}
+              handleEdit={handleEdit}
+              handleDelete={handleDelete}
+              onToggleVisibility={handleToggleVisibility}
+            />
           ))}
         </div>
       </div>

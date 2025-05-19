@@ -50,6 +50,20 @@ const EquipmentModal = ({ isOpen, onClose, onSubmit, formData, onFormChange, err
               {errors.name && <p className="mt-1 text-sm text-red-500">{errors.name}</p>}
             </div>
 
+            <div className="flex items-center gap-2 mt-4">
+              <input
+                type="checkbox"
+                id="isVisible"
+                name="isVisible"
+                checked={formData.isVisible}
+                onChange={(e) => onFormChange({ target: { name: "isVisible", value: e.target.checked } })}
+                className="form-checkbox h-4 w-4 text-[#3CBFAE] border-[#2a2e34] rounded focus:ring-[#3CBFAE] bg-[#0f1216]"
+              />
+              <label htmlFor="isVisible" className="text-sm text-gray-300">
+                Make this equipment visible to users
+              </label>
+            </div>
+
             <div className="flex justify-end gap-3 mt-6">
               <button type="button" onClick={onClose} className="px-4 py-2 text-gray-300 hover:text-white cursor-pointer">
                 Cancel
