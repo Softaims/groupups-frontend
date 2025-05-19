@@ -1,5 +1,4 @@
-import { Trash2, Upload } from "lucide-react";
-
+import { Trash2, Upload, X } from "lucide-react";
 const IndustryModal = ({
   isOpen,
   onClose,
@@ -15,10 +14,16 @@ const IndustryModal = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+    <div className="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50">
       <div className="bg-[#1a1e24] rounded-lg border border-[#2a2e34] w-full max-w-md">
         <div className="p-6">
-          <h2 className="text-xl font-semibold text-white mb-4">{isEditMode ? "Edit Industry" : "Add New Industry"}</h2>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-semibold text-white">{isEditMode ? "Edit Industry" : "Add New Industry"}</h2>
+            <button onClick={onClose} className="text-gray-400 hover:text-white">
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+
           <form onSubmit={onSubmit} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-1">Industry Name</label>
@@ -62,14 +67,7 @@ const IndustryModal = ({
                           className="relative cursor-pointer rounded-md font-medium text-[#3CBFAE] hover:text-[#35a99a] focus-within:outline-none"
                         >
                           <span>Upload a file</span>
-                          <input
-                            id="image-upload"
-                            name="image"
-                            type="file"
-                            accept="image/*"
-                            className="sr-only"
-                            onChange={onImageChange}
-                          />
+                          <input id="image-upload" name="image" type="file" accept="image/*" className="sr-only" onChange={onImageChange} />
                         </label>
                         <p className="pl-1">or drag and drop</p>
                       </div>
@@ -95,4 +93,4 @@ const IndustryModal = ({
   );
 };
 
-export default IndustryModal; 
+export default IndustryModal;

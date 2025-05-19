@@ -1,22 +1,19 @@
 import { X } from "lucide-react";
 
-const EquipmentModal = ({
-  isOpen,
-  onClose,
-  onSubmit,
-  formData,
-  onFormChange,
-  errors,
-  isEditMode,
-  industries,
-}) => {
+const EquipmentModal = ({ isOpen, onClose, onSubmit, formData, onFormChange, errors, isEditMode, industries }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+    <div className="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50">
       <div className="bg-[#1a1e24] rounded-lg border border-[#2a2e34] w-full max-w-md">
         <div className="p-6">
-          <h2 className="text-xl font-semibold text-white mb-4">{isEditMode ? "Edit Equipment" : "Add New Equipment"}</h2>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-semibold text-white">{isEditMode ? "Edit Equipment" : "Add New Equipment"}</h2>
+            <button onClick={onClose} className="text-gray-400 hover:text-white">
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+
           <form onSubmit={onSubmit} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-1">Industry</label>
@@ -68,4 +65,4 @@ const EquipmentModal = ({
   );
 };
 
-export default EquipmentModal; 
+export default EquipmentModal;

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Edit, Trash2, GripVertical } from "lucide-react";
+import { Edit, Trash2, GripVertical, FileText, CheckSquare, Upload, Youtube } from "lucide-react";
 
 const QuestionsList = ({ questions, onEdit, onDelete, onReorder }) => {
   const [items, setItems] = useState([]);
@@ -60,7 +60,59 @@ const QuestionsList = ({ questions, onEdit, onDelete, onReorder }) => {
     if (priority === 1) return "bg-red-500";
     if (priority === 2) return "bg-orange-500";
     if (priority === 3) return "bg-yellow-500";
+    if (priority === 4) return "bg-green-500";
     return "bg-blue-500";
+  };
+
+  const getQuestionTypeIcon = (type) => {
+    switch (type) {
+      case "open_ended":
+        return <FileText className="h-4 w-4 text-blue-400" />;
+      case "multiple_choice":
+        return <CheckSquare className="h-4 w-4 text-green-400" />;
+      case "statement":
+        return <FileText className="h-4 w-4 text-yellow-400" />;
+      case "file_upload":
+        return <Upload className="h-4 w-4 text-purple-400" />;
+      default:
+        return <FileText className="h-4 w-4 text-gray-400" />;
+    }
+  };
+
+  const getQuestionTypeLabel = (type) => {
+    switch (type) {
+      case "open_ended":
+        return "Open-ended";
+      case "multiple_choice":
+        return "Multiple Choice";
+      case "statement":
+        return "Statement";
+      case "file_upload":
+        return "File Upload";
+      default:
+        return "Unknown";
+    }
+  };
+
+  const renderQuestionDetails = (question) => {
+    switch (question.type) {
+      case "multiple_choice":
+        return (
+          <div className="mt-2 text-xs text-gray-400">
+            <span className="mr-2">{question.allowMultiple ? "Multiple selections allowed" : "Single selection only"}</span>
+            <span className="mr-2">•</span>
+            <span>{question.options.length} options</span>
+          </div>
+        );
+      case "file_upload":
+        return (
+          <div className="mt-2 text-xs text-gray-400">
+            <span>File upload required</span>
+          </div>
+        );
+      default:
+        return null;
+    }
   };
 
   return (
@@ -80,8 +132,8 @@ const QuestionsList = ({ questions, onEdit, onDelete, onReorder }) => {
         >
           <div className="flex items-stretch">
             <div className={`w-1.5 ${getPriorityColor(question.priority)}`}></div>
-            <div className="flex-grow p-3 flex items-center gap-3">
-              <div className="cursor-move flex items-center justify-center p-1 hover:bg-[#1a1e24] rounded" title="Drag to reorder">
+            <div className="flex-grow p-3 flex items-start gap-3">
+              <div className="cursor-move flex items-center justify-center p-1 hover:bg-[#1a1e24] rounded mt-1" title="Drag to reorder">
                 <GripVertical className="h-5 w-5 text-gray-500" />
               </div>
               <div className="flex-grow">
@@ -89,8 +141,25 @@ const QuestionsList = ({ questions, onEdit, onDelete, onReorder }) => {
                   <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[#1a1e24] text-xs font-medium text-white">
                     {question.priority}
                   </span>
-                  <h4 className="font-medium text-white">{question.question}</h4>
+                  <h4 className="font-medium text-white">{question.questionText}</h4>
+                  {question.required && <span className="bg-red-900/30 text-red-400 text-xs px-2 py-0.5 rounded">Required</span>}
                 </div>
+
+                <div className="mt-2 flex items-center gap-3">
+                  <div className="flex items-center gap-1 bg-[#1a1e24] px-2 py-1 rounded text-xs">
+                    {getQuestionTypeIcon(question.type)}
+                    <span className="text-gray-300">{getQuestionTypeLabel(question.type)}</span>
+                  </div>
+
+                  {question.youtubeUrl && (
+                    <div className="flex items-center gap-1 bg-[#1a1e24] px-2 py-1 rounded text-xs">
+                      <Youtube className="h-4 w-4 text-red-500" />
+                      <span className="text-gray-300">YouTube Video</span>
+                    </div>
+                  )}
+                </div>
+
+                {renderQuestionDetails(question)}
               </div>
               <div className="flex items-center gap-2">
                 <button

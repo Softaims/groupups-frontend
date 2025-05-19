@@ -34,51 +34,87 @@ const AdminQuestionsMain = () => {
     {
       id: 1,
       equipmentId: 1,
-      question: "What is the warranty period for this equipment?",
+      questionText: "What is the warranty period for this equipment?",
+      type: "open_ended",
+      required: true,
       priority: 1,
       createdAt: "2023-10-15T10:30:00Z",
     },
     {
       id: 2,
       equipmentId: 1,
-      question: "What are the power requirements?",
+      questionText: "What are the power requirements?",
+      type: "multiple_choice",
+      options: [
+        { id: 1, text: "110V" },
+        { id: 2, text: "220V" },
+        { id: 3, text: "Both 110V and 220V" },
+      ],
+      allowMultiple: false,
+      required: true,
       priority: 2,
       createdAt: "2023-10-16T09:15:00Z",
     },
     {
       id: 3,
       equipmentId: 1,
-      question: "How often does it need calibration?",
+      questionText: "Please acknowledge that this equipment requires annual maintenance.",
+      type: "statement",
+      required: true,
       priority: 3,
       createdAt: "2023-10-17T14:45:00Z",
     },
     {
       id: 4,
       equipmentId: 1,
-      question: "What are the dimensions of the equipment?",
+      questionText: "Please upload your floor plan for installation planning.",
+      type: "file_upload",
+      required: false,
       priority: 4,
       createdAt: "2023-10-18T11:20:00Z",
     },
     {
       id: 5,
-      equipmentId: 2,
-      question: "What is the maximum weight capacity?",
-      priority: 1,
-      createdAt: "2023-10-18T11:20:00Z",
+      equipmentId: 1,
+      questionText: "Watch the following video about equipment installation and provide your feedback.",
+      type: "open_ended",
+      youtubeUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      required: false,
+      priority: 5,
+      createdAt: "2023-10-19T16:05:00Z",
     },
     {
       id: 6,
       equipmentId: 2,
-      question: "Are replacement parts readily available?",
-      priority: 2,
-      createdAt: "2023-10-19T16:05:00Z",
+      questionText: "What is the maximum weight capacity you need?",
+      type: "multiple_choice",
+      options: [
+        { id: 1, text: "Up to 250 lbs" },
+        { id: 2, text: "Up to 350 lbs" },
+        { id: 3, text: "Up to 450 lbs" },
+        { id: 4, text: "Over 450 lbs" },
+      ],
+      allowMultiple: false,
+      required: true,
+      priority: 1,
+      createdAt: "2023-10-18T11:20:00Z",
     },
     {
       id: 7,
-      equipmentId: 3,
-      question: "What is the radiation exposure level?",
-      priority: 1,
-      createdAt: "2023-10-20T13:40:00Z",
+      equipmentId: 2,
+      questionText: "Which features are important to you? (Select all that apply)",
+      type: "multiple_choice",
+      options: [
+        { id: 1, text: "Electric height adjustment" },
+        { id: 2, text: "Programmable positions" },
+        { id: 3, text: "Integrated water system" },
+        { id: 4, text: "Armrest controls" },
+        { id: 5, text: "Headrest adjustment" },
+      ],
+      allowMultiple: true,
+      required: true,
+      priority: 2,
+      createdAt: "2023-10-19T16:05:00Z",
     },
   ];
 
@@ -96,7 +132,7 @@ const AdminQuestionsMain = () => {
 
   // Filter questions based on search query
   const filteredQuestions = questions.filter((q) => {
-    return q.question.toLowerCase().includes(searchQuery.toLowerCase());
+    return q.questionText.toLowerCase().includes(searchQuery.toLowerCase());
   });
 
   const handleEquipmentSelect = (equipment) => {
@@ -107,7 +143,7 @@ const AdminQuestionsMain = () => {
     const newQuestion = {
       id: Math.max(0, ...questions.map((q) => q.id)) + 1,
       equipmentId: selectedEquipment.id,
-      question: questionData.question,
+      ...questionData,
       priority: questions.length + 1,
       createdAt: new Date().toISOString(),
     };
@@ -117,7 +153,7 @@ const AdminQuestionsMain = () => {
   };
 
   const handleEditQuestion = (questionData) => {
-    const updatedQuestions = questions.map((q) => (q.id === questionData.id ? { ...q, question: questionData.question } : q));
+    const updatedQuestions = questions.map((q) => (q.id === questionData.id ? { ...q, ...questionData } : q));
     setQuestions(updatedQuestions);
     setIsEditModalOpen(false);
   };
@@ -252,7 +288,7 @@ const AdminQuestionsMain = () => {
           isOpen={isDeleteModalOpen}
           onClose={() => setIsDeleteModalOpen(false)}
           onConfirm={handleDeleteQuestion}
-          questionText={selectedQuestion.question}
+          questionText={selectedQuestion.questionText}
         />
       )}
     </main>
