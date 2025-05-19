@@ -12,5 +12,8 @@ export const adminEquipmentSchema = z.object({
 
 export const adminIndustrySchema = z.object({
   name: z.string().min(2, "Industry name must be at least 2 characters").max(50, "Industry name must not exceed 50 characters"),
+  industry_image: z.any().refine((val) => val !== null && val !== undefined, {
+    message: "Industry image is required",
+  }),
   isVisible: z.boolean().default(true),
 });

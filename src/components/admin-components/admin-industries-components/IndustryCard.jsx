@@ -1,10 +1,21 @@
+import { useState } from "react";
 import { Pencil, Trash2, Eye, EyeOff } from "lucide-react";
 
 const IndustryCard = ({ industry, handleEdit, handleDelete, onToggleVisibility }) => {
+  const [imageLoaded, setImageLoaded] = useState(false);
+
   return (
     <div className="bg-[#1a1e24] rounded-lg border border-[#2a2e34] overflow-hidden group">
       <div className="relative h-48">
-        <img src={industry.image} alt={industry.name} className="w-full h-full object-cover" />
+        {!imageLoaded && <div className="absolute inset-0 bg-[#2a2e34] animate-pulse" />}
+
+        <img
+          src={industry.industry_image}
+          alt={industry.name}
+          onLoad={() => setImageLoaded(true)}
+          className={`w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? "opacity-100" : "opacity-0"}`}
+        />
+
         <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
           <button
             onClick={() => handleEdit(industry)}
@@ -22,6 +33,7 @@ const IndustryCard = ({ industry, handleEdit, handleDelete, onToggleVisibility }
           </button>
         </div>
       </div>
+
       <div className="p-4">
         <div className="flex items-center justify-between mb-2">
           <h3 className="text-lg font-semibold text-white">{industry.name}</h3>

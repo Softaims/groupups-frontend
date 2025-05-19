@@ -48,7 +48,7 @@ const AdminLogin = () => {
         navigate("/admin/dashboard");
       }, 2000);
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error.message || "Something went wrong");
       console.log("error is", error);
     } finally {
       setIsSubmitting(false);
