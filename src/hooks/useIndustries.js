@@ -1,38 +1,22 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { toast } from "react-toastify";
 import { validateForm } from "../utils/validateForm";
 import { adminIndustrySchema } from "../validations/adminIndustrySchema";
 import api from "../utils/apiClient";
+import { useIndustryEquipmentStore } from "../store/industryEquipmentStore";
 
 export const useIndustries = () => {
-  const [industriesLoading, setIndustriesLoading] = useState(true);
-  const [industries, setIndustries] = useState(null);
+  const { industries, setIndustries, industriesLoading } = useIndustryEquipmentStore();
   const [selectedIndustry, setSelectedIndustry] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [formData, setFormData] = useState({ name: "", industry_image: null, isVisible: true });
+  const [formData, setFormData] = useState({ name: "", industry_image: null, visibility: true });
   const [previewImage, setPreviewImage] = useState(null);
   const [formErrors, setFormErrors] = useState({});
 
-  useEffect(() => {
-    const fetchIndustries = async () => {
-      if (!industries) {
-        try {
-          const response = await api.get("/industry-equipment/industries");
-          setIndustries(response.data);
-        } catch (error) {
-          toast.error(error.message || "Something went wrong");
-        } finally {
-          setIndustriesLoading(false);
-        }
-      }
-    };
-    fetchIndustries();
-  }, [industries]);
-
   const handleAddNew = () => {
-    setFormData({ name: "", industry_image: null, isVisible: true });
+    setFormData({ name: "", industry_image: null, visiblity: true });
     setPreviewImage(null);
     setFormErrors({});
     setShowAddModal(true);
@@ -43,7 +27,7 @@ export const useIndustries = () => {
     setFormData({
       name: industry.name,
       industry_image: industry.industry_image,
-      isVisible: industry.isVisible ?? true,
+      visibility: industry.visibility ?? true,
     });
     setPreviewImage(industry.industry_image);
     setShowEditModal(true);
@@ -58,19 +42,19 @@ export const useIndustries = () => {
   const handleToggleVisibility = async (industry) => {
     try {
       await api.patch(`/industry-equipment/industries/${industry.id}`, {
-        isVisible: !industry.isVisible,
+        visibility: !industry.visibility,
       });
       setIndustries(
         industries.map((i) =>
           i.id === industry.id
             ? {
                 ...i,
-                isVisible: !i.isVisible,
+                visibility: !i.visibility,
               }
             : i
         )
       );
-      toast.success(`Industry ${industry.isVisible ? "hidden from" : "made visible to"} users`);
+      toast.success(`Industry ${industry.visibility ? "hidden from" : "made visible to"} users`);
     } catch (error) {
       toast.error(error.message || "Something went wrong");
     }
@@ -128,7 +112,7 @@ export const useIndustries = () => {
     const validationErrors = validateForm(adminIndustrySchema, {
       name: formData.name,
       industry_image: formData.industry_image || previewImage,
-      isVisible: formData.isVisible,
+      visibility: formData.visibility,
     });
 
     if (Object.keys(validationErrors).length > 0) {
@@ -140,7 +124,7 @@ export const useIndustries = () => {
       if (showAddModal) {
         const formDataToSend = new FormData();
         formDataToSend.append("name", formData.name);
-        formDataToSend.append("isVisible", formData.isVisible);
+        formDataToSend.append("visibility", formData.visibility);
         formDataToSend.append("industry_image", formData.industry_image);
         const response = await api.post("/industry-equipment/create-industry", formDataToSend, {
           headers: {
@@ -152,7 +136,7 @@ export const useIndustries = () => {
       } else {
         const formDataToSend = new FormData();
         formDataToSend.append("name", formData.name);
-        formDataToSend.append("isVisible", formData.isVisible);
+        formDataToSend.append("visibility", formData.visibility);
 
         if (formData.industry_image instanceof File) {
           formDataToSend.append("industry_image", formData.industry_image);
@@ -178,7 +162,7 @@ export const useIndustries = () => {
     setShowAddModal(false);
     setShowEditModal(false);
     setSelectedIndustry(null);
-    setFormData({ name: "", industry_image: null, isVisible: true });
+    setFormData({ name: "", industry_image: null, visibility: true });
     setPreviewImage(null);
     setFormErrors({});
   };

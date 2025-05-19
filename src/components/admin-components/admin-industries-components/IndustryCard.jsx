@@ -40,13 +40,13 @@ const IndustryCard = ({ industry, handleEdit, handleDelete, onToggleVisibility }
           <button
             onClick={() => onToggleVisibility(industry)}
             className={`flex items-center gap-1 px-2 py-1 rounded-full text-sm ${
-              industry.isVisible
+              industry.visibility
                 ? "bg-green-500/10 text-green-500 hover:bg-green-500/20"
                 : "bg-gray-500/10 text-gray-500 hover:bg-gray-500/20"
             } transition-colors`}
-            title={industry.isVisible ? "Click to hide from users" : "Click to show to users"}
+            title={industry.visibility ? "Click to hide from users" : "Click to show to users"}
           >
-            {industry.isVisible ? (
+            {industry.visibility ? (
               <>
                 <Eye size={16} />
                 <span>Visible</span>

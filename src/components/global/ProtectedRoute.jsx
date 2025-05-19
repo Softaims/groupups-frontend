@@ -1,12 +1,13 @@
-import { Children, useEffect } from "react";
+import { useEffect } from "react";
 import { useUserStore } from "../../store/userStore";
 import api from "../../utils/apiClient";
 import { useNavigate } from "react-router-dom";
 import SkeletonAdminPage from "../../pages/admin/SkeletonAdminPage";
-
+import { useIndustryEquipmentStore } from "../../store/industryEquipmentStore";
 const ProtectedRoute = ({ children }) => {
   const { user, setUser, clearUser } = useUserStore();
   const navigate = useNavigate();
+  const { fetchIndustries, fetchEquipment } = useIndustryEquipmentStore();
 
   useEffect(() => {
     const getMe = async () => {
@@ -21,7 +22,11 @@ const ProtectedRoute = ({ children }) => {
     if (!user) {
       getMe();
     }
-  }, [clearUser, user, navigate, setUser]);
+    if (user) {
+      fetchIndustries();
+      fetchEquipment();
+    }
+  }, [clearUser, user, navigate, setUser, fetchIndustries, fetchEquipment]);
 
   if (user) {
     return children;
