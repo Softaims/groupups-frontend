@@ -86,6 +86,8 @@ export const useEquipments = () => {
     setFormErrors({});
 
     const validationErrors = validateForm(adminEquipmentSchema, formData);
+    console.log("form data", formData);
+    console.log("errors", validationErrors);
     if (Object.keys(validationErrors).length > 0) {
       setFormErrors(validationErrors);
       return;
