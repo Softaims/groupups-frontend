@@ -20,9 +20,9 @@ const EquipmentSearchFilter = ({ searchQuery, onSearchChange, selectedIndustry, 
         onChange={onIndustryChange}
       >
         <option value="all">All Industries</option>
-        {industries.map((i) => (
-          <option key={i.id} value={i.id}>
-            {i.name}
+        {industries.map((industry) => (
+          <option key={industry.id} value={industry.id}>
+            {industry.name}
           </option>
         ))}
       </select>

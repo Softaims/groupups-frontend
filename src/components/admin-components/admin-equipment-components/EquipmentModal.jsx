@@ -18,11 +18,11 @@ const EquipmentModal = ({ isOpen, onClose, onSubmit, formData, onFormChange, err
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-1">Industry</label>
               <select
-                name="industryId"
-                value={formData.industryId}
+                name="industry_id"
+                value={formData.industry_id}
                 onChange={onFormChange}
                 className={`w-full rounded-md bg-[#0f1216] border ${
-                  errors.industryId ? "border-red-500" : "border-[#2a2e34]"
+                  errors.industry_id ? "border-red-500" : "border-[#2a2e34]"
                 } px-3 py-2 text-white focus:outline-none focus:border-[#3CBFAE] cursor-pointer`}
               >
                 <option value="">Select an industry</option>
@@ -32,7 +32,7 @@ const EquipmentModal = ({ isOpen, onClose, onSubmit, formData, onFormChange, err
                   </option>
                 ))}
               </select>
-              {errors.industryId && <p className="mt-1 text-sm text-red-500">{errors.industryId}</p>}
+              {errors.industry_id && <p className="mt-1 text-sm text-red-500">{errors.industry_id}</p>}
             </div>
 
             <div>
@@ -53,13 +53,13 @@ const EquipmentModal = ({ isOpen, onClose, onSubmit, formData, onFormChange, err
             <div className="flex items-center gap-2 mt-4">
               <input
                 type="checkbox"
-                id="isVisible"
-                name="isVisible"
-                checked={formData.isVisible}
-                onChange={(e) => onFormChange({ target: { name: "isVisible", value: e.target.checked } })}
+                id="visibility"
+                name="visibility"
+                checked={formData.visibility}
+                onChange={(e) => onFormChange({ target: { name: "visibility", value: e.target.checked } })}
                 className="form-checkbox h-4 w-4 text-[#3CBFAE] border-[#2a2e34] rounded focus:ring-[#3CBFAE] bg-[#0f1216]"
               />
-              <label htmlFor="isVisible" className="text-sm text-gray-300">
+              <label htmlFor="visibility" className="text-sm text-gray-300">
                 Make this equipment visible to users
               </label>
             </div>

@@ -5,6 +5,7 @@ export const useIndustryEquipmentStore = create((set) => ({
   industries: [],
   industriesLoading: true,
   equipment: [],
+  equipmentLoading: true,
 
   setIndustries: (industries) => set({ industries }),
   setEquipment: (equipment) => set({ equipment }),
@@ -20,17 +21,40 @@ export const useIndustryEquipmentStore = create((set) => ({
     } catch (error) {
       console.error("Failed to fetch industries:", error);
       set({ industriesLoading: false });
-    } finally {
-      set({ industriesLoading: false });
     }
   },
 
   fetchEquipment: async () => {
     try {
+      set({ equipmentLoading: true });
       const response = await api.get("/industry-equipment/equipments");
-      set({ equipment: response.data || [] });
+      set({ 
+        equipment: response.data || [],
+        equipmentLoading: false 
+      });
     } catch (error) {
       console.error("Failed to fetch equipment:", error);
+      set({ equipmentLoading: false });
     }
   },
+
+  addEquipment: (equipment) => set((state) => ({ 
+    equipment: [...state.equipment, equipment] 
+  })),
+
+  updateEquipment: (updatedEquipment) => set((state) => ({
+    equipment: state.equipment.map((item) => 
+      item._id === updatedEquipment._id ? updatedEquipment : item
+    )
+  })),
+
+  deleteEquipment: (equipmentId) => set((state) => ({
+    equipment: state.equipment.filter((item) => item._id !== equipmentId)
+  })),
+
+  toggleEquipmentVisibility: (equipmentId, visibility) => set((state) => ({
+    equipment: state.equipment.map((item) =>
+      item._id === equipmentId ? { ...item, visibility } : item
+    )
+  }))
 }));
