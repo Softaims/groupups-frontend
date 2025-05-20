@@ -7,8 +7,45 @@ export const useIndustryEquipmentStore = create((set) => ({
   equipment: [],
   equipmentLoading: true,
 
-  setIndustries: (industries) => set({ industries }),
-  setEquipment: (equipment) => set({ equipment }),
+  addIndustry: (industry) =>
+    set((state) => ({
+      industries: [...state.industries, industry],
+    })),
+
+  updateIndustry: (updatedIndustry) =>
+    set((state) => ({
+      industries: state.industries.map((item) => (item.id === updatedIndustry.id ? updatedIndustry : item)),
+    })),
+
+  deleteIndustry: (industryId) =>
+    set((state) => ({
+      industries: state.industries.filter((item) => item.id !== industryId),
+    })),
+
+  toggleIndustryVisibility: (industryId, visibility) =>
+    set((state) => ({
+      industries: state.industries.map((item) => (item.id === industryId ? { ...item, visibility } : item)),
+    })),
+
+  addEquipment: (equipment) =>
+    set((state) => ({
+      equipment: [...state.equipment, equipment],
+    })),
+
+  updateEquipment: (updatedEquipment) =>
+    set((state) => ({
+      equipment: state.equipment.map((item) => (item._id === updatedEquipment._id ? updatedEquipment : item)),
+    })),
+
+  deleteEquipment: (equipmentId) =>
+    set((state) => ({
+      equipment: state.equipment.filter((item) => item._id !== equipmentId),
+    })),
+
+  toggleEquipmentVisibility: (equipmentId, visibility) =>
+    set((state) => ({
+      equipment: state.equipment.map((item) => (item.id === equipmentId ? { ...item, visibility } : item)),
+    })),
 
   fetchIndustries: async () => {
     try {
@@ -28,33 +65,13 @@ export const useIndustryEquipmentStore = create((set) => ({
     try {
       set({ equipmentLoading: true });
       const response = await api.get("/industry-equipment/equipments");
-      set({ 
+      set({
         equipment: response.data || [],
-        equipmentLoading: false 
+        equipmentLoading: false,
       });
     } catch (error) {
       console.error("Failed to fetch equipment:", error);
       set({ equipmentLoading: false });
     }
   },
-
-  addEquipment: (equipment) => set((state) => ({ 
-    equipment: [...state.equipment, equipment] 
-  })),
-
-  updateEquipment: (updatedEquipment) => set((state) => ({
-    equipment: state.equipment.map((item) => 
-      item._id === updatedEquipment._id ? updatedEquipment : item
-    )
-  })),
-
-  deleteEquipment: (equipmentId) => set((state) => ({
-    equipment: state.equipment.filter((item) => item._id !== equipmentId)
-  })),
-
-  toggleEquipmentVisibility: (equipmentId, visibility) => set((state) => ({
-    equipment: state.equipment.map((item) =>
-      item._id === equipmentId ? { ...item, visibility } : item
-    )
-  }))
 }));

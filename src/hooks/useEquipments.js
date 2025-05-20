@@ -51,10 +51,10 @@ export const useEquipments = () => {
       await api.patch(`/industry-equipment/equipments/${equipment.id}`, {
         visibility: !equipment.visibility,
       });
-      toggleEquipmentVisibility(equipment._id, !equipment.visibility);
+      toggleEquipmentVisibility(equipment.id, !equipment.visibility);
       toast.success(`Equipment ${equipment.visibility ? "hidden from" : "made visible to"} users`);
     } catch (error) {
-      toast.error(error.response?.data?.message || "Something went wrong");
+      toast.error(error?.message || "Something went wrong");
     }
   };
 
@@ -66,7 +66,7 @@ export const useEquipments = () => {
       setSelectedEquipment(null);
       toast.success("Equipment deleted successfully");
     } catch (error) {
-      toast.error(error.response?.data?.message || "Something went wrong");
+      toast.error(error?.message || "Something went wrong");
     }
   };
 
@@ -105,7 +105,8 @@ export const useEquipments = () => {
       }
       handleCloseModal();
     } catch (error) {
-      toast.error(error.response?.data?.message || "Something went wrong");
+      console.log("error", error);
+      toast.error(error?.message || "Something went wrong");
     }
   };
 

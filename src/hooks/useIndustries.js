@@ -6,24 +6,26 @@ import api from "../utils/apiClient";
 import { useIndustryEquipmentStore } from "../store/industryEquipmentStore";
 
 export const useIndustries = () => {
-  const { industries, setIndustries, industriesLoading } = useIndustryEquipmentStore();
+  const { industries, industriesLoading, addIndustry, updateIndustry, deleteIndustry, toggleIndustryVisibility, fetchIndustries } =
+    useIndustryEquipmentStore();
+
   const [selectedIndustry, setSelectedIndustry] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [formData, setFormData] = useState({ 
-    name: "", 
-    industry_image: null, 
-    visibility: true 
+  const [formData, setFormData] = useState({
+    name: "",
+    industry_image: null,
+    visibility: true,
   });
   const [previewImage, setPreviewImage] = useState(null);
   const [formErrors, setFormErrors] = useState({});
 
   const handleAddNew = () => {
-    setFormData({ 
-      name: "", 
-      industry_image: null, 
-      visibility: true 
+    setFormData({
+      name: "",
+      industry_image: null,
+      visibility: true,
     });
     setPreviewImage(null);
     setFormErrors({});
@@ -52,16 +54,7 @@ export const useIndustries = () => {
       await api.patch(`/industry-equipment/industries/${industry.id}`, {
         visibility: !industry.visibility,
       });
-      setIndustries(
-        industries.map((i) =>
-          i.id === industry.id
-            ? {
-                ...i,
-                visibility: !i.visibility,
-              }
-            : i
-        )
-      );
+      toggleIndustryVisibility(industry.id, !industry.visibility);
       toast.success(`Industry ${industry.visibility ? "hidden from" : "made visible to"} users`);
     } catch (error) {
       toast.error(error.message || "Something went wrong");
@@ -71,7 +64,7 @@ export const useIndustries = () => {
   const confirmDelete = async () => {
     try {
       await api.delete(`/industry-equipment/industries/${selectedIndustry.id}`);
-      setIndustries(industries.filter((i) => i.id !== selectedIndustry.id));
+      deleteIndustry(selectedIndustry.id);
       setShowDeleteModal(false);
       setSelectedIndustry(null);
       toast.success("Industry deleted successfully");
@@ -135,16 +128,20 @@ export const useIndustries = () => {
         formDataToSend.append("visibility", formData.visibility);
         formDataToSend.append("industry_image", formData.industry_image);
 
-        const response = await api.post("/industry-equipment/create-industry", {
-          name: formData.name,
-          visibility: formData.visibility,
-          industry_image: formData.industry_image
-        }, {
-          headers: {
-            "Content-Type": "multipart/form-data",
+        const response = await api.post(
+          "/industry-equipment/create-industry",
+          {
+            name: formData.name,
+            visibility: formData.visibility,
+            industry_image: formData.industry_image,
           },
-        });
-        setIndustries([...industries, response.data]);
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+        addIndustry(response.data);
         toast.success("Industry added successfully");
       } else {
         const formDataToSend = new FormData();
@@ -155,17 +152,20 @@ export const useIndustries = () => {
           formDataToSend.append("industry_image", formData.industry_image);
         }
 
-        const response = await api.patch(`/industry-equipment/industries/${selectedIndustry.id}`, {
-          name: formData.name,
-          visibility: formData.visibility,
-          ...(formData.industry_image instanceof File && { industry_image: formData.industry_image })
-        }, {
-          headers: {
-            "Content-Type": "multipart/form-data",
+        const response = await api.patch(
+          `/industry-equipment/industries/${selectedIndustry.id}`,
+          {
+            name: formData.name,
+            visibility: formData.visibility,
+            ...(formData.industry_image instanceof File && { industry_image: formData.industry_image }),
           },
-        });
-        const updatedIndustry = response.data;
-        setIndustries(industries.map((i) => (i.id === selectedIndustry.id ? updatedIndustry : i)));
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+        updateIndustry(response.data);
         toast.success("Industry updated successfully");
       }
       handleCloseModal();
@@ -179,10 +179,10 @@ export const useIndustries = () => {
     setShowAddModal(false);
     setShowEditModal(false);
     setSelectedIndustry(null);
-    setFormData({ 
-      name: "", 
-      industry_image: null, 
-      visibility: true 
+    setFormData({
+      name: "",
+      industry_image: null,
+      visibility: true,
     });
     setPreviewImage(null);
     setFormErrors({});

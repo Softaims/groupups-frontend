@@ -10,7 +10,7 @@ const AdminEquipmentHeader = ({ handleAddNew }) => {
       <div className="flex flex-col sm:flex-row gap-2">
         <button
           onClick={handleAddNew}
-          className="flex items-center justify-center gap-2 px-4 py-2 rounded-md bg-[#3CBFAE] text-white hover:bg-[#35a89a] transition-colors"
+          className="cursor-pointer flex items-center justify-center gap-2 px-4 py-2 rounded-md bg-[#3CBFAE] text-white hover:bg-[#35a89a] transition-colors"
         >
           <Plus className="h-4 w-4" />
           <span>Add Equipment</span>

@@ -19,7 +19,7 @@ const IndustryModal = ({
         <div className="p-6">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold text-white">{isEditMode ? "Edit Industry" : "Add New Industry"}</h2>
-            <button onClick={onClose} className="text-gray-400 hover:text-white">
+            <button onClick={onClose} className="cursor-pointer text-gray-400 hover:text-white">
               <X className="w-5 h-5" />
             </button>
           </div>

@@ -30,7 +30,6 @@ const AdminEquipmentMain = () => {
     handleCloseDeleteModal,
     handleAddNew,
   } = useEquipments();
-
   const [selectedIndustry, setSelectedIndustry] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
 
