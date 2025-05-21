@@ -34,12 +34,12 @@ export const useIndustryEquipmentStore = create((set) => ({
 
   updateEquipment: (updatedEquipment) =>
     set((state) => ({
-      equipment: state.equipment.map((item) => (item._id === updatedEquipment._id ? updatedEquipment : item)),
+      equipment: state.equipment.map((item) => (item.id === updatedEquipment.id ? updatedEquipment : item)),
     })),
 
   deleteEquipment: (equipmentId) =>
     set((state) => ({
-      equipment: state.equipment.filter((item) => item._id !== equipmentId),
+      equipment: state.equipment.filter((item) => item.id !== equipmentId),
     })),
 
   toggleEquipmentVisibility: (equipmentId, visibility) =>
