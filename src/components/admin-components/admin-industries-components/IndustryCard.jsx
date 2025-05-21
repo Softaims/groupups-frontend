@@ -13,7 +13,7 @@ const IndustryCard = ({ industry, handleEdit, handleDelete, onToggleVisibility }
           src={industry.industry_image}
           alt={industry.name}
           onLoad={() => setImageLoaded(true)}
-          className={`w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? "opacity-100" : "opacity-0"}`}
+          className={`w-full h-full object-contain transition-opacity duration-300 ${imageLoaded ? "opacity-100" : "opacity-0"}`}
         />
 
         <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">

@@ -173,11 +173,14 @@ export const useQuestions = () => {
     try {
       if (selectedQuestion) {
         const response = await api.patch(`/questions/question/${selectedQuestion.id}`, validationData);
-        setQuestions((prev) => prev.map((q) => (q.id === selectedQuestion.id ? response.data : q)));
+        const updatedQuestions = questions.map((q) => (q.id === selectedQuestion.id ? response.data : q));
+        handleReorderQuestions(updatedQuestions);
         toast.success("Question updated successfully");
       } else {
         const response = await api.post("/questions/create-question", validationData);
-        setQuestions((prev) => [...prev, response.data]);
+        const updatedQuestions = [...questions, response.data];
+        setQuestions(updatedQuestions);
+        handleReorderQuestions(updatedQuestions);
         toast.success("Question added successfully");
       }
       handleCloseModal();
@@ -221,7 +224,6 @@ export const useQuestions = () => {
   };
 
   const handleReorderQuestions = async (reorderedQuestions) => {
-    console.log("reordered questions", reorderedQuestions);
     const questions = reorderedQuestions?.map((item) => {
       return item.id;
     });
@@ -230,9 +232,7 @@ export const useQuestions = () => {
     try {
       await api.post(`/questions/reset-questions`, formData);
       setQuestions(reorderedQuestions);
-      toast.success("Questions reordered successfully");
     } catch (error) {
-      toast.error(error?.message || "Something went wrong");
       console.error("Error reordering questions:", error);
     }
   };

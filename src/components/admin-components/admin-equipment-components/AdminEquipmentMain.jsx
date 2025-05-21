@@ -43,7 +43,7 @@ const AdminEquipmentMain = () => {
   return (
     <main className="flex-1 p-4 md:p-6 md:ml-64 w-full transition-all duration-300 pt-16 md:pt-6">
       <div className="space-y-6">
-        <AdminEquipmentHeader handleAddNew={handleAddNew} />
+        <AdminEquipmentHeader handleAddNew={handleAddNew} industriesLength={industries?.length || 0} />
 
         {!industriesLoading && industries?.length === 0 ? (
           <div className="bg-[#1a1e24] rounded-lg border border-[#2a2e34] p-4">

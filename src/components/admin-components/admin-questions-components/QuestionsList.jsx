@@ -119,7 +119,7 @@ const QuestionsList = ({ questions, onEdit, onDelete, onReorder }) => {
           onDrop={(e) => handleDrop(e, question, index)}
         >
           <div className="flex items-stretch">
-            <div className={`w-1.5 ${getPriorityColor(question.priority)}`}></div>
+            <div className={`w-1.5 ${getPriorityColor(index + 1)}`}></div>
             <div className="flex-grow p-3 flex items-start gap-3">
               <div className="cursor-move flex items-center justify-center p-1 hover:bg-[#1a1e24] rounded mt-1" title="Drag to reorder">
                 <GripVertical className="h-5 w-5 text-gray-500" />

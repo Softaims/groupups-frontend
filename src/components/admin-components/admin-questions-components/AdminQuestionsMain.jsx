@@ -10,7 +10,7 @@ import { useQuestions } from "../../../hooks/useQuestions";
 import { useIndustryEquipmentStore } from "../../../store/industryEquipmentStore";
 
 const AdminQuestionsMain = () => {
-  const { equipment } = useIndustryEquipmentStore();
+  const { equipmentLoading, equipment } = useIndustryEquipmentStore();
   const {
     selectedIndustry,
     selectedEquipment,
@@ -46,7 +46,7 @@ const AdminQuestionsMain = () => {
       <div className="space-y-6">
         <AdminQuestionsHeader selectedEquipment={selectedEquipment} onAddClick={handleAddClick} isLoading={isLoading} />
 
-        {equipment?.length === 0 ? (
+        {!equipmentLoading && equipment?.length === 0 ? (
           <div className="bg-[#1a1e24] rounded-lg border border-[#2a2e34] p-4">
             <EquipmentEmptyState />
           </div>
