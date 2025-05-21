@@ -3,6 +3,7 @@ import IndustryCard from "./IndustryCard";
 import IndustryModal from "./IndustryModal";
 import AdminIndustriesHeader from "./AdminIndustriesHeader";
 import SkeletonIndustryCard from "./SkeletonIndustryCard";
+import EmptyState from "./EmptyState";
 import { useIndustries } from "../../../hooks/useIndustries";
 
 const AdminIndustriesMain = () => {
@@ -35,19 +36,29 @@ const AdminIndustriesMain = () => {
       <div className="space-y-6">
         <AdminIndustriesHeader onAddNew={handleAddNew} />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {industriesLoading
-            ? [1, 2, 3].map((_, index) => <SkeletonIndustryCard key={index} />)
-            : industries?.map((industry) => (
-                <IndustryCard
-                  key={industry.id}
-                  industry={industry}
-                  handleEdit={handleEdit}
-                  handleDelete={handleDelete}
-                  onToggleVisibility={handleToggleVisibility}
-                />
-              ))}
-        </div>
+        {industriesLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {[1, 2, 3].map((_, index) => (
+              <SkeletonIndustryCard key={index} />
+            ))}
+          </div>
+        ) : industries?.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {industries.map((industry) => (
+              <IndustryCard
+                key={industry.id}
+                industry={industry}
+                handleEdit={handleEdit}
+                handleDelete={handleDelete}
+                onToggleVisibility={handleToggleVisibility}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="bg-[#1a1e24] rounded-lg border border-[#2a2e34] p-4">
+            <EmptyState onAddClick={handleAddNew} />
+          </div>
+        )}
       </div>
 
       {showDeleteModal && (
