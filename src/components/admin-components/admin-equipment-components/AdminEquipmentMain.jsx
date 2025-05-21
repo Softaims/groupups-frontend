@@ -7,9 +7,10 @@ import { useIndustryEquipmentStore } from "../../../store/industryEquipmentStore
 import AdminEquipmentHeader from "./AdminEquipmentHeader";
 import EquipmentSearchFilter from "./EquipmentSearchFilter";
 import SkeletonEquipmentTable from "./SkeletonEquipmentTable";
+import IndustryEmptyState from "./IndustryEmptyState";
 
 const AdminEquipmentMain = () => {
-  const { industries } = useIndustryEquipmentStore();
+  const { industries, industriesLoading } = useIndustryEquipmentStore();
   const {
     equipment,
     equipmentLoading,
@@ -43,28 +44,46 @@ const AdminEquipmentMain = () => {
     <main className="flex-1 p-4 md:p-6 md:ml-64 w-full transition-all duration-300 pt-16 md:pt-6">
       <div className="space-y-6">
         <AdminEquipmentHeader handleAddNew={handleAddNew} />
-        <div className="bg-[#1a1e24] rounded-lg border border-[#2a2e34] p-4">
-          <EquipmentSearchFilter
-            searchQuery={searchQuery}
-            onSearchChange={(e) => setSearchQuery(e.target.value)}
-            selectedIndustry={selectedIndustry}
-            onIndustryChange={(e) => {
-              setSelectedIndustry(e.target.value);
-            }}
-            industries={industries}
-          />
-          {equipmentLoading ? (
-            <SkeletonEquipmentTable />
-          ) : (
-            <EquipmentTable
-              equipment={filteredEquipment}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-              onToggleVisibility={handleToggleVisibility}
+
+        {!industriesLoading && industries?.length === 0 ? (
+          <div className="bg-[#1a1e24] rounded-lg border border-[#2a2e34] p-4">
+            <IndustryEmptyState />
+          </div>
+        ) : (
+          <div className="bg-[#1a1e24] rounded-lg border border-[#2a2e34] p-4">
+            <EquipmentSearchFilter
+              searchQuery={searchQuery}
+              onSearchChange={(e) => setSearchQuery(e.target.value)}
+              selectedIndustry={selectedIndustry}
+              onIndustryChange={(e) => {
+                setSelectedIndustry(e.target.value);
+              }}
               industries={industries}
             />
-          )}
-        </div>
+            {equipmentLoading ? (
+              <SkeletonEquipmentTable />
+            ) : filteredEquipment.length > 0 ? (
+              <EquipmentTable
+                equipment={filteredEquipment}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+                onToggleVisibility={handleToggleVisibility}
+                industries={industries}
+              />
+            ) : searchQuery ? (
+              <div className="text-center py-10">
+                <p className="text-gray-400">No equipment found matching "{searchQuery}"</p>
+                <button onClick={() => setSearchQuery("")} className="mt-2 text-[#3CBFAE] hover:underline">
+                  Clear search
+                </button>
+              </div>
+            ) : (
+              <div className="text-center py-10">
+                <p className="text-gray-400">No equipment available. Click the "Add Equipment" button to get started.</p>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {showDeleteModal && (

@@ -6,7 +6,7 @@ import api from "../utils/apiClient";
 import { useIndustryEquipmentStore } from "../store/industryEquipmentStore";
 
 export const useIndustries = () => {
-  const { industries, industriesLoading, addIndustry, updateIndustry, deleteIndustry, toggleIndustryVisibility, fetchIndustries } =
+  const { industries, industriesLoading, addIndustry, updateIndustry, deleteIndustry, toggleIndustryVisibility } =
     useIndustryEquipmentStore();
   const [selectedIndustry, setSelectedIndustry] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
