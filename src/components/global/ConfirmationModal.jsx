@@ -54,14 +54,14 @@ const ConfirmationModal = ({
         onClick={(e) => e.stopPropagation()}
       >
         {showCloseIcon && (
-          <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-white">
+          <button onClick={onClose} className="cursor-pointer absolute top-4 right-4 text-gray-400 hover:text-white">
             <X size={18} />
           </button>
         )}
         <h3 className="text-xl font-semibold text-white mb-2">{title}</h3>
         <div className="mb-6 text-gray-300">{message}</div>
         <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-3">
-          <button onClick={onClose} className={`px-4 py-2 rounded-md text-sm font-medium ${buttonStyles.cancel}`}>
+          <button onClick={onClose} className={`cursor-pointer px-4 py-2 rounded-md text-sm font-medium ${buttonStyles.cancel}`}>
             {cancelText}
           </button>
           <button
@@ -69,7 +69,7 @@ const ConfirmationModal = ({
               onConfirm();
               onClose();
             }}
-            className={`px-4 py-2 rounded-md text-sm font-medium ${buttonStyles.confirm}`}
+            className={`cursor-pointer px-4 py-2 rounded-md text-sm font-medium ${buttonStyles.confirm}`}
           >
             {confirmText}
           </button>

@@ -8,7 +8,6 @@ import { useIndustryEquipmentStore } from "../store/industryEquipmentStore";
 export const useEquipments = () => {
   const { equipment, equipmentLoading, addEquipment, updateEquipment, deleteEquipment, toggleEquipmentVisibility, fetchEquipment } =
     useIndustryEquipmentStore();
-
   const [selectedEquipment, setSelectedEquipment] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
@@ -86,8 +85,6 @@ export const useEquipments = () => {
     setFormErrors({});
 
     const validationErrors = validateForm(adminEquipmentSchema, formData);
-    console.log("form data", formData);
-    console.log("errors", validationErrors);
     if (Object.keys(validationErrors).length > 0) {
       setFormErrors(validationErrors);
       return;

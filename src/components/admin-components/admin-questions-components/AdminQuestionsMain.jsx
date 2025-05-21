@@ -39,6 +39,9 @@ const AdminQuestionsMain = () => {
     setSearchQuery,
   } = useQuestions();
 
+  console.log("loading", isLoading);
+  console.log("questions", questions?.length);
+  console.log("search", searchQuery);
   return (
     <main className="flex-1 p-4 md:p-6 md:ml-64 w-full transition-all duration-300 pt-16 md:pt-6">
       <div className="space-y-6">
@@ -79,7 +82,7 @@ const AdminQuestionsMain = () => {
               <div className="text-center py-10">
                 <p className="text-gray-400">Loading questions...</p>
               </div>
-            ) : questions.length > 0 ? (
+            ) : questions?.length > 0 ? (
               <div className="mb-2">
                 <h3 className="text-white font-medium mb-3">
                   Questions ({questions.length})<span className="text-sm font-normal text-gray-400 ml-2">Drag to reorder</span>

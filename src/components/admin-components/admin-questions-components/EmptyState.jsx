@@ -1,5 +1,3 @@
-"use client";
-
 import { HelpCircle, Plus } from "lucide-react";
 
 const EmptyState = ({ onAddClick }) => {

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { toast } from "react-toastify";
 import { validateForm } from "../utils/validateForm";
 import { simpleQuestionSchema, multipleChoiceSchema } from "../validations/adminQuestionSchema";
@@ -9,7 +9,7 @@ export const useQuestions = () => {
   const { industries, equipment } = useIndustryEquipmentStore();
   const [selectedIndustry, setSelectedIndustry] = useState(null);
   const [selectedEquipment, setSelectedEquipment] = useState(null);
-  const [questions, setQuestions] = useState([]);
+  const [questions, setQuestions] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -26,27 +26,22 @@ export const useQuestions = () => {
   });
   const [formErrors, setFormErrors] = useState({});
 
-  useEffect(() => {
-    const fetchQuestions = async () => {
-      if (!selectedEquipment?.id) {
-        setQuestions([]);
-        return;
-      }
-
-      try {
-        setIsLoading(true);
-        const response = await api.get(`/questions/questions?equipmentId=${selectedEquipment.id}`);
-        setQuestions(response.data || []);
-      } catch (err) {
-        toast.error(err.message || "Something went wrong");
-        setQuestions([]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchQuestions();
-  }, [selectedEquipment]);
+  const fetchQuestions = async (selectedEquipment) => {
+    if (!selectedEquipment?.id) {
+      setQuestions(null);
+      return;
+    }
+    try {
+      setIsLoading(true);
+      const response = await api.get(`/questions/questions?equipmentId=${selectedEquipment.id}`);
+      setQuestions(response.data || []);
+    } catch (err) {
+      toast.error(err.message || "Something went wrong");
+      setQuestions([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleIndustrySelect = (industry) => {
     setSelectedIndustry(industry);
@@ -54,7 +49,10 @@ export const useQuestions = () => {
   };
 
   const handleEquipmentSelect = (equipment) => {
-    setSelectedEquipment(equipment);
+    if (selectedEquipment?.id != equipment.id) {
+      setSelectedEquipment(equipment);
+      fetchQuestions(equipment);
+    }
   };
 
   const handleTypeChange = (type) => {
@@ -239,12 +237,11 @@ export const useQuestions = () => {
     }
   };
 
-  const filteredQuestions = questions.filter((q) => {
+  const filteredQuestions = questions?.filter((q) => {
     return q.question_text.toLowerCase().includes(searchQuery.toLowerCase());
   });
 
   return {
-    // State
     selectedIndustry,
     selectedEquipment,
     questions: filteredQuestions,
@@ -258,7 +255,6 @@ export const useQuestions = () => {
     formErrors,
     searchQuery,
 
-    // Actions
     handleIndustrySelect,
     handleEquipmentSelect,
     handleFormChange,

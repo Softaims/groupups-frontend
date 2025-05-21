@@ -1,14 +1,16 @@
-"use client";
-
 import { useState } from "react";
 import { Cpu, ChevronDown, X } from "lucide-react";
 
-const EquipmentSelector = ({ industries, equipment, selectedIndustry, selectedEquipment, onIndustrySelect, onEquipmentSelect, isLoading }) => {
+const EquipmentSelector = ({
+  industries,
+  equipment,
+  selectedIndustry,
+  selectedEquipment,
+  onIndustrySelect,
+  onEquipmentSelect,
+  isLoading,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
-
-  const handleIndustrySelect = (industry) => {
-    onIndustrySelect(industry);
-  };
 
   const handleEquipmentSelect = (equipment) => {
     onEquipmentSelect(equipment);
@@ -31,8 +33,8 @@ const EquipmentSelector = ({ industries, equipment, selectedIndustry, selectedEq
         <div className="flex items-center gap-2">
           <Cpu className="h-5 w-5 text-[#3CBFAE]" />
           <span>
-            {selectedEquipment 
-              ? `${selectedEquipment.name}${selectedIndustry ? ` (${selectedIndustry.name})` : ''}`
+            {selectedEquipment
+              ? `${selectedEquipment.name}${selectedIndustry ? ` (${selectedIndustry.name})` : ""}`
               : "Select Equipment to Manage Questions"}
           </span>
           {(selectedEquipment || selectedIndustry) && (
@@ -56,7 +58,7 @@ const EquipmentSelector = ({ industries, equipment, selectedIndustry, selectedEq
                       className={`w-full text-left px-4 py-2 hover:bg-[#2a2e34] transition-colors ${
                         selectedIndustry?.id === industry.id ? "bg-[#2a2e34] text-[#3CBFAE]" : "text-white"
                       }`}
-                      onClick={() => handleIndustrySelect(industry)}
+                      onClick={() => onIndustrySelect(industry)}
                     >
                       {industry.name}
                     </button>
