@@ -50,7 +50,7 @@ export const useIndustryEquipmentStore = create((set) => ({
   fetchIndustries: async () => {
     try {
       set({ industriesLoading: true });
-      const response = await api.get("/industry-equipment/industries");
+      const response = await api.get("/industry-equipment/admin/industries");
       set({
         industries: response.data || [],
         industriesLoading: false,
@@ -64,7 +64,7 @@ export const useIndustryEquipmentStore = create((set) => ({
   fetchEquipment: async () => {
     try {
       set({ equipmentLoading: true });
-      const response = await api.get("/industry-equipment/equipments");
+      const response = await api.get("/industry-equipment/admin/equipments");
       set({
         equipment: response.data || [],
         equipmentLoading: false,

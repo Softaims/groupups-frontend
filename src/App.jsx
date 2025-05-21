@@ -13,7 +13,7 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/:industryId" element={<EquipmentSelectionPage />} />
+          <Route path="/:industryName" element={<EquipmentSelectionPage />} />
           <Route path="/404" element={<NotFoundPage />} />
           <Route path="/:industryId/:equipmentId" element={<ChatbotLandingPage />} />
           <Route path="/:industryId/:equipmentId/chat" element={<ChatbotPage />} />
