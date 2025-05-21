@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useEffect } from "react";
 import { Edit, Trash2, GripVertical, FileText, CheckSquare, Upload, Youtube } from "lucide-react";
 
@@ -14,10 +12,8 @@ const QuestionsList = ({ questions, onEdit, onDelete, onReorder }) => {
 
   const handleDragStart = (e, item, index) => {
     setDraggedItem({ item, index });
-    // This is needed for Firefox
     e.dataTransfer.effectAllowed = "move";
     e.dataTransfer.setData("text/plain", item.id);
-    // Add a slight delay to make the dragged item invisible
     setTimeout(() => {
       e.target.classList.add("opacity-50");
     }, 0);
@@ -32,24 +28,16 @@ const QuestionsList = ({ questions, onEdit, onDelete, onReorder }) => {
   const handleDragOver = (e, item, index) => {
     e.preventDefault();
     e.dataTransfer.dropEffect = "move";
-
     if (!draggedItem || draggedItem.item.id === item.id) return;
-
     setDraggedOverItem({ item, index });
   };
 
   const handleDrop = (e, item, index) => {
     e.preventDefault();
-
     if (!draggedItem || draggedItem.item.id === item.id) return;
-
     const newItems = [...items];
     const draggedItemContent = newItems[draggedItem.index];
-
-    // Remove the dragged item
     newItems.splice(draggedItem.index, 1);
-
-    // Add it at the new position
     newItems.splice(index, 0, draggedItemContent);
 
     setItems(newItems);
@@ -95,11 +83,11 @@ const QuestionsList = ({ questions, onEdit, onDelete, onReorder }) => {
   };
 
   const renderQuestionDetails = (question) => {
-    switch (question.type) {
+    switch (question.question_type) {
       case "multiple_choice":
         return (
           <div className="mt-2 text-xs text-gray-400">
-            <span className="mr-2">{question.allowMultiple ? "Multiple selections allowed" : "Single selection only"}</span>
+            <span className="mr-2">{question.allowMultipleSelection ? "Multiple selections allowed" : "Single selection only"}</span>
             <span className="mr-2">•</span>
             <span>{question.options.length} options</span>
           </div>
@@ -141,17 +129,17 @@ const QuestionsList = ({ questions, onEdit, onDelete, onReorder }) => {
                   <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[#1a1e24] text-xs font-medium text-white">
                     {question.priority}
                   </span>
-                  <h4 className="font-medium text-white">{question.questionText}</h4>
+                  <h4 className="font-medium text-white">{question.question_text}</h4>
                   {question.required && <span className="bg-red-900/30 text-red-400 text-xs px-2 py-0.5 rounded">Required</span>}
                 </div>
 
                 <div className="mt-2 flex items-center gap-3">
                   <div className="flex items-center gap-1 bg-[#1a1e24] px-2 py-1 rounded text-xs">
-                    {getQuestionTypeIcon(question.type)}
-                    <span className="text-gray-300">{getQuestionTypeLabel(question.type)}</span>
+                    {getQuestionTypeIcon(question.question_type)}
+                    <span className="text-gray-300">{getQuestionTypeLabel(question.question_type)}</span>
                   </div>
 
-                  {question.youtubeUrl && (
+                  {question.youtube_link && (
                     <div className="flex items-center gap-1 bg-[#1a1e24] px-2 py-1 rounded text-xs">
                       <Youtube className="h-4 w-4 text-red-500" />
                       <span className="text-gray-300">YouTube Video</span>

@@ -1,59 +1,21 @@
 import { X, Plus, Trash2, Youtube } from "lucide-react";
-import { adminQuestionSchema } from "../../../validations/adminQuestionSchema";
 
-const QuestionForm = ({ isOpen, onClose, onSubmit, formData, onFormChange, errors, equipment, isEditMode }) => {
+const QuestionForm = ({
+  isOpen,
+  onClose,
+  onSubmit,
+  formData,
+  onFormChange,
+  handleTypeChange,
+  addOption,
+  removeOption,
+  updateOption,
+  errors,
+  equipment,
+  isEditMode,
+  isLoading,
+}) => {
   if (!isOpen) return null;
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    try {
-      const validationData = {
-        ...formData,
-        options: formData.type === "multiple_choice" ? formData.options.filter(opt => opt.text.trim() !== "") : undefined,
-        allowMultiple: formData.type === "multiple_choice" ? formData.allowMultiple : undefined,
-      };
-
-      const validatedData = adminQuestionSchema.parse(validationData);
-      onSubmit(isEditMode ? { ...validatedData, id: formData.id } : validatedData);
-    } catch (error) {
-      if (error.errors) {
-        const formattedErrors = {};
-        error.errors.forEach((err) => {
-          formattedErrors[err.path[0]] = err.message;
-        });
-        onFormChange("errors", formattedErrors);
-      }
-    }
-  };
-
-  const handleTypeChange = (type) => {
-    onFormChange("type", type);
-    onFormChange("options", type === "multiple_choice" 
-      ? (formData.options.length >= 2 ? formData.options : [{ id: 1, text: "" }, { id: 2, text: "" }])
-      : [{ id: 1, text: "" }]
-    );
-    onFormChange("allowMultiple", type === "multiple_choice" ? formData.allowMultiple : false);
-  };
-
-  const addOption = () => {
-    const newId = Math.max(0, ...formData.options.map(o => o.id)) + 1;
-    onFormChange("options", [...formData.options, { id: newId, text: "" }]);
-  };
-
-  const removeOption = (id) => {
-    if (formData.options.length <= 2) {
-      onFormChange("errors", { options: "Multiple choice questions require at least two options" });
-      return;
-    }
-    onFormChange("options", formData.options.filter(option => option.id !== id));
-  };
-
-  const updateOption = (id, text) => {
-    onFormChange("options", formData.options.map(option => 
-      option.id === id ? { ...option, text } : option
-    ));
-  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 overflow-y-auto">
@@ -71,17 +33,17 @@ const QuestionForm = ({ isOpen, onClose, onSubmit, formData, onFormChange, error
           </p>
         </div>
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={onSubmit}>
           <div className="mb-4">
-            <label htmlFor="questionType" className="block mb-2 text-sm font-medium text-gray-300">
+            <label htmlFor="question_type" className="block mb-2 text-sm font-medium text-gray-300">
               Question Type
             </label>
             <select
-              id="questionType"
+              id="question_type"
               className={`w-full rounded-md bg-[#0c0f12] py-2 px-3 border ${
-                errors?.type ? "border-red-500" : "border-[#2a2e34]"
+                errors?.question_type ? "border-red-500" : "border-[#2a2e34]"
               } focus:outline-none focus:border-[#3CBFAE] text-white`}
-              value={formData.type}
+              value={formData.question_type}
               onChange={(e) => handleTypeChange(e.target.value)}
             >
               <option value="open_ended">Open-ended Question</option>
@@ -89,27 +51,27 @@ const QuestionForm = ({ isOpen, onClose, onSubmit, formData, onFormChange, error
               <option value="statement">Statement (Acknowledge to Continue)</option>
               <option value="file_upload">File Upload</option>
             </select>
-            {errors?.type && <p className="mt-1 text-sm text-red-500">{errors.type}</p>}
+            {errors?.question_type && <p className="mt-1 text-sm text-red-500">{errors.question_type}</p>}
           </div>
 
           <div className="mb-4">
-            <label htmlFor="questionText" className="block mb-2 text-sm font-medium text-gray-300">
+            <label htmlFor="question_text" className="block mb-2 text-sm font-medium text-gray-300">
               Question Text
             </label>
             <textarea
-              id="questionText"
+              id="question_text"
               rows={3}
               className={`w-full rounded-md bg-[#0c0f12] py-2 px-3 border ${
-                errors?.questionText ? "border-red-500" : "border-[#2a2e34]"
+                errors?.question_text ? "border-red-500" : "border-[#2a2e34]"
               } focus:outline-none focus:border-[#3CBFAE] text-white resize-none`}
               placeholder="Enter question text"
-              value={formData.questionText}
-              onChange={(e) => onFormChange("questionText", e.target.value)}
+              value={formData.question_text}
+              onChange={(e) => onFormChange("question_text", e.target.value)}
             />
-            {errors?.questionText && <p className="mt-1 text-sm text-red-500">{errors.questionText}</p>}
+            {errors?.question_text && <p className="mt-1 text-sm text-red-500">{errors.question_text}</p>}
           </div>
 
-          {formData.type === "multiple_choice" && (
+          {formData.question_type === "multiple_choice" && (
             <div className="mb-4">
               <div className="flex justify-between items-center mb-2">
                 <label className="text-sm font-medium text-gray-300">Options</label>
@@ -148,8 +110,8 @@ const QuestionForm = ({ isOpen, onClose, onSubmit, formData, onFormChange, error
                   <input
                     type="checkbox"
                     className="form-checkbox h-4 w-4 text-[#3CBFAE] border-[#2a2e34] rounded focus:ring-[#3CBFAE] bg-[#0c0f12]"
-                    checked={formData.allowMultiple}
-                    onChange={(e) => onFormChange("allowMultiple", e.target.checked)}
+                    checked={formData.allowMultipleSelection}
+                    onChange={(e) => onFormChange("allowMultipleSelection", e.target.checked)}
                   />
                   <span className="ml-2 text-sm text-gray-300">Allow multiple selections</span>
                 </label>
@@ -159,15 +121,11 @@ const QuestionForm = ({ isOpen, onClose, onSubmit, formData, onFormChange, error
 
           <div className="mb-4">
             <div className="flex items-center justify-between mb-2">
-              <label htmlFor="youtubeUrl" className="text-sm font-medium text-gray-300">
+              <label htmlFor="youtube_link" className="text-sm font-medium text-gray-300">
                 YouTube Video URL (Optional)
               </label>
-              {formData.youtubeUrl && (
-                <button
-                  type="button"
-                  onClick={() => onFormChange("youtubeUrl", "")}
-                  className="text-xs text-gray-400 hover:text-red-500"
-                >
+              {formData.youtube_link && (
+                <button type="button" onClick={() => onFormChange("youtube_link", "")} className="text-xs text-gray-400 hover:text-red-500">
                   Clear
                 </button>
               )}
@@ -176,16 +134,16 @@ const QuestionForm = ({ isOpen, onClose, onSubmit, formData, onFormChange, error
               <Youtube className="h-5 w-5 text-red-500" />
               <input
                 type="text"
-                id="youtubeUrl"
+                id="youtube_link"
                 className={`flex-grow rounded-md bg-[#0c0f12] py-2 px-3 border ${
-                  errors?.youtubeUrl ? "border-red-500" : "border-[#2a2e34]"
+                  errors?.youtube_link ? "border-red-500" : "border-[#2a2e34]"
                 } focus:outline-none focus:border-[#3CBFAE] text-white`}
                 placeholder="https://www.youtube.com/watch?v=..."
-                value={formData.youtubeUrl}
-                onChange={(e) => onFormChange("youtubeUrl", e.target.value)}
+                value={formData.youtube_link}
+                onChange={(e) => onFormChange("youtube_link", e.target.value)}
               />
             </div>
-            {errors?.youtubeUrl && <p className="mt-1 text-sm text-red-500">{errors.youtubeUrl}</p>}
+            {errors?.youtube_link && <p className="mt-1 text-sm text-red-500">{errors.youtube_link}</p>}
             <p className="mt-1 text-xs text-gray-400">Add a YouTube video that will be shown with this question</p>
           </div>
 
@@ -209,8 +167,12 @@ const QuestionForm = ({ isOpen, onClose, onSubmit, formData, onFormChange, error
             >
               Cancel
             </button>
-            <button type="submit" className="px-4 py-2 rounded-md bg-[#3CBFAE] text-white hover:bg-[#35a89a] transition-colors">
-              {isEditMode ? "Save Changes" : "Add Question"}
+            <button
+              type="submit"
+              className="px-4 py-2 rounded-md bg-[#3CBFAE] text-white hover:bg-[#35a89a] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={isLoading}
+            >
+              {isLoading ? "Saving..." : isEditMode ? "Save Changes" : "Add Question"}
             </button>
           </div>
         </form>
@@ -220,4 +182,3 @@ const QuestionForm = ({ isOpen, onClose, onSubmit, formData, onFormChange, error
 };
 
 export default QuestionForm;
-

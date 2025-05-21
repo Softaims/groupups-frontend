@@ -3,30 +3,39 @@
 import { useState } from "react";
 import { Cpu, ChevronDown, X } from "lucide-react";
 
-const EquipmentSelector = ({ industries, equipment, selectedEquipment, onSelect }) => {
+const EquipmentSelector = ({ industries, equipment, selectedIndustry, selectedEquipment, onIndustrySelect, onEquipmentSelect, isLoading }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [activeIndustry, setActiveIndustry] = useState(null);
+
+  const handleIndustrySelect = (industry) => {
+    onIndustrySelect(industry);
+  };
 
   const handleEquipmentSelect = (equipment) => {
-    onSelect(equipment);
+    onEquipmentSelect(equipment);
     setIsOpen(false);
   };
 
   const clearSelection = (e) => {
     e.stopPropagation();
-    onSelect(null);
+    onEquipmentSelect(null);
+    onIndustrySelect(null);
   };
 
   return (
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between p-3 bg-[#1a1e24] border border-[#2a2e34] rounded-lg text-white hover:bg-[#22272e] transition-colors"
+        disabled={isLoading}
+        className="w-full flex items-center justify-between p-3 bg-[#1a1e24] border border-[#2a2e34] rounded-lg text-white hover:bg-[#22272e] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <div className="flex items-center gap-2">
           <Cpu className="h-5 w-5 text-[#3CBFAE]" />
-          <span>{selectedEquipment ? selectedEquipment.name : "Select Equipment to Manage Questions"}</span>
-          {selectedEquipment && (
+          <span>
+            {selectedEquipment 
+              ? `${selectedEquipment.name}${selectedIndustry ? ` (${selectedIndustry.name})` : ''}`
+              : "Select Equipment to Manage Questions"}
+          </span>
+          {(selectedEquipment || selectedIndustry) && (
             <button onClick={clearSelection} className="ml-2 p-1 rounded-full hover:bg-[#2a2e34] transition-colors" title="Clear selection">
               <X className="h-3 w-3 text-gray-400" />
             </button>
@@ -45,9 +54,9 @@ const EquipmentSelector = ({ industries, equipment, selectedEquipment, onSelect 
                   <li key={industry.id}>
                     <button
                       className={`w-full text-left px-4 py-2 hover:bg-[#2a2e34] transition-colors ${
-                        activeIndustry === industry.id ? "bg-[#2a2e34] text-[#3CBFAE]" : "text-white"
+                        selectedIndustry?.id === industry.id ? "bg-[#2a2e34] text-[#3CBFAE]" : "text-white"
                       }`}
-                      onClick={() => setActiveIndustry(industry.id)}
+                      onClick={() => handleIndustrySelect(industry)}
                     >
                       {industry.name}
                     </button>
@@ -55,12 +64,11 @@ const EquipmentSelector = ({ industries, equipment, selectedEquipment, onSelect 
                 ))}
               </ul>
             </div>
-
             {/* Equipment list */}
             <div className="w-2/3 max-h-64 overflow-y-auto">
               <ul className="py-2">
                 {equipment
-                  .filter((item) => !activeIndustry || item.industryId === activeIndustry)
+                  .filter((item) => !selectedIndustry || item.industry_id === selectedIndustry.id)
                   .map((item) => (
                     <li key={item.id}>
                       <button

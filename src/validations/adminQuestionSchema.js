@@ -1,56 +1,73 @@
 import { z } from "zod";
 
-const optionSchema = z.object({
-  id: z.number(),
-  text: z.string().min(1, "Option text is required").max(200, "Option text must not exceed 200 characters"),
+const baseQuestionSchema = z.object({
+  equipment_id: z
+    .string({
+      required_error: "Equipment ID is required",
+    })
+    .length(24, {
+      message: "Equipment ID must be a valid id",
+    }),
+
+  question_type: z.enum(["open_ended", "multiple_choice", "statement", "file_upload"], {
+    required_error: "Question type is required",
+    invalid_type_error: "Question type must be one of: open_ended, multiple_choice, statement, file_upload",
+  }),
+
+  required: z
+    .boolean({
+      required_error: "Required field must be true or false",
+      invalid_type_error: "Required field must be a boolean",
+    })
+    .default(true),
+
+  youtube_link: z
+    .string({
+      invalid_type_error: "YouTube link must be a string",
+    })
+    .url("You must provide a valid YouTube URL")
+    .optional()
+    .or(z.literal("")),
+
+  question_text: z
+    .string({
+      required_error: "Question text is required",
+    })
+    .trim()
+    .min(1, {
+      message: "Question text cannot be empty",
+    }),
 });
 
-export const adminQuestionSchema = z.object({
-  questionText: z.string().min(2, "Question text must be at least 2 characters").max(500, "Question text must not exceed 500 characters"),
-  
-  type: z.enum(["open_ended", "multiple_choice", "statement", "file_upload"], {
+export const simpleQuestionSchema = baseQuestionSchema.extend({
+  question_type: z.enum(["open_ended", "statement", "file_upload"], {
     required_error: "Question type is required",
-    invalid_type_error: "Invalid question type",
+    invalid_type_error: "Question type must be one of: open_ended, multiple_choice, statement, file_upload",
   }),
+});
 
-  required: z.boolean().default(false),
-
-  youtubeUrl: z
-    .string()
-    .nullable()
-    .transform((val) => (val === "" ? null : val))
-    .refine(
-      (url) => {
-        if (!url) return true; // Optional field
-        const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$/;
-        return youtubeRegex.test(url);
-      },
-      {
-        message: "Please enter a valid YouTube URL",
-      }
-    ),
+export const multipleChoiceSchema = baseQuestionSchema.extend({
+  question_type: z.literal("multiple_choice"),
 
   options: z
-    .array(optionSchema)
-    .min(2, "Multiple choice questions require at least two options")
-    .optional()
-    .refine(
-      (options) => {
-        // Only validate options if type is multiple_choice
-        if (options && options.length > 0) {
-          return options.every((option) => option.text.trim().length > 0);
-        }
-        return true;
-      },
+    .array(
+      z.object({
+        id: z.number(),
+        text: z
+          .string({
+            required_error: "Option text is required",
+          })
+          .trim()
+          .min(1, "Option text cannot be empty"),
+      }),
       {
-        message: "All options must have text",
+        required_error: "Options are required for multiple choice questions",
       }
-    ),
+    )
+    .min(2, "Multiple choice questions must have at least 2 options"),
 
-  allowMultiple: z.boolean().optional(),
-
-  equipmentId: z.number({
-    required_error: "Equipment ID is required",
-    invalid_type_error: "Equipment ID must be a number",
+  allowMultipleSelection: z.boolean({
+    required_error: "allowMultipleSelection is required for multiple choice questions",
+    invalid_type_error: "allowMultipleSelection must be a boolean",
   }),
-}); 
+});
