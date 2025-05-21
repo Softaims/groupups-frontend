@@ -3,7 +3,6 @@ import EquipmentButton from "./EquipmentButton";
 import { useNavigate, useParams } from "react-router-dom";
 import api from "../../utils/apiClient";
 import SkeletonEquipmentButton from "./SkeletonEquipmentButton";
-import EmptyEquipmentState from "./EmptyEquipmentState";
 import { Navigate } from "react-router-dom";
 const EquipmentSelection = () => {
   const [selectedEquipment, setSelectedEquipment] = useState("");
