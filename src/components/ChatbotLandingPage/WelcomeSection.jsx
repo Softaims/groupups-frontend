@@ -1,8 +1,31 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
-
-const WelcomeSection = ({ equipment, industry }) => {
+import { useEffect, useState } from "react";
+import { Navigate, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import api from "../../utils/apiClient";
+import SkeletonWelcomeSection from "./SkeletonWelcomeSection";
+const WelcomeSection = () => {
   const navigate = useNavigate();
+  const { industryName, equipmentName } = useParams();
+  const [equipment, setEquipment] = useState(null);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    const fetchEquipments = async () => {
+      try {
+        const response = await api.get(`/industry-equipment/equipment?industry=${industryName}&equipment=${equipmentName}`);
+        setEquipment(response.data);
+      } catch (err) {
+        console.log("Failed to fetch equipment", err);
+        setEquipment({});
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchEquipments();
+  }, [industryName, equipmentName]);
+
+  if (loading) return <SkeletonWelcomeSection />;
+  if (!loading && !equipment?.name) return <Navigate to={"/404"} />;
+
   return (
     <main className="flex flex-1">
       <div className="lg:w-[40%] w-full flex flex-col justify-between px-12 py-10">
@@ -13,7 +36,7 @@ const WelcomeSection = ({ equipment, industry }) => {
             </h1>
             <p className="text-[#4aa6a4] text-2xl mb-8">I'll ask you Qs to guide us. You can ask me Qs too.</p>
             <button
-              onClick={() => navigate(`/${industry?.id}/${equipment?.id}/chat`)}
+              onClick={() => navigate(`/${industryName}/${equipmentName}/chat`)}
               className="bg-white text-[#030d13] cursor-pointer font-medium py-3 px-8 rounded-full hover:bg-gray-100 transition-colors"
             >
               Get Started

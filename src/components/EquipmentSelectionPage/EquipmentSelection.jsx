@@ -4,7 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import api from "../../utils/apiClient";
 import SkeletonEquipmentButton from "./SkeletonEquipmentButton";
 import EmptyEquipmentState from "./EmptyEquipmentState";
-
+import { Navigate } from "react-router-dom";
 const EquipmentSelection = () => {
   const [selectedEquipment, setSelectedEquipment] = useState("");
   const { industryName } = useParams();
@@ -48,7 +48,7 @@ const EquipmentSelection = () => {
             />
           ))
         ) : (
-          <EmptyEquipmentState />
+          <Navigate to={"/404"} />
         )}
       </div>
 
