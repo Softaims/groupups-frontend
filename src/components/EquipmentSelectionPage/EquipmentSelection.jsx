@@ -4,22 +4,26 @@ import { useNavigate, useParams } from "react-router-dom";
 import api from "../../utils/apiClient";
 import SkeletonEquipmentButton from "./SkeletonEquipmentButton";
 import { Navigate } from "react-router-dom";
+import EmptyEquipmentState from "./EmptyEquipmentState";
 const EquipmentSelection = () => {
   const [selectedEquipment, setSelectedEquipment] = useState("");
   const { industryName } = useParams();
   const navigate = useNavigate();
 
   const [equipments, setEquipments] = useState(null);
+  const [industry, setIndustry] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchEquipments = async () => {
       try {
         const response = await api.get(`/industry-equipment/equipments?industry=${industryName}`);
-        setEquipments(response.data || []);
+        setEquipments(response.data?.equipments || []);
+        setIndustry(response.data?.industry || {});
       } catch (err) {
         console.log("Failed to fetch equipments:", err);
         setEquipments([]);
+        setIndustry({});
       } finally {
         setLoading(false);
       }
@@ -46,6 +50,8 @@ const EquipmentSelection = () => {
               setSelectedEquipment={setSelectedEquipment}
             />
           ))
+        ) : industry?.name && equipments?.length === 0 ? (
+          <EmptyEquipmentState />
         ) : (
           <Navigate to={"/404"} />
         )}
