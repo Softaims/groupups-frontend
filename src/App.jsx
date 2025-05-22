@@ -16,7 +16,7 @@ function App() {
           <Route path="/:industryName" element={<EquipmentSelectionPage />} />
           <Route path="/404" element={<NotFoundPage />} />
           <Route path="/:industryName/:equipmentName" element={<ChatbotLandingPage />} />
-          <Route path="/:industryId/:equipmentId/chat" element={<ChatbotPage />} />
+          <Route path="/:industryName/:equipmentName/chat" element={<ChatbotPage />} />
           <Route path="/admin/*" element={<AdminRoutes />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>

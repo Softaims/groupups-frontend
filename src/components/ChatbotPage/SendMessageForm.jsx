@@ -14,8 +14,8 @@ const SendMessageForm = () => {
     e.preventDefault();
     if (inputValue.trim()) {
       socket?.emit("sendMessage", { type: equipmentId, messages: [...messages, { role: "user", content: inputValue }] });
-      addMessage({ role: "user", content: inputValue });
-      addMessage({ role: "assistant", content: "loading" });
+      addMessage({ role: "user", content: JSON.stringify({ content: { responseText: inputValue } }) });
+      addMessage({ role: "assistant", content: JSON.stringify({ content: { responseText: "loading" } }) });
       setInputValue("");
     }
   };

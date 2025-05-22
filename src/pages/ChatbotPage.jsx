@@ -1,20 +1,8 @@
 import ChatInterface from "../components/ChatbotPage/ChatInterface";
 import ProductRecommendationInterface from "../components/ChatbotPage/ProductRecommendationInterface";
 import { ResizablePanelGroup, ResizableHandle, ResizablePanel } from "../components/ui/Resizable";
-import { useParams, Navigate } from "react-router-dom";
-import { industryData } from "../constants/industriesData";
-import { useChatSocket } from "../hooks/useChatSocket";
 
 export const ChatbotPage = () => {
-  const { industryId } = useParams();
-  const { equipmentId } = useParams();
-  const selectedIndustry = industryData?.find((industry) => industry.id === industryId);
-  const selectedEquipment = selectedIndustry?.equipments?.find((equipment) => equipment.id == equipmentId);
-  useChatSocket(selectedEquipment);
-
-  if (!selectedIndustry || !selectedEquipment) {
-    return <Navigate to={"/404"} />;
-  }
   return (
     <div className="flex flex-col h-screen bg-[#041018]">
       {/* For Smaller Screens */}

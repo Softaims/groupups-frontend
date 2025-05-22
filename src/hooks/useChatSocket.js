@@ -9,14 +9,16 @@ export const useChatSocket = (selectedEquipment) => {
 
   useEffect(() => {
     if (!selectedEquipment || !isConnected) return;
+    console.log("equipment", selectedEquipment);
     clearMessages();
     socket.emit("sendMessage", { type: selectedEquipment.id, messages: [] });
   }, [selectedEquipment, isConnected, clearMessages]);
 
   useEffect(() => {
     const handleReceiveMessage = (message) => {
+      console.log("message", message);
       removeLastMessage();
-      addMessage({ role: message.role, content: message.content });
+      addMessage(message);
       setChatCompletionPercent(message.progress);
     };
 
