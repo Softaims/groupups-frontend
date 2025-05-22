@@ -11,7 +11,7 @@ const WelcomeSection = () => {
   useEffect(() => {
     const fetchEquipments = async () => {
       try {
-        const response = await api.get(`/industry-equipment/equipment?industry=${industryName}&equipment=${equipmentName}`);
+        const response = await api.get(`/industry-equipment/check-equipment?industry=${industryName}&equipment=${equipmentName}`);
         setEquipment(response.data);
       } catch (err) {
         console.log("Failed to fetch equipment", err);
