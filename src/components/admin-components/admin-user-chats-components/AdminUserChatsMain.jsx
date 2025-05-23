@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { Search, Filter, ChevronRight, ChevronLeft } from "lucide-react";
 import { useIndustryEquipmentStore } from "../../../store/industryEquipmentStore";
+import UserChatsFilter from "./UserChatsFilter";
+import UserChatsList from "./UserChatsList";
+import UserChatsHeader from "./UserChatsHeader";
 
 const AdminUserChatsMain = () => {
   const { industries, industriesLoading } = useIndustryEquipmentStore();
@@ -23,9 +26,8 @@ const AdminUserChatsMain = () => {
 
   const filteredChats = userChats.filter((chat) => {
     const matchesIndustry = selectedIndustry === "all" || chat.industry === selectedIndustry;
-    const matchesSearch = 
-      chat.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      chat.email.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch =
+      chat.name.toLowerCase().includes(searchQuery.toLowerCase()) || chat.email.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesIndustry && matchesSearch;
   });
 
@@ -80,13 +82,10 @@ const AdminUserChatsMain = () => {
           >
             <ChevronLeft className="h-4 w-4 text-gray-400" />
           </button>
-          
+
           {startPage > 1 && (
             <>
-              <button
-                onClick={() => handlePageChange(1)}
-                className="px-3 py-1 rounded-md hover:bg-[#22272e] text-gray-400"
-              >
+              <button onClick={() => handlePageChange(1)} className="px-3 py-1 rounded-md hover:bg-[#22272e] text-gray-400">
                 1
               </button>
               {startPage > 2 && <span className="text-gray-400">...</span>}
@@ -97,11 +96,7 @@ const AdminUserChatsMain = () => {
             <button
               key={page}
               onClick={() => handlePageChange(page)}
-              className={`px-3 py-1 rounded-md ${
-                currentPage === page
-                  ? "bg-[#3CBFAE] text-white"
-                  : "hover:bg-[#22272e] text-gray-400"
-              }`}
+              className={`px-3 py-1 rounded-md ${currentPage === page ? "bg-[#3CBFAE] text-white" : "hover:bg-[#22272e] text-gray-400"}`}
             >
               {page}
             </button>
@@ -110,10 +105,7 @@ const AdminUserChatsMain = () => {
           {endPage < totalPages && (
             <>
               {endPage < totalPages - 1 && <span className="text-gray-400">...</span>}
-              <button
-                onClick={() => handlePageChange(totalPages)}
-                className="px-3 py-1 rounded-md hover:bg-[#22272e] text-gray-400"
-              >
+              <button onClick={() => handlePageChange(totalPages)} className="px-3 py-1 rounded-md hover:bg-[#22272e] text-gray-400">
                 {totalPages}
               </button>
             </>
@@ -135,67 +127,19 @@ const AdminUserChatsMain = () => {
   return (
     <main className="flex-1 p-4 md:p-6 md:ml-64 w-full transition-all duration-300 pt-16 md:pt-6">
       <div className="space-y-6">
-        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight text-white">User Chats</h1>
-            <p className="text-gray-400">Manage and view user chat conversations</p>
-          </div>
-        </div>
-
+        <UserChatsHeader />
         <div className="bg-[#1a1e24] rounded-lg border border-[#2a2e34] p-4">
-          <div className="flex flex-col md:flex-row gap-4 mb-6">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <input
-                type="search"
-                placeholder="Search by name or email..."
-                className="w-full rounded-md bg-[#0c0f12] pl-10 py-2 border border-[#2a2e34] focus:outline-none focus:border-[#3CBFAE] text-white"
-                value={searchQuery}
-                onChange={handleSearchChange}
-              />
-            </div>
-            <div className="relative min-w-[200px]">
-              <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <select
-                className="w-full appearance-none rounded-md bg-[#0c0f12] pl-10 py-2 pr-8 border border-[#2a2e34] focus:outline-none focus:border-[#3CBFAE] text-white"
-                value={selectedIndustry}
-                onChange={handleIndustryChange}
-              >
-                <option value="all">All Industries</option>
-                {industries.map((industry) => (
-                  <option key={industry.id} value={industry.name}>
-                    {industry.name}
-                  </option>
-                ))}
-              </select>
-              <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                <svg className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </div>
-            </div>
-          </div>
+          <UserChatsFilter
+            searchQuery={searchQuery}
+            onSearchChange={handleSearchChange}
+            selectedIndustry={selectedIndustry}
+            onIndustryChange={handleIndustryChange}
+            industries={industries}
+          />
 
           {currentChats.length > 0 ? (
             <>
-              <div className="space-y-4">
-                {currentChats.map((chat) => (
-                  <div
-                    key={chat.id}
-                    className="flex items-center justify-between p-4 bg-[#0c0f12] rounded-lg border border-[#2a2e34] hover:bg-[#22272e] transition-colors cursor-pointer"
-                  >
-                    <div className="flex-1">
-                      <h3 className="text-white font-medium">{chat.name}</h3>
-                      <p className="text-gray-400 text-sm">{chat.email}</p>
-                      <p className="text-gray-500 text-xs mt-1">Last message: {chat.lastMessage}</p>
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <span className="text-sm text-gray-400">{chat.industry}</span>
-                      <ChevronRight className="h-5 w-5 text-gray-400" />
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <UserChatsList chats={currentChats} />
               {renderPaginationControls()}
             </>
           ) : searchQuery ? (
@@ -216,4 +160,4 @@ const AdminUserChatsMain = () => {
   );
 };
 
-export default AdminUserChatsMain; 
+export default AdminUserChatsMain;
