@@ -7,7 +7,6 @@ import SkeletonUserChatCard from "./SkeletonUserChatCard";
 const AdminUserChatsMain = () => {
   const { interactions, isLoading, industries, selectedIndustry, searchQuery, handleSearchChange, handleIndustryChange } = useAdminChats();
 
-  console.log("interactions", interactions);
   return (
     <main className="flex-1 p-4 md:p-6 md:ml-64 w-full transition-all duration-300 pt-16 md:pt-6">
       <div className="space-y-6">

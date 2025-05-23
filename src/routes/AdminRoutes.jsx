@@ -21,7 +21,7 @@ const AdminRoutes = () => (
     <Route path="equipment" element={<ProtectedRoute children={<AdminEquipmentPage />} />} />
     <Route path="questions" element={<ProtectedRoute children={<AdminQuestionsPage />} />} />
     <Route path="chats" element={<ProtectedRoute children={<AdminUserChatsPage />} />} />
-    <Route path="chats/:userEmail" element={<ProtectedRoute children={<AdminUserChatDetailsPage />} />} />
+    <Route path="chats/:interactionId" element={<ProtectedRoute children={<AdminUserChatDetailsPage />} />} />
     <Route path="*" element={<NotFoundPage />} />
   </Routes>
 );

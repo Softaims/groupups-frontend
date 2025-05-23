@@ -1,30 +1,18 @@
 import UserChatQuestionCard from "./UserChatQuestionCard";
 
-const UserChatQuestionsList = ({
-  questions,
-  expandedQuestionId,
-  onToggleExpand,
-}) => {
-  if (questions.length === 0) {
-    return (
-      <div className="text-center py-10">
-        <p className="text-gray-400">No questions and answers found for this chat.</p>
-      </div>
-    );
-  }
-
+const UserChatQuestionsList = ({ responses, expandedQuestionId, onToggleExpand }) => {
   return (
     <div className="space-y-4">
-      {questions.map((question) => (
+      {responses.map((question) => (
         <UserChatQuestionCard
-          key={question.id}
+          key={question.question_id}
           question={question}
-          isExpanded={expandedQuestionId === question.id}
-          onToggleExpand={() => onToggleExpand(question.id)}
+          isExpanded={expandedQuestionId === question.question_id}
+          onToggleExpand={() => onToggleExpand(question.question_id)}
         />
       ))}
     </div>
   );
 };
 
-export default UserChatQuestionsList; 
+export default UserChatQuestionsList;
