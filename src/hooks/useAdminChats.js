@@ -4,10 +4,10 @@ import api from "../utils/apiClient";
 import { toast } from "react-toastify";
 
 const useAdminChats = () => {
-  const { industries } = useIndustryEquipmentStore();
+  const { equipment } = useIndustryEquipmentStore();
   const [isLoading, setIsLoading] = useState(false);
   const [interactions, setInteractions] = useState(null);
-  const [selectedIndustry, setSelectedIndustry] = useState("all");
+  const [selectedEquipment, setSelectedEquipment] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
 
   const fetchAllInteractions = async () => {
@@ -31,19 +31,18 @@ const useAdminChats = () => {
     setSearchQuery(e.target.value);
   };
 
-  const handleIndustryChange = (e) => {
-    setSelectedIndustry(e.target.value);
+  const handleEquipmentChange = (e) => {
+    setSelectedEquipment(e.target.value);
   };
 
   return {
     interactions,
     isLoading,
-    industries,
-    selectedIndustry,
+    equipment,
+    selectedEquipment,
     searchQuery,
     handleSearchChange,
-    handleIndustryChange,
-    refreshInteractions: fetchAllInteractions,
+    handleEquipmentChange,
   };
 };
 

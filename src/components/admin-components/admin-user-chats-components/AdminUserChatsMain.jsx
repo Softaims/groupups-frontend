@@ -5,7 +5,7 @@ import UserChatsHeader from "./UserChatsHeader";
 import useAdminChats from "../../../hooks/useAdminChats";
 import SkeletonUserChatCard from "./SkeletonUserChatCard";
 const AdminUserChatsMain = () => {
-  const { interactions, isLoading, industries, selectedIndustry, searchQuery, handleSearchChange, handleIndustryChange } = useAdminChats();
+  const { interactions, isLoading, equipment, selectedEquipment, searchQuery, handleSearchChange, handleEquipmentChange } = useAdminChats();
 
   return (
     <main className="flex-1 p-4 md:p-6 md:ml-64 w-full transition-all duration-300 pt-16 md:pt-6">
@@ -15,9 +15,9 @@ const AdminUserChatsMain = () => {
           <UserChatsFilter
             searchQuery={searchQuery}
             onSearchChange={handleSearchChange}
-            selectedIndustry={selectedIndustry}
-            onIndustryChange={handleIndustryChange}
-            industries={industries}
+            selectedIndustry={selectedEquipment}
+            onIndustryChange={handleEquipmentChange}
+            equipment={equipment}
           />
 
           {isLoading ? (

@@ -10,17 +10,6 @@ const SkeletonUserChatQuestionCard = () => {
         </div>
         <div className="h-5 w-5 bg-gray-700 rounded" />
       </div>
-
-      <div className="mt-4 pt-4 border-t border-[#2a2e34]">
-        <div className="flex items-start gap-2 mb-2">
-          <div className="h-4 w-12 bg-gray-700 rounded" />
-          <div className="flex-1 space-y-2">
-            <div className="h-3 w-full bg-gray-700 rounded" />
-            <div className="h-3 w-3/4 bg-gray-700 rounded" />
-            <div className="h-3 w-1/2 bg-gray-700 rounded" />
-          </div>
-        </div>
-      </div>
     </div>
   );
 };
