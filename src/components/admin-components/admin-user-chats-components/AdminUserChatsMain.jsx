@@ -4,8 +4,21 @@ import UserChatsList from "./UserChatsList";
 import UserChatsHeader from "./UserChatsHeader";
 import useAdminChats from "../../../hooks/useAdminChats";
 import SkeletonUserChatCard from "./SkeletonUserChatCard";
+import PaginationControls from "../admin-global/PaginationControls";
+
 const AdminUserChatsMain = () => {
-  const { interactions, isLoading, equipment, selectedEquipment, searchQuery, handleSearchChange, handleEquipmentChange } = useAdminChats();
+  const { 
+    interactions, 
+    isLoading, 
+    equipment, 
+    selectedEquipment, 
+    searchQuery, 
+    currentPage,
+    pagination,
+    handleSearchChange, 
+    handleEquipmentChange,
+    handlePageChange 
+  } = useAdminChats();
 
   return (
     <main className="flex-1 p-4 md:p-6 md:ml-64 w-full transition-all duration-300 pt-16 md:pt-6">
@@ -27,7 +40,17 @@ const AdminUserChatsMain = () => {
               ))}
             </div>
           ) : interactions?.length > 0 ? (
-            <UserChatsList chats={interactions} />
+            <>
+              <UserChatsList chats={interactions} />
+              <PaginationControls
+                currentPage={currentPage}
+                totalPages={pagination.total_pages}
+                onPageChange={handlePageChange}
+                startIndex={(currentPage - 1) * pagination.limit}
+                endIndex={currentPage * pagination.limit}
+                totalItems={pagination.total}
+              />
+            </>
           ) : searchQuery ? (
             <div className="text-center py-10">
               <p className="text-gray-400">No chats found matching "{searchQuery}"</p>
