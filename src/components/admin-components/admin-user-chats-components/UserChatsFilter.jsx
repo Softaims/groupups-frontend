@@ -1,6 +1,6 @@
 import { Search, Filter } from "lucide-react";
 
-const UserChatsFilter = ({ searchQuery, onSearchChange, selectedEquipment, onEquipmentChange, equipment }) => {
+const UserChatsFilter = ({ searchQuery, onSearchChange, selectedEquipment, handleEquipmentChange, equipment }) => {
   return (
     <div className="flex flex-col md:flex-row gap-4 mb-6">
       <div className="relative flex-1">
@@ -18,11 +18,11 @@ const UserChatsFilter = ({ searchQuery, onSearchChange, selectedEquipment, onEqu
         <select
           className="w-full appearance-none rounded-md bg-[#0c0f12] pl-10 py-2 pr-8 border border-[#2a2e34] focus:outline-none focus:border-[#3CBFAE] text-white"
           value={selectedEquipment}
-          onChange={onEquipmentChange}
+          onChange={handleEquipmentChange}
         >
           <option value="all">All Equipments</option>
           {equipment?.map((equipment) => (
-            <option key={equipment.id} value={equipment.name}>
+            <option key={equipment.id} value={equipment.id}>
               {equipment.name}
             </option>
           ))}

@@ -16,7 +16,7 @@ const AdminUserChatsMain = () => {
             searchQuery={searchQuery}
             onSearchChange={handleSearchChange}
             selectedIndustry={selectedEquipment}
-            onIndustryChange={handleEquipmentChange}
+            handleEquipmentChange={handleEquipmentChange}
             equipment={equipment}
           />
 
