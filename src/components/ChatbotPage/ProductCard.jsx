@@ -55,7 +55,7 @@ const ProductCard = ({ product, index }) => {
               <div className="mt-4 flex space-x-2">
                 <button
                   onClick={() => setIsFlipped(true)}
-                  className="bg-white font-bold text-black px-3 md:px-4 py-2 rounded-xl text-xs md:text-sm"
+                  className="cursor-pointer bg-white font-bold text-black px-3 md:px-4 py-2 rounded-xl text-xs md:text-sm"
                 >
                   Why good fit
                 </button>
@@ -84,7 +84,7 @@ const ProductCard = ({ product, index }) => {
           <div className="relative overflow-hidden bg-[#D9D9D9]/5 rounded-lg p-4 md:p-5 flex flex-col">
             <div className="flex justify-between items-center mb-4">
               <h3 className="font-medium text-base md:text-lg text-white">Why good fit</h3>
-              <button onClick={() => setIsFlipped(false)} className="text-gray-400 hover:text-white transition-colors">
+              <button onClick={() => setIsFlipped(false)} className="cursor-pointer text-gray-400 hover:text-white transition-colors">
                 <X className="w-8 h-8 bg-[#1D403F]/40 rounded-full p-2" />
               </button>
             </div>

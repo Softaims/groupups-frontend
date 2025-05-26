@@ -7,17 +7,17 @@ import SkeletonUserChatCard from "./SkeletonUserChatCard";
 import PaginationControls from "../admin-global/PaginationControls";
 
 const AdminUserChatsMain = () => {
-  const { 
-    interactions, 
-    isLoading, 
-    equipment, 
-    selectedEquipment, 
-    searchQuery, 
+  const {
+    interactions,
+    isLoading,
+    equipment,
+    selectedEquipment,
+    searchQuery,
     currentPage,
     pagination,
-    handleSearchChange, 
+    handleSearchChange,
     handleEquipmentChange,
-    handlePageChange 
+    handlePageChange,
   } = useAdminChats();
 
   return (
@@ -35,7 +35,7 @@ const AdminUserChatsMain = () => {
 
           {isLoading ? (
             <div className="space-y-4">
-              {[1, 2, 3].map((item) => (
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((item) => (
                 <SkeletonUserChatCard key={item} />
               ))}
             </div>
