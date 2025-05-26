@@ -2,7 +2,10 @@ import { create } from "zustand";
 
 export const useChatStore = create((set) => ({
   messages: [],
-  chatCompletionPercent: 0,
+  recommendedProducts: null,
+  isInitiated: false,
+  isLLMLoading: false,
+  isChatCompleted: false,
 
   addMessage: (message) =>
     set((state) => ({
@@ -10,10 +13,15 @@ export const useChatStore = create((set) => ({
     })),
 
   clearMessages: () => set({ messages: [] }),
+
   removeLastMessage: () =>
     set((state) => ({
       messages: state.messages.slice(0, -1),
     })),
 
-  setChatCompletionPercent: (percent) => set(() => ({ chatCompletionPercent: percent })),
+  setRecommendedProducts: (products) => set({ recommendedProducts: products }),
+
+  setIsInitiated: (isInitiated) => set({ isInitiated: isInitiated }),
+  setIsLLMLoading: (isLLMLoading) => set({ isLLMLoading: isLLMLoading }),
+  setIsChatCompleted: (isChatCompleted) => set({ isChatCompleted: isChatCompleted }),
 }));
