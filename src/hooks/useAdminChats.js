@@ -6,7 +6,7 @@ import debounce from "lodash.debounce";
 
 const useAdminChats = () => {
   const { equipment } = useIndustryEquipmentStore();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [interactions, setInteractions] = useState(null);
   const [selectedEquipment, setSelectedEquipment] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
@@ -39,10 +39,6 @@ const useAdminChats = () => {
 
     debouncedFetch(queryString);
   }, [searchQuery, selectedEquipment, debouncedFetch]);
-
-  useEffect(() => {
-    fetchAllInteractions();
-  }, []);
 
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
