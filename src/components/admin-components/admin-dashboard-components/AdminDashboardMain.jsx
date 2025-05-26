@@ -3,14 +3,11 @@ import StatsCard from "./StatsCard";
 import RecentActivityTable from "./RecentActivityTable";
 import IndustryInteractionsChart from "./IndustryInteractionChart";
 import EquipmentInteractionsChart from "./EquipmentInteractionChart";
+import useAdminStats from "../../../hooks/useAdminStats";
+import SkeletonChartHorizontal from "./SkeletonChartHorizontal";
+import SkeletonChartVertical from "./SkeletonChartVertical";
 const AdminDashboardMain = () => {
-  const stats = [
-    { title: "Total Industries", value: "12", icon: Building2, change: "+2 added this month" },
-    { title: "Total Equipment", value: "143", icon: Cpu, change: "+15 added this month" },
-    { title: "Total Questions", value: "87", icon: HelpCircle, change: "+5 added this month" },
-    { title: "Active Chats", value: "24", icon: MessageSquare, change: "+8 since yesterday" },
-  ];
-
+  const { countStats, industryChartData, equipmentChartData } = useAdminStats();
   const activities = [
     {
       id: 1,
@@ -99,16 +96,25 @@ const AdminDashboardMain = () => {
         </div>
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {stats.map((stat, index) => (
+          {countStats?.map((stat, index) => (
             <StatsCard stat={stat} key={index} />
           ))}
         </div>
 
         <div className="flex flex-col space-y-6 md:space-y-0 md:grid md:grid-cols-2 md:gap-6">
-          <IndustryInteractionsChart data={industryData} />
-          <EquipmentInteractionsChart data={equipmentData} />
+          {industryChartData && equipmentChartData ? (
+            <>
+              <IndustryInteractionsChart data={industryChartData} />
+              <EquipmentInteractionsChart data={equipmentChartData} />
+            </>
+          ) : (
+            <>
+              <SkeletonChartVertical />
+              <SkeletonChartHorizontal />
+            </>
+          )}
         </div>
-        <RecentActivityTable activities={activities} />
+        {/* <RecentActivityTable activities={activities} /> */}
       </div>
     </main>
   );
