@@ -34,6 +34,9 @@ const AdminProductsMain = () => {
     handleCloseModal,
     handleCloseDeleteModal,
     setSearchQuery,
+    handleImageChange,
+    previewImage,
+    handleRemoveImage,
   } = useProducts();
 
   return (
@@ -118,6 +121,9 @@ const AdminProductsMain = () => {
           onSubmit={handleSubmit}
           formData={formData}
           onFormChange={handleFormChange}
+          onImageChange={handleImageChange}
+          previewImage={previewImage}
+          onRemoveImage={handleRemoveImage}
           errors={formErrors}
           equipment={selectedEquipment}
           isEditMode={!!selectedProduct}

@@ -3,15 +3,39 @@ import { z } from "zod";
 export const productSchema = z.object({
   name: z.string().min(1, "Product name is required"),
   description: z.string().min(1, "Description is required"),
+  image: z
+    .any()
+    .refine((file) => file instanceof File || typeof file === "string", {
+      message: "Image is required",
+    })
+    .refine(
+      (file) => {
+        if (file instanceof File) {
+          const validTypes = ["image/jpeg", "image/png", "image/jpg"];
+          return validTypes.includes(file.type);
+        }
+        return true;
+      },
+      {
+        message: "Only JPEG, PNG images are allowed",
+      }
+    )
+    .refine(
+      (file) => {
+        if (file instanceof File) {
+          return file.size <= 2 * 1024 * 1024; // 2MB
+        }
+        return true;
+      },
+      {
+        message: "Image size must be less than 2MB",
+      }
+    ),
   price: z.coerce
     .number()
     .min(0, "Price cannot be negative")
     .refine((val) => !isNaN(val), "Price must be a number"),
-  stock: z.coerce
-    .number()
-    .min(0, "Stock cannot be negative")
-    .int("Stock must be a whole number")
-    .refine((val) => !isNaN(val), "Stock must be a number"),
-  is_featured: z.boolean().default(false),
-  equipment_id: z.number().min(1, "Equipment is required"),
-}); 
+  why_good_fit_reason: z.string().min(1, "Why good fit reason is required"),
+
+  equipment_id: z.string().min(1, "Equipment is required"),
+});

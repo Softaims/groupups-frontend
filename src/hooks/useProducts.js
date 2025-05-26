@@ -3,6 +3,7 @@ import { toast } from "react-toastify";
 import { productSchema } from "../validations/adminProductSchema";
 import api from "../utils/apiClient";
 import { useIndustryEquipmentStore } from "../store/industryEquipmentStore";
+import { validateForm } from "../utils/validateForm";
 
 export const useProducts = () => {
   const { industries, equipment } = useIndustryEquipmentStore();
@@ -18,11 +19,12 @@ export const useProducts = () => {
     name: "",
     description: "",
     price: "",
-    stock: "",
-    is_featured: false,
+    why_good_fit_reason: "",
     equipment_id: null,
+    image: null,
   });
   const [formErrors, setFormErrors] = useState({});
+  const [previewImage, setPreviewImage] = useState(null);
 
   const fetchProducts = async (selectedEquipment) => {
     if (!selectedEquipment?.id) {
@@ -31,7 +33,7 @@ export const useProducts = () => {
     }
     try {
       setIsLoading(true);
-      const response = await api.get(`/products/products?equipmentId=${selectedEquipment.id}`);
+      const response = await api.get(`/products/get-by-equipment/${selectedEquipment.id}`);
       setProducts(response.data || []);
     } catch (err) {
       toast.error(err.message || "Something went wrong");
@@ -61,17 +63,40 @@ export const useProducts = () => {
     }
   };
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFormData((prev) => ({
+        ...prev,
+        image: file,
+      }));
+      setPreviewImage(URL.createObjectURL(file));
+      if (formErrors.image) {
+        setFormErrors((prev) => ({ ...prev, image: null }));
+      }
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setPreviewImage(null);
+    setFormData((prev) => ({ ...prev, image: null }));
+    if (formErrors.image) {
+      setFormErrors((prev) => ({ ...prev, image: null }));
+    }
+  };
+
   const handleAddClick = () => {
     setSelectedProduct(null);
     setFormData({
       name: "",
       description: "",
       price: "",
-      stock: "",
-      is_featured: false,
+      why_good_fit_reason: "",
       equipment_id: selectedEquipment.id,
+      image: null,
     });
     setFormErrors({});
+    setPreviewImage(null);
     setIsFormModalOpen(true);
   };
 
@@ -81,10 +106,11 @@ export const useProducts = () => {
       name: product.name,
       description: product.description,
       price: product.price,
-      stock: product.stock,
-      is_featured: product.is_featured,
+      why_good_fit_reason: product.why_good_fit_reason,
       equipment_id: selectedEquipment.id,
+      image: product.image,
     });
+    setPreviewImage(product.image);
     setFormErrors({});
     setIsFormModalOpen(true);
   };
@@ -96,31 +122,49 @@ export const useProducts = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setFormErrors({});
+    const validationData = {
+      ...formData,
+      equipment_id: selectedEquipment.id,
+    };
+    const validationErrors = validateForm(productSchema, validationData);
+    if (Object.keys(validationErrors).length > 0) {
+      setFormErrors(validationErrors);
+      return;
+    }
     try {
-      // Validate with Zod
-      const validatedData = productSchema.parse(formData);
       setIsLoading(true);
-      
+      const formDataToSend = new FormData();
+      Object.keys(formData).forEach((key) => {
+        if (key === "image" && formData[key] instanceof File) {
+          formDataToSend.append(key, formData[key]);
+        } else if (key !== "image") {
+          formDataToSend.append(key, formData[key]);
+        }
+      });
+      let response;
       if (selectedProduct) {
-        await api.put(`/products/products/${selectedProduct.id}`, validatedData);
+        response = await api.put(`/products/update-product/${selectedProduct.id}`, formDataToSend, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+        setProducts((prev) => prev.map((p) => (p.id === selectedProduct.id ? response.data : p)));
         toast.success("Product updated successfully");
       } else {
-        await api.post("/products/products", validatedData);
+        response = await api.post("/products/create-product", formDataToSend, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+        setProducts((prev) => [...(prev || []), response.data]);
         toast.success("Product added successfully");
       }
-      setIsFormModalOpen(false);
-      fetchProducts(selectedEquipment);
-    } catch (err) {
-      if (err.errors) {
-        // Handle Zod validation errors
-        const errors = {};
-        err.errors.forEach((error) => {
-          errors[error.path[0]] = error.message;
-        });
-        setFormErrors(errors);
-      } else {
-        toast.error(err.message || "Something went wrong");
-      }
+
+      handleCloseModal();
+    } catch (error) {
+      toast.error(error?.message || "Something went wrong");
+      console.error("Error saving product:", error);
     } finally {
       setIsLoading(false);
     }
@@ -129,7 +173,7 @@ export const useProducts = () => {
   const handleDeleteProduct = async () => {
     try {
       setIsLoading(true);
-      await api.delete(`/products/products/${selectedProduct.id}`);
+      await api.delete(`/products/delete-product/${selectedProduct.id}`);
       toast.success("Product deleted successfully");
       setIsDeleteModalOpen(false);
       fetchProducts(selectedEquipment);
@@ -143,6 +187,15 @@ export const useProducts = () => {
   const handleCloseModal = () => {
     setIsFormModalOpen(false);
     setFormErrors({});
+    setPreviewImage(null);
+    setFormData({
+      name: "",
+      description: "",
+      price: "",
+      why_good_fit_reason: "",
+      equipment_id: null,
+      image: null,
+    });
   };
 
   const handleCloseDeleteModal = () => {
@@ -161,9 +214,12 @@ export const useProducts = () => {
     formData,
     formErrors,
     searchQuery,
+    previewImage,
     handleIndustrySelect,
     handleEquipmentSelect,
     handleFormChange,
+    handleImageChange,
+    handleRemoveImage,
     handleAddClick,
     handleEditClick,
     handleDeleteClick,
@@ -173,4 +229,4 @@ export const useProducts = () => {
     handleCloseDeleteModal,
     setSearchQuery,
   };
-}; 
+};
