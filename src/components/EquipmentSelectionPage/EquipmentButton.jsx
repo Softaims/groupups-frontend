@@ -1,5 +1,3 @@
-import React from "react";
-
 const EquipmentButton = ({ equipment, selectedEquipment, setSelectedEquipment }) => {
   return (
     <button

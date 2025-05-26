@@ -4,20 +4,37 @@ import socket from "../lib/socket";
 import { useSocketStore } from "../store/socketStore";
 
 export const useChatSocket = (selectedEquipment) => {
-  const { messages, addMessage, clearMessages, setChatCompletionPercent, removeLastMessage } = useChatStore();
+  const {
+    messages,
+    addMessage,
+    removeLastMessage,
+    setRecommendedProducts,
+    isInitiated,
+    setIsInitiated,
+    setIsChatCompleted,
+    setIsLLMLoading,
+  } = useChatStore();
   const isConnected = useSocketStore((state) => state.isConnected);
 
   useEffect(() => {
-    if (!selectedEquipment || !isConnected) return;
-    clearMessages();
+    if (!selectedEquipment || !isConnected || isInitiated) return;
     socket.emit("sendMessage", { type: selectedEquipment.id, messages: [] });
-  }, [selectedEquipment, isConnected, clearMessages]);
+    setIsInitiated(true);
+    setIsLLMLoading(true);
+    console.log("message sent");
+  }, [selectedEquipment, isConnected, isInitiated, setIsInitiated, setIsLLMLoading]);
 
   useEffect(() => {
     const handleReceiveMessage = (message) => {
+      const parsedMessage = JSON.parse(message.content);
+      console.log("parsed", parsedMessage);
       removeLastMessage();
-      addMessage({ role: message.role, content: message.content });
-      setChatCompletionPercent(message.progress);
+      addMessage(message);
+      setIsLLMLoading(false);
+      setIsChatCompleted(parsedMessage.content?.isQuestionsCompleted);
+      if (parsedMessage.content?.isQuestionsCompleted) {
+        setRecommendedProducts(parsedMessage.content?.recommendedProducts || []);
+      }
     };
 
     socket.on("receiveMessage", handleReceiveMessage);
@@ -25,7 +42,7 @@ export const useChatSocket = (selectedEquipment) => {
     return () => {
       socket.off("receiveMessage", handleReceiveMessage);
     };
-  }, [addMessage]);
+  }, [addMessage, removeLastMessage, setRecommendedProducts, setIsLLMLoading, setIsChatCompleted]);
 
   return { messages };
 };

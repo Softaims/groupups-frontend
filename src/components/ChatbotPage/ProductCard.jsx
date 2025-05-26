@@ -5,7 +5,7 @@ import GoodFitIcon from "../../../public/icons/GoodFitIcon";
 import FOVIcon from "../../../public/icons/FOVIcon";
 import BudgetIcon from "../../../public/icons/BudgetIcon";
 
-const ProductCard = ({ product, whyGoodFit }) => {
+const ProductCard = ({ product, index }) => {
   const [isFlipped, setIsFlipped] = useState(false);
 
   return (
@@ -17,39 +17,39 @@ const ProductCard = ({ product, whyGoodFit }) => {
             <div className="flex items-center justify-center mb-4 md:mb-0 md:mr-6">
               <div className="bg-[#041018] rounded-xl p-2 relative border border-[#FFFFFF]/10 flex items-center justify-center">
                 <div className="absolute top-[-4px] left-[-4px] bg-[#1a2a2f] text-white rounded-full w-5 h-5 md:w-6 md:h-6 flex items-center justify-center text-xs">
-                  {product.id}
+                  {index}
                 </div>
-                {product.image && <img src="/images/dummy_dental_picture.png" alt={product.title} className="w-full md:w-50 md:h-50" />}
-                {product.logo && <div className="absolute bottom-2 right-2 text-center text-xs text-gray-400">{product.logo}</div>}
+                {product.image && <img src={product.image} alt={product.name} className="w-full md:w-50 md:h-50" />}
+                {/* {product.logo && <div className="absolute bottom-2 right-2 text-center text-xs text-gray-400">{product.image}</div>} */}
               </div>
             </div>
 
             <div className="flex-1">
               <div className="flex justify-between items-start mb-3">
-                <h3 className="font-medium text-[#FFFFFF] mr-6 text-sm 2xl:text-lg">{product.title}</h3>
+                <h3 className="font-medium text-[#FFFFFF] mr-6 text-sm 2xl:text-lg">{product.name}</h3>
               </div>
 
               <div className="space-y-2 text-xs md:text-sm text-gray-400">
-                <div className="flex items-start space-x-2">
+                <div className="flex items-center space-x-2">
                   <div className="pt-0.5">
                     <FOVIcon className="h-4 w-4 md:h-5 md:w-5 flex-shrink-0" />
                   </div>
-                  <p className="mr-6 text-wrap break-words">{product.fov}</p>
+                  <p className="mr-6 text-wrap break-words">Description: {product.description}</p>
                 </div>
 
                 <div className="flex items-start space-x-2">
                   <div className="pt-0.5">
                     <BudgetIcon className="h-4 w-4 md:h-5 md:w-5 flex-shrink-0" />
                   </div>
-                  <p className="mr-6 text-wrap break-words">{product.budget}</p>
+                  <p className="mr-6 text-wrap break-words">Price: {product.price}</p>
                 </div>
 
-                <div className="flex items-start space-x-2">
+                {/* <div className="flex items-start space-x-2">
                   <div className="pt-0.5">
                     <FOVIcon className="h-4 w-4 md:h-5 md:w-5 flex-shrink-0" />
                   </div>
-                  <p className="mr-6 text-wrap break-words">{product.warranty}</p>
-                </div>
+                  <p className="mr-6 text-wrap break-words">{product.price}</p>
+                </div> */}
               </div>
 
               <div className="mt-4 flex space-x-2">
@@ -59,9 +59,9 @@ const ProductCard = ({ product, whyGoodFit }) => {
                 >
                   Why good fit
                 </button>
-                <button className="bg-[#4aa6a4] font-bold text-white px-3 md:px-4 py-2 rounded-xl text-xs md:text-sm hover:bg-[#3d8d8b] transition-colors">
+                {/* <button className="bg-[#4aa6a4] font-bold text-white px-3 md:px-4 py-2 rounded-xl text-xs md:text-sm hover:bg-[#3d8d8b] transition-colors">
                   View Demo
-                </button>
+                </button> */}
               </div>
             </div>
 
@@ -89,12 +89,12 @@ const ProductCard = ({ product, whyGoodFit }) => {
               </button>
             </div>
             <div>
-              <p className="text-[#A0A0A0] text-xs md:text-sm leading-relaxed">{whyGoodFit}</p>
+              <p className="text-[#A0A0A0] text-xs md:text-sm leading-relaxed">{product.why_good_fit_reason}</p>
             </div>
             <div className="mt-4 flex justify-end">
-              <button className="bg-[#4AA6A4] text-white px-3 md:px-4 py-1.5 md:py-2 rounded-lg text-xs md:text-sm hover:bg-[#3d8d8b] transition-colors">
+              {/* <button className="bg-[#4AA6A4] text-white px-3 md:px-4 py-1.5 md:py-2 rounded-lg text-xs md:text-sm hover:bg-[#3d8d8b] transition-colors">
                 View Demo
-              </button>
+              </button> */}
             </div>
           </div>
         </div>
