@@ -1,8 +1,8 @@
 import { z } from "zod";
 
 export const productSchema = z.object({
-  name: z.string().min(1, "Product name is required"),
-  description: z.string().min(1, "Description is required"),
+  name: z.string().min(1, "Product name is required").max(100, "Product name should be less than 100 characters"),
+  description: z.string().min(10, "Description must be atleast 10 characters"),
   image: z
     .any()
     .refine((file) => file instanceof File || typeof file === "string", {
