@@ -6,6 +6,7 @@ import AdminDashboardPage from "../pages/admin/AdminDashboardPage";
 import AdminIndustriesPage from "../pages/admin/AdminIndustriesPage";
 import AdminEquipmentPage from "../pages/admin/AdminEquipmentPage";
 import AdminQuestionsPage from "../pages/admin/AdminQuestionsPage";
+import AdminProductsPage from "../pages/admin/AdminProductsPage";
 import AdminUserChatsPage from "../pages/admin/AdminUserChatsPage";
 import AdminUserChatDetailsPage from "../pages/admin/AdminUserChatDetailsPage";
 import NotFoundPage from "../pages/NotFoundPage";
@@ -20,6 +21,7 @@ const AdminRoutes = () => (
     <Route path="industries" element={<ProtectedRoute children={<AdminIndustriesPage />} />} />
     <Route path="equipment" element={<ProtectedRoute children={<AdminEquipmentPage />} />} />
     <Route path="questions" element={<ProtectedRoute children={<AdminQuestionsPage />} />} />
+    <Route path="products" element={<ProtectedRoute children={<AdminProductsPage />} />} />
     <Route path="chats" element={<ProtectedRoute children={<AdminUserChatsPage />} />} />
     <Route path="chats/:interactionId" element={<ProtectedRoute children={<AdminUserChatDetailsPage />} />} />
     <Route path="*" element={<NotFoundPage />} />
