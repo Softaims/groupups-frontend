@@ -1,7 +1,7 @@
 import ProductCard from "./ProductCard";
 import SkeletonProductCard from "./SkeletonProductCard";
 import { useChatStore } from "../../store/chatStore";
-
+import EmptyRecommendedProductsState from "./EmptyRecommendedProductsState";
 const ProductRecommendationInterface = () => {
   const recommendedProducts = useChatStore((state) => state.recommendedProducts);
   return (
@@ -12,9 +12,13 @@ const ProductRecommendationInterface = () => {
             {recommendedProducts ? "Here are the products that are the right fit for your needs." : `Analyzing your needs`}
           </h2>
 
-          {recommendedProducts
-            ? recommendedProducts.map((product, index) => <ProductCard key={product.id} index={index + 1} product={product} />)
-            : [1, 2, 3].map((item) => <SkeletonProductCard key={item} />)}
+          {!recommendedProducts ? (
+            [1, 2, 3].map((item) => <SkeletonProductCard key={item} />)
+          ) : recommendedProducts?.length == 0 ? (
+            <EmptyRecommendedProductsState />
+          ) : (
+            recommendedProducts.map((product, index) => <ProductCard key={product.id} index={index + 1} product={product} />)
+          )}
         </div>
       </div>
     </div>

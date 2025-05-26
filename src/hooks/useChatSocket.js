@@ -28,13 +28,13 @@ export const useChatSocket = (selectedEquipment) => {
     const handleReceiveMessage = (message) => {
       const parsedMessage = JSON.parse(message.content);
       console.log("parsed", parsedMessage);
-      if (parsedMessage) {
-        setRecommendedProducts(parsedMessage.content?.recommendedProducts);
-      }
       removeLastMessage();
       addMessage(message);
       setIsLLMLoading(false);
       setIsChatCompleted(parsedMessage.content?.isQuestionsCompleted);
+      if (parsedMessage.content?.isQuestionsCompleted) {
+        setRecommendedProducts(parsedMessage.content?.recommendedProducts || []);
+      }
     };
 
     socket.on("receiveMessage", handleReceiveMessage);
