@@ -6,7 +6,7 @@ import { useIndustryEquipmentStore } from "../store/industryEquipmentStore";
 import { validateForm } from "../utils/validateForm";
 
 export const useProducts = () => {
-  const { industries, equipment } = useIndustryEquipmentStore();
+  const { industries } = useIndustryEquipmentStore();
   const [selectedIndustry, setSelectedIndustry] = useState(null);
   const [selectedEquipment, setSelectedEquipment] = useState(null);
   const [products, setProducts] = useState(null);
@@ -57,7 +57,6 @@ export const useProducts = () => {
 
   const handleFormChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    // Clear error when field is modified
     if (formErrors[field]) {
       setFormErrors((prev) => ({ ...prev, [field]: null }));
     }
@@ -86,6 +85,10 @@ export const useProducts = () => {
   };
 
   const handleAddClick = () => {
+    if (products?.length >= 3) {
+      toast.warning("You cannot add more than 3 products for an equipment");
+      return;
+    }
     setSelectedProduct(null);
     setFormData({
       name: "",

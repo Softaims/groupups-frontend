@@ -1,69 +1,69 @@
-import { Edit, Trash2, Package } from "lucide-react";
+import { Edit, Trash2, Package, DollarSign, Info } from "lucide-react";
 
 const ProductsList = ({ products, onEdit, onDelete }) => {
   return (
-    <div className="space-y-3">
-      {products.map((product, index) => (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {products.map((product) => (
         <div
           key={product.id}
-          className="bg-[#0c0f12] border border-[#2a2e34] rounded-md overflow-hidden"
+          className="bg-[#0c0f12] border border-[#2a2e34] rounded-lg overflow-hidden hover:border-[#3CBFAE] transition-colors"
         >
-          <div className="flex items-stretch">
-            <div className={`w-1.5 bg-blue-500`}></div>
-            <div className="flex-grow p-3 flex items-start gap-3">
-              {product.image ? (
-                <img 
-                  src={product.image} 
-                  alt={product.name}
-                  className="w-12 h-12 object-cover rounded-md"
-                />
-              ) : (
-                <div className="flex items-center justify-center p-1 mt-1">
-                  <Package className="h-5 w-5 text-[#3CBFAE]" />
-                </div>
-              )}
-              <div className="flex-grow">
-                <div className="flex items-center gap-2">
-                  <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[#1a1e24] text-xs font-medium text-white">
-                    {index + 1}
-                  </span>
-                  <h4 className="font-medium text-white">{product.name}</h4>
-                </div>
-
-                <div className="mt-2 flex items-center gap-3">
-                  <div className="flex items-center gap-1 bg-[#1a1e24] px-2 py-1 rounded text-xs">
-                    <span className="text-gray-300">${product.price}</span>
-                  </div>
-                </div>
-
-                {product.description && (
-                  <p className="mt-2 text-sm text-gray-400 line-clamp-2">{product.description}</p>
-                )}
-
-                {product.why_good_fit_reason && (
-                  <div className="mt-2">
-                    <p className="text-xs font-medium text-[#3CBFAE]">Why Good Fit:</p>
-                    <p className="mt-1 text-sm text-gray-400 line-clamp-2">{product.why_good_fit_reason}</p>
-                  </div>
-                )}
+          {/* Product Header with Image */}
+          <div className="relative h-48 bg-[#1a1e24]">
+            {product.image ? (
+              <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-[#1a1e24]">
+                <Package className="h-16 w-16 text-[#3CBFAE] opacity-50" />
               </div>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => onEdit(product)}
-                  className="p-1.5 rounded-md hover:bg-[#1a1e24] transition-colors"
-                  title="Edit Product"
-                >
-                  <Edit className="h-4 w-4 text-[#3CBFAE]" />
-                </button>
-                <button
-                  onClick={() => onDelete(product)}
-                  className="p-1.5 rounded-md hover:bg-[#1a1e24] transition-colors"
-                  title="Delete Product"
-                >
-                  <Trash2 className="h-4 w-4 text-red-500" />
-                </button>
+            )}
+            {/* Action Buttons */}
+            <div className="absolute top-2 right-2 flex gap-2">
+              <button
+                onClick={() => onEdit(product)}
+                className="p-2 rounded-md bg-[#1a1e24] hover:bg-[#2a2e34] transition-colors"
+                title="Edit Product"
+              >
+                <Edit className="h-4 w-4 text-[#3CBFAE]" />
+              </button>
+              <button
+                onClick={() => onDelete(product)}
+                className="p-2 rounded-md bg-[#1a1e24] hover:bg-[#2a2e34] transition-colors"
+                title="Delete Product"
+              >
+                <Trash2 className="h-4 w-4 text-red-500" />
+              </button>
+            </div>
+          </div>
+
+          {/* Product Details */}
+          <div className="p-4 space-y-4">
+            {/* Name and Price */}
+            <div className="flex items-start justify-between gap-4">
+              <h3 className="text-lg font-medium text-white flex-1">{product.name}</h3>
+              <div className="flex items-center gap-1 px-3 py-1 bg-[#1a1e24] rounded-full">
+                <DollarSign className="h-4 w-4 text-[#3CBFAE]" />
+                <span className="text-white font-medium">{product.price}</span>
               </div>
             </div>
+
+            {/* Description */}
+            {product.description && (
+              <div className="space-y-1">
+                <p className="text-sm text-gray-400 line-clamp-2">{product.description}</p>
+              </div>
+            )}
+
+            {/* Why Good Fit Reason */}
+            {product.why_good_fit_reason && (
+              <div className="space-y-1 pt-2 border-t border-[#2a2e34]">
+                <div className="flex items-center gap-1 text-[#3CBFAE]">
+                  <Info className="h-4 w-4" />
+                  <span className="text-sm font-medium">Why Good Fit</span>
+                </div>
+                <p className="text-sm text-gray-400 line-clamp-2">{product.why_good_fit_reason}</p>
+              </div>
+            )}
           </div>
         </div>
       ))}
@@ -71,4 +71,4 @@ const ProductsList = ({ products, onEdit, onDelete }) => {
   );
 };
 
-export default ProductsList; 
+export default ProductsList;

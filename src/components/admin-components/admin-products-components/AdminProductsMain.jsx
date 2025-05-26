@@ -88,15 +88,8 @@ const AdminProductsMain = () => {
                   </div>
                 ) : products?.length > 0 ? (
                   <div className="mb-2">
-                    <h3 className="text-white font-medium mb-3">
-                      Products ({products.length})
-                    </h3>
-                    <ProductsList
-                      products={products}
-                      onEdit={handleEditClick}
-                      onDelete={handleDeleteClick}
-                      isLoading={isLoading}
-                    />
+                    <h3 className="text-white font-medium mb-3">Products ({products.length})</h3>
+                    <ProductsList products={products} onEdit={handleEditClick} onDelete={handleDeleteClick} isLoading={isLoading} />
                   </div>
                 ) : searchQuery ? (
                   <div className="text-center py-10">
@@ -147,4 +140,4 @@ const AdminProductsMain = () => {
   );
 };
 
-export default AdminProductsMain; 
+export default AdminProductsMain;
