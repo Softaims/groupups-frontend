@@ -39,6 +39,7 @@ const QuestionForm = ({
               Question Type
             </label>
             <select
+              disabled={true}
               id="question_type"
               className={`w-full rounded-md bg-[#0c0f12] py-2 px-3 border ${
                 errors?.question_type ? "border-red-500" : "border-[#2a2e34]"

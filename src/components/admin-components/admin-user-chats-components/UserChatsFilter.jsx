@@ -7,7 +7,7 @@ const UserChatsFilter = ({ searchQuery, onSearchChange, selectedEquipment, handl
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
         <input
           type="search"
-          placeholder="Search by name or email..."
+          placeholder="Search by email..."
           className="w-full rounded-md bg-[#0c0f12] pl-10 py-2 border border-[#2a2e34] focus:outline-none focus:border-[#3CBFAE] text-white"
           value={searchQuery}
           onChange={onSearchChange}

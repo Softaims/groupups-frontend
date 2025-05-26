@@ -127,7 +127,7 @@ const QuestionsList = ({ questions, onEdit, onDelete, onReorder }) => {
               <div className="flex-grow">
                 <div className="flex items-center gap-2">
                   <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[#1a1e24] text-xs font-medium text-white">
-                    {question.priority}
+                    {index + 1}
                   </span>
                   <h4 className="font-medium text-white">{question.question_text}</h4>
                   {question.required && <span className="bg-red-900/30 text-red-400 text-xs px-2 py-0.5 rounded">Required</span>}
