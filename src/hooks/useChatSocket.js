@@ -4,25 +4,17 @@ import socket from "../lib/socket";
 import { useSocketStore } from "../store/socketStore";
 
 export const useChatSocket = (selectedEquipment) => {
-  const {
-    messages,
-    addMessage,
-    removeLastMessage,
-    setRecommendedProducts,
-    isInitiated,
-    setIsInitiated,
-    setIsChatCompleted,
-    setIsLLMLoading,
-  } = useChatStore();
+  const { messages, addMessage, removeLastMessage, setRecommendedProducts, setIsChatCompleted, setIsLLMLoading, clearMessages } =
+    useChatStore();
   const isConnected = useSocketStore((state) => state.isConnected);
 
   useEffect(() => {
-    if (!selectedEquipment || !isConnected || isInitiated) return;
+    if (!selectedEquipment || !isConnected) return;
+    clearMessages();
     socket.emit("sendMessage", { type: selectedEquipment.id, messages: [] });
-    setIsInitiated(true);
     setIsLLMLoading(true);
     console.log("message sent");
-  }, [selectedEquipment, isConnected, isInitiated, setIsInitiated, setIsLLMLoading]);
+  }, [selectedEquipment, isConnected, setIsLLMLoading, clearMessages]);
 
   useEffect(() => {
     const handleReceiveMessage = (message) => {

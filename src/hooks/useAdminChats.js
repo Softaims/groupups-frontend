@@ -22,9 +22,9 @@ const useAdminChats = () => {
     try {
       setIsLoading(true);
       const response = await api.get(`/chatbot/interactions${query}`);
-      setInteractions(response.data?.interactions || []);
+      setInteractions(response?.data?.interactions || []);
       setPagination(
-        response.data?.pagination || {
+        response?.data?.pagination || {
           total: 0,
           page: 1,
           limit: 10,
