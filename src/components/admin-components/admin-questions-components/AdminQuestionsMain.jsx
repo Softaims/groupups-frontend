@@ -39,6 +39,9 @@ const AdminQuestionsMain = () => {
     handleCloseDeleteModal,
     handleReorderQuestions,
     setSearchQuery,
+    addContextItem,
+    removeContextItem,
+    updateContextItem,
   } = useQuestions();
 
   return (
@@ -132,6 +135,9 @@ const AdminQuestionsMain = () => {
           equipment={selectedEquipment}
           isEditMode={!!selectedQuestion}
           isLoading={isLoading}
+          addContextItem={addContextItem}
+          removeContextItem={removeContextItem}
+          updateContextItem={updateContextItem}
         />
       )}
 

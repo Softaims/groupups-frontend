@@ -23,6 +23,7 @@ export const useQuestions = () => {
     options: [{ id: 1, text: "" }],
     allowMultipleSelection: false,
     equipment_id: null,
+    context: [],
   });
   const [formErrors, setFormErrors] = useState({});
 
@@ -34,6 +35,7 @@ export const useQuestions = () => {
     try {
       setIsLoading(true);
       const response = await api.get(`/questions/questions?equipmentId=${selectedEquipment.id}`);
+      console.log('Fetched questions:', response.data);
       setQuestions(response.data || []);
     } catch (err) {
       toast.error(err.message || "Something went wrong");
@@ -121,6 +123,27 @@ export const useQuestions = () => {
     }
   };
 
+  const addContextItem = () => {
+    setFormData((prev) => ({
+      ...prev,
+      context: [...prev.context, ""],
+    }));
+  };
+
+  const removeContextItem = (index) => {
+    setFormData((prev) => ({
+      ...prev,
+      context: prev.context.filter((_, i) => i !== index),
+    }));
+  };
+
+  const updateContextItem = (index, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      context: prev.context.map((item, i) => (i === index ? value : item)),
+    }));
+  };
+
   const handleAddClick = () => {
     setSelectedQuestion(null);
     setFormData({
@@ -131,6 +154,7 @@ export const useQuestions = () => {
       options: [{ id: 1, text: "" }],
       allowMultipleSelection: false,
       equipment_id: selectedEquipment.id,
+      context: [],
     });
     setFormErrors({});
     setIsFormModalOpen(true);
@@ -147,6 +171,7 @@ export const useQuestions = () => {
       options: question.question_type === "multiple_choice" ? [...(question.options || [])] : [{ id: 1, text: "" }],
       allowMultipleSelection: question.question_type === "multiple_choice" ? question.allowMultipleSelection || false : false,
       equipment_id: selectedEquipment.id,
+      context: question.context || [],
     });
     setIsFormModalOpen(true);
   };
@@ -214,6 +239,7 @@ export const useQuestions = () => {
       options: [{ id: 1, text: "" }],
       allowMultipleSelection: false,
       equipment_id: null,
+      context: [],
     });
     setFormErrors({});
   };
@@ -271,5 +297,8 @@ export const useQuestions = () => {
     handleCloseDeleteModal,
     handleReorderQuestions,
     setSearchQuery,
+    addContextItem,
+    removeContextItem,
+    updateContextItem,
   };
 };
