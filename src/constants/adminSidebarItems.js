@@ -8,5 +8,5 @@ export const adminSidebarItems = [
   { icon: Brain, label: "AI Snippets", path: "/admin/ai-snippets" },
   { icon: Package, label: "Products", path: "/admin/products" },
   { icon: MessageSquare, label: "User Chats", path: "/admin/chats" },
-  { icon: User, label: "Profile", path: "/admin/profile" },
+  // { icon: User, label: "Profile", path: "/admin/profile" },
 ];
