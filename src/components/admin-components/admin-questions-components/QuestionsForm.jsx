@@ -1,3 +1,4 @@
+import React from "react";
 import { X, Plus, Trash2, Youtube } from "lucide-react";
 
 const QuestionForm = ({
@@ -14,12 +15,15 @@ const QuestionForm = ({
   equipment,
   isEditMode,
   isLoading,
+  addContextItem,
+  removeContextItem,
+  updateContextItem,
 }) => {
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 overflow-y-auto">
-      <div className="bg-[#1a1e24] rounded-lg border border-[#2a2e34] p-6 w-full max-w-2xl my-8 mx-4">
+      <div className="bg-[#1a1e24] rounded-lg border border-[#2a2e34] p-6 w-full max-w-2xl my-8 mx-4 max-h-[90vh] flex flex-col">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold text-white">{isEditMode ? "Edit Question" : "Add New Question"}</h2>
           <button onClick={onClose} className="text-gray-400 hover:text-white">
@@ -33,7 +37,7 @@ const QuestionForm = ({
           </p>
         </div>
 
-        <form onSubmit={onSubmit}>
+        <form onSubmit={onSubmit} className="flex-1 overflow-y-auto pr-2">
           <div className="mb-4">
             <label htmlFor="question_type" className="block mb-2 text-sm font-medium text-gray-300">
               Question Type
@@ -160,21 +164,66 @@ const QuestionForm = ({
             </label>
           </div>
 
-          <div className="flex justify-end gap-2">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 rounded-md bg-[#0c0f12] border border-[#2a2e34] text-white hover:bg-[#2a2e34] transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-2 rounded-md bg-[#3CBFAE] text-white hover:bg-[#35a89a] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              disabled={isLoading}
-            >
-              {isLoading ? "Saving..." : isEditMode ? "Save Changes" : "Add Question"}
-            </button>
+          {/* Context Items */}
+          <div className="space-y-4 mb-6">
+            <div className="flex items-center justify-between">
+              <label className="block text-sm font-medium text-gray-300">
+                Context Items
+              </label>
+              <button
+                type="button"
+                onClick={addContextItem}
+                className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-white bg-[#3CBFAE] hover:bg-[#35a89a] rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#3CBFAE] transition-colors"
+              >
+                <Plus className="h-4 w-4 mr-1" />
+                Add Context
+              </button>
+            </div>
+            <div className="space-y-3">
+              {formData.context.map((item, index) => (
+                <div key={index} className="flex gap-2">
+                  <textarea
+                    value={item}
+                    onChange={(e) => updateContextItem(index, e.target.value)}
+                    placeholder="Enter context item"
+                    rows={2}
+                    className="flex-1 min-w-0 block w-full px-3 py-2 text-sm bg-[#0c0f12] border border-[#2a2e34] rounded-md focus:outline-none focus:border-[#3CBFAE] text-white resize-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeContextItem(index)}
+                    className="inline-flex items-center p-2 text-sm font-medium text-gray-400 hover:text-red-500 focus:outline-none transition-colors"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
+              ))}
+            </div>
+            {errors?.context && (
+              <p className="mt-1 text-sm text-red-500">{errors.context}</p>
+            )}
+            <p className="text-sm text-gray-400">
+              Add context items that will help the AI understand the question better.
+            </p>
+          </div>
+
+          <div className="sticky bottom-0 bg-[#1a1e24] pt-4 border-t border-[#2a2e34]">
+            <div className="flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2 rounded-md bg-[#0c0f12] border border-[#2a2e34] text-white hover:bg-[#2a2e34] transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="px-4 py-2 rounded-md bg-[#3CBFAE] text-white hover:bg-[#35a89a] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={isLoading}
+              >
+                {isLoading ? "Saving..." : isEditMode ? "Save Changes" : "Add Question"}
+              </button>
+            </div>
           </div>
         </form>
       </div>

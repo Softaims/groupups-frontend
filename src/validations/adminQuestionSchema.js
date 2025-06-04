@@ -37,6 +37,8 @@ const baseQuestionSchema = z.object({
     .min(1, {
       message: "Question text cannot be empty",
     }),
+
+  context: z.array(z.string().min(1, "Context item cannot be empty")).default([]),
 });
 
 export const simpleQuestionSchema = baseQuestionSchema.extend({

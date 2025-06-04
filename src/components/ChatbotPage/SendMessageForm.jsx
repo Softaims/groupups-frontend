@@ -16,7 +16,10 @@ const SendMessageForm = () => {
   const sendMessage = (e) => {
     e.preventDefault();
     if (inputValue.trim()) {
-      socket?.emit("sendMessage", { type: equipmentId, messages: [...messages, { role: "user", content: inputValue }] });
+      socket?.emit("sendMessage", {
+        type: equipmentId,
+        messages: [...messages, { role: "user", content: JSON.stringify({ content: { responseText: inputValue } }) }],
+      });
       setIsLLMLoading(true);
       addMessage({ role: "user", content: JSON.stringify({ content: { responseText: inputValue } }) });
       addMessage({ role: "assistant", content: JSON.stringify({ content: { responseText: "loading" } }) });
