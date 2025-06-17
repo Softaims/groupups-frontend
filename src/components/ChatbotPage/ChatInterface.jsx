@@ -11,6 +11,8 @@ import { useChatSocket } from "../../hooks/useChatSocket";
 
 const ChatInterface = () => {
   const messages = useChatStore((state) => state.messages);
+  const streamingMessageId = useChatStore((state) => state.streamingMessageId);
+  const setStreamingMessageId = useChatStore((state) => state.setStreamingMessageId);
   const isConnected = useSocketStore((state) => state.isConnected);
   const connectionStatus = useSocketStore((state) => state.connectionStatus);
   const [equipment, setEquipment] = useState(null);
@@ -37,6 +39,19 @@ const ChatInterface = () => {
     chatScrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  // Set streaming for the last assistant message when it's added
+  useEffect(() => {
+    if (messages.length > 0) {
+      const lastMessage = messages[messages.length - 1];
+      if (lastMessage.role === "assistant") {
+        const parsedMessage = JSON.parse(lastMessage.content);
+        if (parsedMessage.content.responseText !== "loading") {
+          setStreamingMessageId(lastMessage.id || messages.length - 1);
+        }
+      }
+    }
+  }, [messages, setStreamingMessageId]);
+
   useChatSocket(equipment);
 
   if (!loading && !equipment) {
@@ -55,7 +70,9 @@ const ChatInterface = () => {
           <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 md:space-y-6">
             {messages?.length > 0 ? (
               messages.map((message, index) => {
-                return <Message key={index} message={message} />;
+                const messageId = message.id || index;
+                const isStreaming = streamingMessageId === messageId;
+                return <Message key={index} message={message} isStreaming={isStreaming} />;
               })
             ) : (
               <SkeletonMessage />

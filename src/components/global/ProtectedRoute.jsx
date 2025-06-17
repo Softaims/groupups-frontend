@@ -8,15 +8,13 @@ import { useIndustryEquipmentStore } from "../../store/industryEquipmentStore";
 const ProtectedRoute = ({ children }) => {
   const { user, setUser, clearUser } = useUserStore();
   const navigate = useNavigate();
-  const { fetchIndustries, fetchEquipment } = useIndustryEquipmentStore();
+  const { fetchIndustries, fetchEquipment, industries, equipment } = useIndustryEquipmentStore();
 
   useEffect(() => {
     const initialize = async () => {
       try {
         const response = await api.get("/get-me");
         setUser(response.data);
-        fetchIndustries();
-        fetchEquipment();
       } catch {
         clearUser();
         navigate("/admin/login");
@@ -26,7 +24,11 @@ const ProtectedRoute = ({ children }) => {
     if (!user) {
       initialize();
     }
-  }, [user, setUser, clearUser, navigate, fetchIndustries, fetchEquipment]);
+    if (user && (!industries || !equipment)) {
+      fetchIndustries();
+      fetchEquipment();
+    }
+  }, [user, setUser, clearUser, navigate, fetchIndustries, fetchEquipment, industries, equipment]);
 
   if (user) {
     return children;

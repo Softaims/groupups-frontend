@@ -10,11 +10,16 @@ export const useChatSocket = (selectedEquipment) => {
 
   useEffect(() => {
     if (!selectedEquipment || !isConnected) return;
-    clearMessages();
     socket.emit("sendMessage", { type: selectedEquipment.id, messages: [] });
     setIsLLMLoading(true);
     console.log("message sent");
-  }, [selectedEquipment, isConnected, setIsLLMLoading, clearMessages]);
+  }, [selectedEquipment, isConnected, setIsLLMLoading, clearMessages, messages]);
+
+  useEffect(() => {
+    return () => {
+      clearMessages();
+    };
+  }, [clearMessages]);
 
   useEffect(() => {
     const handleReceiveMessage = (message) => {

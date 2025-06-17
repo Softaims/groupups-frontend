@@ -10,6 +10,7 @@ import AdminProductsPage from "../pages/admin/AdminProductsPage";
 import AdminUserChatsPage from "../pages/admin/AdminUserChatsPage";
 import AdminUserChatDetailsPage from "../pages/admin/AdminUserChatDetailsPage";
 import AdminTrainingAISnippetsPage from "../pages/admin/AdminTrainingAISnippetsPage";
+import AdminProfilePage from "../pages/admin/AdminProfilePage";
 import NotFoundPage from "../pages/NotFoundPage";
 import ProtectedRoute from "../components/global/ProtectedRoute";
 
@@ -26,6 +27,7 @@ const AdminRoutes = () => (
     <Route path="products" element={<ProtectedRoute children={<AdminProductsPage />} />} />
     <Route path="chats" element={<ProtectedRoute children={<AdminUserChatsPage />} />} />
     <Route path="chats/:interactionId" element={<ProtectedRoute children={<AdminUserChatDetailsPage />} />} />
+    <Route path="profile" element={<ProtectedRoute children={<AdminProfilePage />} />} />
     <Route path="*" element={<NotFoundPage />} />
   </Routes>
 );
