@@ -13,7 +13,7 @@ export const useChatSocket = (selectedEquipment) => {
     socket.emit("sendMessage", { type: selectedEquipment.id, messages: [] });
     setIsLLMLoading(true);
     console.log("message sent");
-  }, [selectedEquipment, isConnected, setIsLLMLoading, clearMessages, messages]);
+  }, [selectedEquipment, isConnected, setIsLLMLoading]);
 
   useEffect(() => {
     return () => {
@@ -23,6 +23,8 @@ export const useChatSocket = (selectedEquipment) => {
 
   useEffect(() => {
     const handleReceiveMessage = (message) => {
+      const lastMessage = messages[messages.length - 1] || "";
+      if (lastMessage && lastMessage?.role === "assistant" && JSON.parse(lastMessage?.content)?.responseText == "loading") return;
       const parsedMessage = JSON.parse(message.content);
       console.log("parsed", parsedMessage);
       removeLastMessage();
@@ -39,7 +41,7 @@ export const useChatSocket = (selectedEquipment) => {
     return () => {
       socket.off("receiveMessage", handleReceiveMessage);
     };
-  }, [addMessage, removeLastMessage, setRecommendedProducts, setIsLLMLoading, setIsChatCompleted]);
+  }, [addMessage, removeLastMessage, setRecommendedProducts, setIsLLMLoading, setIsChatCompleted, messages]);
 
   return { messages };
 };
