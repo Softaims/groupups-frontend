@@ -4,12 +4,12 @@ import socket from "../lib/socket";
 import { useSocketStore } from "../store/socketStore";
 
 export const useChatSocket = (selectedEquipment) => {
-  const { messages, addMessage, removeLastMessage, setRecommendedProducts, setIsChatCompleted, setIsLLMLoading, clearMessages, clearStreamingMessageId } =
+  const { messages, addMessage, removeLastMessage, setRecommendedProducts, setIsChatCompleted, setIsLLMLoading, clearMessages } =
     useChatStore();
   const isConnected = useSocketStore((state) => state.isConnected);
 
   useEffect(() => {
-    if (!selectedEquipment || !isConnected || (messages && messages.length > 0)) return;
+    if (!selectedEquipment || !isConnected) return;
     socket.emit("sendMessage", { type: selectedEquipment.id, messages: [] });
     setIsLLMLoading(true);
     console.log("message sent");
@@ -25,10 +25,6 @@ export const useChatSocket = (selectedEquipment) => {
     const handleReceiveMessage = (message) => {
       const parsedMessage = JSON.parse(message.content);
       console.log("parsed", parsedMessage);
-      
-      // Clear any existing streaming state
-      clearStreamingMessageId();
-      
       removeLastMessage();
       addMessage(message);
       setIsLLMLoading(false);
@@ -43,7 +39,7 @@ export const useChatSocket = (selectedEquipment) => {
     return () => {
       socket.off("receiveMessage", handleReceiveMessage);
     };
-  }, [addMessage, removeLastMessage, setRecommendedProducts, setIsLLMLoading, setIsChatCompleted, clearStreamingMessageId]);
+  }, [addMessage, removeLastMessage, setRecommendedProducts, setIsLLMLoading, setIsChatCompleted]);
 
   return { messages };
 };
