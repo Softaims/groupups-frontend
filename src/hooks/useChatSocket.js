@@ -4,22 +4,31 @@ import socket from "../lib/socket";
 import { useSocketStore } from "../store/socketStore";
 
 export const useChatSocket = (selectedEquipment) => {
-  const { messages, addMessage, removeLastMessage, setRecommendedProducts, setIsChatCompleted, setIsLLMLoading, clearMessages } =
+  const { messages, addMessage, removeLastMessage, setRecommendedProducts, setIsChatCompleted, setIsLLMLoading, clearMessages, clearStreamingMessageId } =
     useChatStore();
   const isConnected = useSocketStore((state) => state.isConnected);
 
   useEffect(() => {
-    if (!selectedEquipment || !isConnected) return;
-    clearMessages();
+    if (!selectedEquipment || !isConnected || (messages && messages.length > 0)) return;
     socket.emit("sendMessage", { type: selectedEquipment.id, messages: [] });
     setIsLLMLoading(true);
     console.log("message sent");
-  }, [selectedEquipment, isConnected, setIsLLMLoading, clearMessages]);
+  }, [selectedEquipment, isConnected, setIsLLMLoading, clearMessages, messages]);
+
+  useEffect(() => {
+    return () => {
+      clearMessages();
+    };
+  }, [clearMessages]);
 
   useEffect(() => {
     const handleReceiveMessage = (message) => {
       const parsedMessage = JSON.parse(message.content);
       console.log("parsed", parsedMessage);
+      
+      // Clear any existing streaming state
+      clearStreamingMessageId();
+      
       removeLastMessage();
       addMessage(message);
       setIsLLMLoading(false);
@@ -34,7 +43,7 @@ export const useChatSocket = (selectedEquipment) => {
     return () => {
       socket.off("receiveMessage", handleReceiveMessage);
     };
-  }, [addMessage, removeLastMessage, setRecommendedProducts, setIsLLMLoading, setIsChatCompleted]);
+  }, [addMessage, removeLastMessage, setRecommendedProducts, setIsLLMLoading, setIsChatCompleted, clearStreamingMessageId]);
 
   return { messages };
 };

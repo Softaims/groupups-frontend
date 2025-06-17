@@ -6,6 +6,7 @@ export const useChatStore = create((set) => ({
   isInitiated: false,
   isLLMLoading: false,
   isChatCompleted: false,
+  streamingMessageId: null,
 
   addMessage: (message) =>
     set((state) => ({
@@ -24,4 +25,7 @@ export const useChatStore = create((set) => ({
   setIsInitiated: (isInitiated) => set({ isInitiated: isInitiated }),
   setIsLLMLoading: (isLLMLoading) => set({ isLLMLoading: isLLMLoading }),
   setIsChatCompleted: (isChatCompleted) => set({ isChatCompleted: isChatCompleted }),
+  
+  setStreamingMessageId: (messageId) => set({ streamingMessageId: messageId }),
+  clearStreamingMessageId: () => set({ streamingMessageId: null }),
 }));

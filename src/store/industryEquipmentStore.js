@@ -2,9 +2,9 @@ import { create } from "zustand";
 import api from "../utils/apiClient";
 
 export const useIndustryEquipmentStore = create((set) => ({
-  industries: [],
+  industries: null,
   industriesLoading: true,
-  equipment: [],
+  equipment: null,
   equipmentLoading: true,
 
   addIndustry: (industry) =>
