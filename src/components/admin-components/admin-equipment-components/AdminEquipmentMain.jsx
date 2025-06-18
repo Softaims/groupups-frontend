@@ -34,7 +34,7 @@ const AdminEquipmentMain = () => {
   const [selectedIndustry, setSelectedIndustry] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
 
-  const filteredEquipment = equipment.filter((item) => {
+  const filteredEquipment = equipment?.filter((item) => {
     const matchesIndustry = selectedIndustry === "all" || item.industry_id === selectedIndustry;
     const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesIndustry && matchesSearch;
@@ -62,7 +62,7 @@ const AdminEquipmentMain = () => {
             />
             {equipmentLoading ? (
               <SkeletonEquipmentTable />
-            ) : filteredEquipment.length > 0 ? (
+            ) : filteredEquipment?.length > 0 ? (
               <EquipmentTable
                 equipment={filteredEquipment}
                 onEdit={handleEdit}
