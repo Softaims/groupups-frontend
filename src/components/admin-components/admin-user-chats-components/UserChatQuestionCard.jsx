@@ -1,6 +1,6 @@
 import { ChevronDown, ChevronUp, FileText, CheckSquare, Upload } from "lucide-react";
 
-const UserChatQuestionCard = ({ question, isExpanded, onToggleExpand }) => {
+const UserChatQuestionCard = ({ question }) => {
   const getQuestionTypeIcon = (type) => {
     switch (type) {
       case "open_ended":
@@ -66,7 +66,7 @@ const UserChatQuestionCard = ({ question, isExpanded, onToggleExpand }) => {
   };
 
   return (
-    <div onClick={onToggleExpand} className="p-4 bg-[#0c0f12] rounded-lg border border-[#2a2e34] transition-colors cursor-pointer">
+    <div className="p-4 bg-[#0c0f12] rounded-lg border border-[#2a2e34] transition-colors cursor-pointer">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           {getQuestionTypeIcon(question?.question?.question_type)}
@@ -76,16 +76,14 @@ const UserChatQuestionCard = ({ question, isExpanded, onToggleExpand }) => {
           </div>
           {question?.question?.required && <span className="bg-red-900/30 text-red-400 text-xs px-2 py-0.5 rounded">Required</span>}
         </div>
-        {isExpanded ? <ChevronUp className="h-5 w-5 text-gray-400" /> : <ChevronDown className="h-5 w-5 text-gray-400" />}
       </div>
-      {isExpanded && (
-        <div className="mt-4 pt-4 border-t border-[#2a2e34]">
-          <div className="flex items-start gap-2 mb-2">
-            <span className="text-gray-400 text-sm flex-shrink-0">Answer:</span>
-            {renderAnswer(question)}
-          </div>
+
+      <div className="mt-4 pt-4 border-t border-[#2a2e34]">
+        <div className="flex items-start gap-2 mb-2">
+          <span className="text-gray-400 text-sm flex-shrink-0">Answer:</span>
+          {renderAnswer(question)}
         </div>
-      )}
+      </div>
     </div>
   );
 };

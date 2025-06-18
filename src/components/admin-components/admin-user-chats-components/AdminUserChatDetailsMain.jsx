@@ -6,7 +6,7 @@ import SkeletonUserChatDetailHeader from "./SkeletonUserChatDetailHeader";
 import SkeletonUserChatQuestionCard from "./SkeletonUserChatQuestionCard";
 
 const AdminUserChatDetailsMain = () => {
-  const { interactionDetailS, isLoading, expandedQuestionId, handleToggleExpand } = useAdminChatDetails();
+  const { interactionDetailS, isLoading } = useAdminChatDetails();
   console.log("interaction", interactionDetailS);
   return (
     <main className="flex-1 p-4 md:p-6 md:ml-64 w-full transition-all duration-300 pt-16 md:pt-6">
@@ -26,11 +26,7 @@ const AdminUserChatDetailsMain = () => {
               industry={interactionDetailS?.industry}
               time={interactionDetailS?.created_at}
             />
-            <UserChatQuestionsList
-              responses={interactionDetailS?.responses}
-              expandedQuestionId={expandedQuestionId}
-              onToggleExpand={handleToggleExpand}
-            />
+            <UserChatQuestionsList responses={interactionDetailS?.responses} />
           </>
         ) : (
           <Navigate to={"/404"} />

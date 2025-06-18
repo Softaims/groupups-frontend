@@ -57,7 +57,7 @@ const ProductCard = ({ product, index }) => {
                   onClick={() => setIsFlipped(true)}
                   className="cursor-pointer bg-white font-bold text-black px-3 md:px-4 py-2 rounded-xl text-xs md:text-sm"
                 >
-                  Why good fit
+                  Why this Unit
                 </button>
                 {/* <button className="bg-[#4aa6a4] font-bold text-white px-3 md:px-4 py-2 rounded-xl text-xs md:text-sm hover:bg-[#3d8d8b] transition-colors">
                   View Demo

@@ -34,9 +34,7 @@ const EquipmentSelection = () => {
 
   return (
     <div className="px-4 w-full">
-      {(loading || equipments?.length > 0) && (
-        <h2 className="text-lg mb-8 text-[#EEEEEE]">Select Equipment you want recommendations for</h2>
-      )}
+      {(loading || equipments?.length > 0) && <h2 className="text-lg mb-8 text-[#EEEEEE]">Select the equipment you need:</h2>}
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
         {loading ? (
