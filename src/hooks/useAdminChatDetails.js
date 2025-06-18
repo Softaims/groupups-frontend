@@ -7,7 +7,6 @@ const useAdminChatDetails = () => {
   const { interactionId } = useParams();
   const [interactionDetailS, setInteractionDetails] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [expandedQuestionId, setExpandedQuestionId] = useState(null);
 
   useEffect(() => {
     const fetchInteractionDetails = async () => {
@@ -27,15 +26,9 @@ const useAdminChatDetails = () => {
     }
   }, [interactionId]);
 
-  const handleToggleExpand = (questionId) => {
-    setExpandedQuestionId(expandedQuestionId === questionId ? null : questionId);
-  };
-
   return {
     interactionDetailS,
     isLoading,
-    expandedQuestionId,
-    handleToggleExpand,
   };
 };
 

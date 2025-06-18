@@ -12,8 +12,7 @@ const HeroSection = () => {
         </span>
       </h1>
       <p className="text-[#eeeeee]/41 max-w-2xl">
-        Groupups helps you discover the best equipment tailored for your industry. Start by choosing your field, and we'll guide you to the
-        right products.
+        GroupUps guides you to the right equipment based on your practice’s specific needs, while also getting you the best pricing.
       </p>
     </div>
   );
