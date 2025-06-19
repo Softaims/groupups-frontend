@@ -56,7 +56,7 @@ const ProductCard = ({ product, onEdit, onDelete }) => {
           <div className="space-y-1 pt-2 border-t border-[#2a2e34]">
             <div className="flex items-center gap-1 text-[#3CBFAE]">
               <Info className="h-4 w-4" />
-              <span className="text-sm font-medium">Why Good Fit</span>
+              <span className="text-sm font-medium">Why this Unit</span>
             </div>
             <p className="text-sm text-gray-400 line-clamp-2">{product.why_good_fit_reason}</p>
           </div>

@@ -192,6 +192,13 @@ export const useIndustries = () => {
     setShowDeleteModal(false);
   };
 
+  const handleReorder = async (newItems) => {
+    await api.post("/industry-equipment/reorder-industries", {
+      orderedIds: newItems.map((ind) => ind.id),
+    });
+    toast.success("Order saved");
+  };
+
   return {
     industriesLoading,
     industries,
@@ -214,5 +221,6 @@ export const useIndustries = () => {
     handleCloseModal,
     handleCloseDeleteModal,
     handleAddNew,
+    handleReorder,
   };
 };

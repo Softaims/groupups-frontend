@@ -4,7 +4,7 @@ const GoodFitReason = ({ goodFitReason }) => {
   return (
     <div className="bg-[#D9D9D9]/5 rounded-2xl p-4 md:p-5">
       <div className="flex justify-between items-center mb-3">
-        <h3 className="font-medium text-base md:text-lg text-white">Why good fit</h3>
+        <h3 className="font-medium text-base md:text-lg text-white">Why this Unit</h3>
         <button className="text-gray-400 hover:text-white transition-colors">
           <X className="w-8 h-8 bg-[#1D403F]/40 rounded-full p-2" />
         </button>

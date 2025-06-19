@@ -19,7 +19,7 @@ const ProductCard = ({ product, index }) => {
                 <div className="absolute top-[-4px] left-[-4px] bg-[#1a2a2f] text-white rounded-full w-5 h-5 md:w-6 md:h-6 flex items-center justify-center text-xs">
                   {index}
                 </div>
-                {product.image && <img src={product.image} alt={product.name} className="w-full md:w-50 md:h-50" />}
+                {product.image && <img src={product.image} alt={product.name} className="w-50 h-50" />}
                 {/* {product.logo && <div className="absolute bottom-2 right-2 text-center text-xs text-gray-400">{product.image}</div>} */}
               </div>
             </div>
@@ -83,7 +83,7 @@ const ProductCard = ({ product, index }) => {
         <div className={`w-full backface-hidden rotate-y-180 ${isFlipped ? "block" : "hidden"}`}>
           <div className="relative overflow-hidden bg-[#D9D9D9]/5 rounded-lg p-4 md:p-5 flex flex-col">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="font-medium text-base md:text-lg text-white">Why good fit</h3>
+              <h3 className="font-medium text-base md:text-lg text-white">Why this Unit</h3>
               <button onClick={() => setIsFlipped(false)} className="cursor-pointer text-gray-400 hover:text-white transition-colors">
                 <X className="w-8 h-8 bg-[#1D403F]/40 rounded-full p-2" />
               </button>

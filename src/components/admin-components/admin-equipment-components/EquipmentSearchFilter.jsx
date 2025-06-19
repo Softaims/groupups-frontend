@@ -6,7 +6,7 @@ const EquipmentSearchFilter = ({ searchQuery, onSearchChange, selectedIndustry, 
       <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
       <input
         type="search"
-        placeholder="Search equipment..."
+        placeholder="Search equipment in selected industry..."
         className="w-full rounded-md bg-[#0c0f12] pl-10 py-2 border border-[#2a2e34] focus:outline-none focus:border-[#3CBFAE] text-white"
         value={searchQuery}
         onChange={onSearchChange}
@@ -19,8 +19,7 @@ const EquipmentSearchFilter = ({ searchQuery, onSearchChange, selectedIndustry, 
         value={selectedIndustry}
         onChange={onIndustryChange}
       >
-        <option value="all">All Industries</option>
-        {industries.map((industry) => (
+        {industries?.map((industry) => (
           <option key={industry.id} value={industry.id}>
             {industry.name}
           </option>

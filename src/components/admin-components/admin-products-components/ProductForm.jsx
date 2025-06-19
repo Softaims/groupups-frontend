@@ -112,7 +112,7 @@ const ProductForm = ({
 
             <div>
               <label htmlFor="why_good_fit_reason" className="block mb-2 text-sm font-medium text-gray-300">
-                Why Good Fit Reason
+                Why this Unit Reason
               </label>
               <textarea
                 id="why_good_fit_reason"

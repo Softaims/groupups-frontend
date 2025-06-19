@@ -4,28 +4,39 @@ import socket from "../lib/socket";
 import { useSocketStore } from "../store/socketStore";
 
 export const useChatSocket = (selectedEquipment) => {
-  const { messages, addMessage, removeLastMessage, setRecommendedProducts, setIsChatCompleted, setIsLLMLoading, clearMessages } =
-    useChatStore();
+  const {
+    messages,
+    addMessage,
+    removeLastMessage,
+    setRecommendedProducts,
+    setIsChatCompleted,
+    setIsLLMLoading,
+    isLLMLoading,
+    clearMessages,
+  } = useChatStore();
   const isConnected = useSocketStore((state) => state.isConnected);
 
   useEffect(() => {
     if (!selectedEquipment || !isConnected) return;
+    clearMessages();
+    setRecommendedProducts(null);
     socket.emit("sendMessage", { type: selectedEquipment.id, messages: [] });
     setIsLLMLoading(true);
     console.log("message sent");
-  }, [selectedEquipment, isConnected, setIsLLMLoading]);
+  }, [selectedEquipment, isConnected, setIsLLMLoading, clearMessages, setRecommendedProducts]);
 
   useEffect(() => {
     return () => {
       clearMessages();
+      setRecommendedProducts(null);
     };
-  }, [clearMessages]);
+  }, [clearMessages, setRecommendedProducts]);
 
   useEffect(() => {
     const handleReceiveMessage = (message) => {
-      const lastMessage = messages[messages.length - 1] || "";
-      if (lastMessage && lastMessage?.role === "assistant" && JSON.parse(lastMessage?.content)?.responseText == "loading") return;
       const parsedMessage = JSON.parse(message.content);
+      if (!isLLMLoading) return;
+      console.log("is llm loading", isLLMLoading);
       console.log("parsed", parsedMessage);
       removeLastMessage();
       addMessage(message);
@@ -41,7 +52,7 @@ export const useChatSocket = (selectedEquipment) => {
     return () => {
       socket.off("receiveMessage", handleReceiveMessage);
     };
-  }, [addMessage, removeLastMessage, setRecommendedProducts, setIsLLMLoading, setIsChatCompleted, messages]);
+  }, [addMessage, removeLastMessage, setRecommendedProducts, setIsLLMLoading, setIsChatCompleted, messages, isLLMLoading]);
 
   return { messages };
 };
