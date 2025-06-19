@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Pencil, Trash2, Eye, EyeOff } from "lucide-react";
+import { Pencil, Trash2, Eye, EyeOff, GripVertical } from "lucide-react";
 
 const IndustryCard = ({ industry, handleEdit, handleDelete, onToggleVisibility }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
@@ -36,7 +36,12 @@ const IndustryCard = ({ industry, handleEdit, handleDelete, onToggleVisibility }
 
       <div className="p-4">
         <div className="flex items-center justify-between mb-2">
-          <h3 className="text-lg font-semibold text-white">{industry.name}</h3>
+          <div className="flex items-center gap-2">
+            <span className="cursor-move flex items-center justify-center p-1 hover:bg-[#1a1e24] rounded mt-1" title="Drag to reorder">
+              <GripVertical className="h-5 w-5 text-gray-400" />
+            </span>
+            <h3 className="text-sm font-semibold text-white">{industry.name}</h3>
+          </div>
           <button
             onClick={() => onToggleVisibility(industry)}
             className={`flex items-center gap-1 px-2 py-1 rounded-full text-sm ${

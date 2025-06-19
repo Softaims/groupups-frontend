@@ -5,6 +5,7 @@ import AdminIndustriesHeader from "./AdminIndustriesHeader";
 import SkeletonIndustryCard from "./SkeletonIndustryCard";
 import EmptyState from "./EmptyState";
 import { useIndustries } from "../../../hooks/useIndustries";
+import IndustriesList from "./IndustriesList";
 
 const AdminIndustriesMain = () => {
   const {
@@ -29,6 +30,7 @@ const AdminIndustriesMain = () => {
     handleToggleVisibility,
     handleCloseModal,
     handleCloseDeleteModal,
+    handleReorder,
   } = useIndustries();
 
   return (
@@ -43,17 +45,13 @@ const AdminIndustriesMain = () => {
             ))}
           </div>
         ) : industries?.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {industries.map((industry) => (
-              <IndustryCard
-                key={industry.id}
-                industry={industry}
-                handleEdit={handleEdit}
-                handleDelete={handleDelete}
-                onToggleVisibility={handleToggleVisibility}
-              />
-            ))}
-          </div>
+          <IndustriesList
+            industries={industries}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+            onToggleVisibility={handleToggleVisibility}
+            onReorder={handleReorder}
+          />
         ) : (
           <div className="bg-[#1a1e24] rounded-lg border border-[#2a2e34] p-4">
             <EmptyState onAddClick={handleAddNew} />
