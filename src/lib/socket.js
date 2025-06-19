@@ -1,6 +1,6 @@
 import { io } from "socket.io-client";
 import { useSocketStore } from "../store/socketStore";
-const socket = io("http://localhost:9000", {
+const socket = io("https://groupups-backend.softaims.com", {
   withCredentials: true,
 });
 socket.on("connect", () => {
