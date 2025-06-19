@@ -35,7 +35,7 @@ const EquipmentSelector = ({
           <span>
             {selectedEquipment
               ? `${selectedEquipment.name}${selectedIndustry ? ` (${selectedIndustry.name})` : ""}`
-              : "Select Equipment to Manage Questions"}
+              : "Select Equipment to Manage"}
           </span>
           {(selectedEquipment || selectedIndustry) && (
             <button onClick={clearSelection} className="ml-2 p-1 rounded-full hover:bg-[#2a2e34] transition-colors" title="Clear selection">

@@ -124,6 +124,14 @@ export const useEquipments = () => {
     setShowDeleteModal(false);
   };
 
+  const handleReorder = async (newItems, industryId) => {
+    if (!industryId) return;
+    await api.post("/industry-equipment/reorder-equipments", {
+      industryId,
+      orderedIds: newItems.map((eq) => eq.id),
+    });
+  };
+
   return {
     equipment,
     equipmentLoading,
@@ -143,5 +151,6 @@ export const useEquipments = () => {
     handleCloseModal,
     handleCloseDeleteModal,
     handleAddNew,
+    handleReorder,
   };
 };

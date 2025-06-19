@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import EquipmentTable from "./EquipmentTable";
 import EquipmentModal from "./EquipmentModal";
 import ConfirmationModal from "../../global/ConfirmationModal";
@@ -30,12 +30,21 @@ const AdminEquipmentMain = () => {
     handleCloseModal,
     handleCloseDeleteModal,
     handleAddNew,
+    handleReorder,
   } = useEquipments();
-  const [selectedIndustry, setSelectedIndustry] = useState("all");
+  const [selectedIndustry, setSelectedIndustry] = useState(() => (industries && industries.length > 0 ? industries[0].id : ""));
   const [searchQuery, setSearchQuery] = useState("");
 
+  useEffect(() => {
+    if (industries && industries.length > 0) {
+      if (!selectedIndustry || !industries.some((ind) => ind.id === selectedIndustry)) {
+        setSelectedIndustry(industries[0].id);
+      }
+    }
+  }, [industries, selectedIndustry]);
+
   const filteredEquipment = equipment?.filter((item) => {
-    const matchesIndustry = selectedIndustry === "all" || item.industry_id === selectedIndustry;
+    const matchesIndustry = item.industry_id === selectedIndustry;
     const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesIndustry && matchesSearch;
   });
@@ -69,6 +78,8 @@ const AdminEquipmentMain = () => {
                 onDelete={handleDelete}
                 onToggleVisibility={handleToggleVisibility}
                 industries={industries}
+                onReorder={handleReorder}
+                industryId={selectedIndustry}
               />
             ) : searchQuery ? (
               <div className="text-center py-10">
@@ -79,7 +90,9 @@ const AdminEquipmentMain = () => {
               </div>
             ) : (
               <div className="text-center py-10">
-                <p className="text-gray-400">No equipment available. Click the "Add Equipment" button to get started.</p>
+                <p className="text-gray-400">
+                  No equipment available under this Industry. Click the "Add Equipment" button to get started.
+                </p>
               </div>
             )}
           </div>
