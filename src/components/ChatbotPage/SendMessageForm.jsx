@@ -8,6 +8,7 @@ const SendMessageForm = () => {
   const [inputValue, setInputValue] = useState("");
   const { equipmentId } = useParams();
   const messages = useChatStore((state) => state.messages);
+  const streamingMessageId = useChatStore((state) => state.streamingMessageId);
   const isLLMLoading = useChatStore((state) => state.isLLMLoading);
   const setIsLLMLoading = useChatStore((state) => state.setIsLLMLoading);
   const addMessage = useChatStore((state) => state.addMessage);
@@ -49,7 +50,7 @@ const SendMessageForm = () => {
               className="w-full resize-none bg-[#ffffff]/5 text-white rounded-3xl py-3 px-4 pr-12 focus:outline-none placeholder:text-[#ffffff]/19 text-sm"
             />
             <button
-              disabled={isLLMLoading}
+              disabled={isLLMLoading || streamingMessageId != null}
               type="submit"
               className="absolute bottom-5 right-2 bg-[#e5e7eb] hover:bg-[#4aa6a4] transition-colors rounded-full p-1.5"
             >

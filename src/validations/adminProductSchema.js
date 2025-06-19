@@ -35,7 +35,7 @@ export const productSchema = z.object({
     .number()
     .min(0, "Price cannot be negative")
     .refine((val) => !isNaN(val), "Price must be a number"),
-  why_good_fit_reason: z.string().min(1, "Why good fit reason is required"),
+  why_good_fit_reason: z.string().min(1, "Why this unit reason is required"),
 
   equipment_id: z.string().min(1, "Equipment is required"),
 });
