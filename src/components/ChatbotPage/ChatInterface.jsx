@@ -79,7 +79,7 @@ const ChatInterface = () => {
             )}
             <div ref={chatScrollRef}></div>
           </div>
-          <SendMessageForm />
+          <SendMessageForm equipment={equipment} />
         </>
       )}
     </div>
