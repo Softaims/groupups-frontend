@@ -14,7 +14,7 @@ const ProductCard = ({ product, onEdit, onDelete }) => {
             src={product.image}
             alt={product.name}
             onLoad={() => setImageLoaded(true)}
-            className={`w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? "opacity-100" : "opacity-0"}`}
+            className={`w-full h-full object-contain transition-opacity duration-300 ${imageLoaded ? "opacity-100" : "opacity-0"}`}
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-[#1a1e24]">

@@ -48,8 +48,11 @@ const AdminLogin = () => {
         navigate("/admin/dashboard");
       }, 2000);
     } catch (error) {
-      toast.error(error.message || "Something went wrong");
-      console.log("error is", error);
+      if (!error || error?.status == 500) {
+        toast.error("Something went wrong");
+      } else {
+        toast.error(error.message);
+      }
     } finally {
       setIsSubmitting(false);
     }

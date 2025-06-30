@@ -52,8 +52,8 @@ export const useEquipments = () => {
       });
       toggleEquipmentVisibility(equipment.id, !equipment.visibility);
       toast.success(`Equipment ${equipment.visibility ? "hidden from" : "made visible to"} users`);
-    } catch (error) {
-      toast.error(error?.message || "Something went wrong");
+    } catch {
+      toast.error("Unable to update visibility at the moment");
     }
   };
 
@@ -64,8 +64,8 @@ export const useEquipments = () => {
       setShowDeleteModal(false);
       setSelectedEquipment(null);
       toast.success("Equipment deleted successfully");
-    } catch (error) {
-      toast.error(error?.message || "Something went wrong");
+    } catch {
+      toast.error("Failed to delete equipment");
     }
   };
 
@@ -103,7 +103,7 @@ export const useEquipments = () => {
       handleCloseModal();
     } catch (error) {
       console.log("error", error);
-      toast.error(error?.message || "Something went wrong");
+      toast.error(showAddModal ? "Failed to add equipment" : "Failed to update equipment");
     }
   };
 

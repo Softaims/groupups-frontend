@@ -35,10 +35,10 @@ export const useQuestions = () => {
     try {
       setIsLoading(true);
       const response = await api.get(`/questions/questions?equipmentId=${selectedEquipment.id}`);
-      console.log('Fetched questions:', response.data);
+      console.log("Fetched questions:", response.data);
       setQuestions(response.data || []);
-    } catch (err) {
-      toast.error(err.message || "Something went wrong");
+    } catch {
+      toast.error("Something went wrong");
       setQuestions([]);
     } finally {
       setIsLoading(false);
@@ -210,7 +210,7 @@ export const useQuestions = () => {
       }
       handleCloseModal();
     } catch (error) {
-      toast.error(error?.message || "Failed to save question");
+      toast.error(selectedQuestion ? "Failed to update question" : "Failed to add question");
       console.error("Error saving question:", error);
     }
   };
@@ -223,7 +223,7 @@ export const useQuestions = () => {
       setSelectedQuestion(null);
       toast.success("Question deleted successfully");
     } catch (error) {
-      toast.error(error?.message || "Failed to delete question");
+      toast.error("Failed to delete question");
       console.error("Error deleting question:", error);
     }
   };

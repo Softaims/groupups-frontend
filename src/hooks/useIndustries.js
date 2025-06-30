@@ -55,8 +55,8 @@ export const useIndustries = () => {
       });
       toggleIndustryVisibility(industry.id, !industry.visibility);
       toast.success(`Industry ${industry.visibility ? "hidden from" : "made visible to"} users`);
-    } catch (error) {
-      toast.error(error.message || "Something went wrong");
+    } catch {
+      toast.error("Unable to update visibility at the moment");
     }
   };
 
@@ -67,8 +67,8 @@ export const useIndustries = () => {
       setShowDeleteModal(false);
       setSelectedIndustry(null);
       toast.success("Industry deleted successfully");
-    } catch (error) {
-      toast.error(error.message || "Something went wrong");
+    } catch {
+      toast.error("Failed to delete industry");
     }
   };
 
@@ -170,7 +170,7 @@ export const useIndustries = () => {
       handleCloseModal();
     } catch (error) {
       console.error("Update error:", error);
-      toast.error(error.message || "Something went wrong");
+      toast.error(showAddModal ? "Failed to add industry" : "Failed to update industry");
     }
   };
 

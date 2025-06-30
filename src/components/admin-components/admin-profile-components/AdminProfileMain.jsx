@@ -56,8 +56,8 @@ const AdminProfileMain = () => {
         confirmNewPassword: "",
       });
       setErrors({});
-    } catch (error) {
-      toast.error(error.message || "Failed to update password");
+    } catch {
+      toast.error("Failed to update password");
     } finally {
       setIsSubmitting(false);
     }
