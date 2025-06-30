@@ -14,8 +14,8 @@ const useAdminChatDetails = () => {
         setIsLoading(true);
         const response = await api.get(`/chatbot/interactions/${interactionId}`);
         setInteractionDetails(response.data || {});
-      } catch (err) {
-        toast.error(err.message || "Failed to fetch chat details");
+      } catch {
+        toast.error("Something went wrong");
         setInteractionDetails({});
       } finally {
         setIsLoading(false);

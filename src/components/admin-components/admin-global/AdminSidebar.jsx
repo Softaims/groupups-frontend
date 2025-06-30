@@ -19,8 +19,8 @@ export const AdminSidebar = () => {
     try {
       await api.post("/logout");
       navigate("/admin/login");
-    } catch (error) {
-      toast.error(error.message);
+    } catch {
+      toast.error("Something went wrong while loging out");
     }
   };
 

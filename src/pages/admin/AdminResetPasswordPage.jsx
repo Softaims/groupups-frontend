@@ -51,7 +51,11 @@ const AdminResetPasswordPage = () => {
         navigate("/admin/login");
       }, 2000);
     } catch (error) {
-      toast.error(error.message || "Something went wrong");
+      if (!error || error?.status == 500) {
+        toast.error("Something went wrong");
+      } else {
+        toast.error(error.message);
+      }
     } finally {
       setIsSubmitting(false);
     }

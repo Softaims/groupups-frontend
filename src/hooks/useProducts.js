@@ -35,8 +35,8 @@ export const useProducts = () => {
       setIsLoading(true);
       const response = await api.get(`/products/get-by-equipment/${selectedEquipment.id}`);
       setProducts(response.data || []);
-    } catch (err) {
-      toast.error(err.message || "Something went wrong");
+    } catch {
+      toast.error("Something went wrong");
       setProducts([]);
     } finally {
       setIsLoading(false);
@@ -166,7 +166,7 @@ export const useProducts = () => {
 
       handleCloseModal();
     } catch (error) {
-      toast.error(error?.message || "Something went wrong");
+      toast.error(selectedProduct ? "Failed to update product" : "Failed to add product");
       console.error("Error saving product:", error);
     } finally {
       setIsLoading(false);
@@ -180,8 +180,8 @@ export const useProducts = () => {
       toast.success("Product deleted successfully");
       setIsDeleteModalOpen(false);
       fetchProducts(selectedEquipment);
-    } catch (err) {
-      toast.error(err.message || "Something went wrong");
+    } catch {
+      toast.error("Failed to delete product");
     } finally {
       setIsLoading(false);
     }

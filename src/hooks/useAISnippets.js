@@ -30,8 +30,8 @@ export const useAISnippets = () => {
       setIsLoading(true);
       const response = await api.get(`/train-ai/snippets/${selectedEquipment.id}`);
       setSnippets(response.data || []);
-    } catch (err) {
-      toast.error(err.message || "Something went wrong");
+    } catch {
+      toast.error("Something went wrong");
       setSnippets([]);
     } finally {
       setIsLoading(false);
@@ -113,7 +113,7 @@ export const useAISnippets = () => {
       }
       handleCloseModal();
     } catch (error) {
-      toast.error(error?.message || "Failed to save AI snippet");
+      toast.error(selectedSnippet ? "Failed to update AI snippet" : "Failed to save AI snippet");
       console.error("Error saving AI snippet:", error);
     }
   };
@@ -126,7 +126,7 @@ export const useAISnippets = () => {
       setSelectedSnippet(null);
       toast.success("AI snippet deleted successfully");
     } catch (error) {
-      toast.error(error?.message || "Failed to delete AI snippet");
+      toast.error("Failed to delete AI snippet");
       console.error("Error deleting AI snippet:", error);
     }
   };

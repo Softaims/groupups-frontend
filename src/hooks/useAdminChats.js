@@ -31,8 +31,8 @@ const useAdminChats = () => {
           total_pages: 1,
         }
       );
-    } catch (err) {
-      toast.error(err.message || "Something went wrong");
+    } catch {
+      toast.error("Something went wrong");
       setInteractions([]);
     } finally {
       setIsLoading(false);

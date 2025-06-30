@@ -13,22 +13,31 @@ export const useChatSocket = (selectedEquipment) => {
     setIsLLMLoading,
     isLLMLoading,
     clearMessages,
+    hasHydrated,
   } = useChatStore();
   const isConnected = useSocketStore((state) => state.isConnected);
-
+  console.log("is llm loading", isLLMLoading);
   useEffect(() => {
-    if (!selectedEquipment || !isConnected) return;
-    clearMessages();
-    setRecommendedProducts(null);
-    socket.emit("sendMessage", { type: selectedEquipment.id, messages: [] });
+    if (!selectedEquipment || !isConnected || (hasHydrated && messages.length > 0 && !isLLMLoading)) return;
+
+    socket.emit("sendMessage", { type: selectedEquipment.id, messages: messages });
     setIsLLMLoading(true);
     console.log("message sent");
-  }, [selectedEquipment, isConnected, setIsLLMLoading, clearMessages, setRecommendedProducts]);
+  }, [selectedEquipment, isConnected, setIsLLMLoading, clearMessages, setRecommendedProducts, messages, isLLMLoading, hasHydrated]);
 
   useEffect(() => {
-    return () => {
+    const cleanup = () => {
+      console.log("Cleanup triggered");
       clearMessages();
       setRecommendedProducts(null);
+      localStorage.removeItem("chat-storage");
+    };
+
+    window.addEventListener("beforeunload", cleanup);
+
+    return () => {
+      cleanup();
+      window.removeEventListener("beforeunload", cleanup);
     };
   }, [clearMessages, setRecommendedProducts]);
 

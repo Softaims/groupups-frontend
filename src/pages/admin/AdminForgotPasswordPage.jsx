@@ -42,7 +42,11 @@ const AdminForgotPasswordPage = () => {
       await api.post("/forgot-password", formData);
       setSubmitted(true);
     } catch (error) {
-      toast.error(error.message);
+      if (!error || error?.status == 500) {
+        toast.error("Something went wrong");
+      } else {
+        toast.error(error.message);
+      }
     } finally {
       setIsSubmitting(false);
     }
