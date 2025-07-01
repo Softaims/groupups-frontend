@@ -3,7 +3,6 @@ import { create } from "zustand";
 export const useChatStore = create((set) => ({
   messages: [],
   recommendedProducts: null,
-  isInitiated: false,
   isLLMLoading: true,
   isChatCompleted: false,
   streamingMessageId: null,
@@ -21,8 +20,6 @@ export const useChatStore = create((set) => ({
     })),
 
   setRecommendedProducts: (products) => set({ recommendedProducts: products }),
-
-  setIsInitiated: (isInitiated) => set({ isInitiated }),
   setIsLLMLoading: (isLLMLoading) => set({ isLLMLoading }),
   setIsChatCompleted: (isChatCompleted) => set({ isChatCompleted }),
   setStreamingMessageId: (messageId) => set({ streamingMessageId: messageId }),
