@@ -1,11 +1,9 @@
 import { ArrowUp } from "lucide-react";
 import { useState } from "react";
-import socket from "../../lib/socket";
 import { useChatStore } from "../../store/chatStore";
 
-const SendMessageForm = ({ equipment }) => {
+const SendMessageForm = () => {
   const [inputValue, setInputValue] = useState("");
-  const messages = useChatStore((state) => state.messages);
   const streamingMessageId = useChatStore((state) => state.streamingMessageId);
   const isLLMLoading = useChatStore((state) => state.isLLMLoading);
   const setIsLLMLoading = useChatStore((state) => state.setIsLLMLoading);
@@ -15,13 +13,8 @@ const SendMessageForm = ({ equipment }) => {
   const sendMessage = (e) => {
     e.preventDefault();
     if (inputValue.trim()) {
-      socket?.emit("sendMessage", {
-        type: equipment?.id,
-        messages: [...messages, { role: "user", content: JSON.stringify({ content: { responseText: inputValue } }) }],
-      });
       setIsLLMLoading(true);
       addMessage({ role: "user", content: JSON.stringify({ content: { responseText: inputValue } }) });
-      addMessage({ role: "assistant", content: JSON.stringify({ content: { responseText: "loading" } }) });
       setInputValue("");
     }
   };

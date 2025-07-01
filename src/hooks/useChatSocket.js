@@ -4,50 +4,30 @@ import socket from "../lib/socket";
 import { useSocketStore } from "../store/socketStore";
 
 export const useChatSocket = (selectedEquipment) => {
-  const {
-    messages,
-    addMessage,
-    removeLastMessage,
-    setRecommendedProducts,
-    setIsChatCompleted,
-    setIsLLMLoading,
-    isLLMLoading,
-    clearMessages,
-    hasHydrated,
-  } = useChatStore();
+  const { messages, addMessage, setRecommendedProducts, setIsChatCompleted, setIsLLMLoading, isLLMLoading, clearMessages } = useChatStore();
   const isConnected = useSocketStore((state) => state.isConnected);
-  console.log("is llm loading", isLLMLoading);
-  useEffect(() => {
-    if (!selectedEquipment || !isConnected || (hasHydrated && messages.length > 0 && !isLLMLoading)) return;
 
+  useEffect(() => {
+    console.log("llm", isLLMLoading);
+    if (!selectedEquipment || !isConnected || !isLLMLoading) return;
     socket.emit("sendMessage", { type: selectedEquipment.id, messages: messages });
     setIsLLMLoading(true);
     console.log("message sent");
-  }, [selectedEquipment, isConnected, setIsLLMLoading, clearMessages, setRecommendedProducts, messages, isLLMLoading, hasHydrated]);
+  }, [selectedEquipment, isConnected, setIsLLMLoading, messages, isLLMLoading]);
 
   useEffect(() => {
-    const cleanup = () => {
-      console.log("Cleanup triggered");
-      clearMessages();
-      setRecommendedProducts(null);
-      localStorage.removeItem("chat-storage");
-    };
-
-    window.addEventListener("beforeunload", cleanup);
-
     return () => {
-      cleanup();
-      window.removeEventListener("beforeunload", cleanup);
+      setRecommendedProducts(null);
+      clearMessages();
+      setIsLLMLoading(true);
     };
-  }, [clearMessages, setRecommendedProducts]);
+  }, [clearMessages, setRecommendedProducts, setIsLLMLoading]);
 
   useEffect(() => {
     const handleReceiveMessage = (message) => {
       const parsedMessage = JSON.parse(message.content);
       if (!isLLMLoading) return;
-      console.log("is llm loading", isLLMLoading);
       console.log("parsed", parsedMessage);
-      removeLastMessage();
       addMessage(message);
       setIsLLMLoading(false);
       setIsChatCompleted(parsedMessage.content?.isQuestionsCompleted);
@@ -61,7 +41,7 @@ export const useChatSocket = (selectedEquipment) => {
     return () => {
       socket.off("receiveMessage", handleReceiveMessage);
     };
-  }, [addMessage, removeLastMessage, setRecommendedProducts, setIsLLMLoading, setIsChatCompleted, messages, isLLMLoading]);
+  }, [addMessage, setRecommendedProducts, setIsLLMLoading, setIsChatCompleted, messages, isLLMLoading]);
 
   return { messages };
 };
