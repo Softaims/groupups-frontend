@@ -69,11 +69,14 @@ const ChatInterface = () => {
         <>
           <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 md:space-y-6">
             {messages?.length > 0 ? (
-              messages.map((message, index) => {
-                const messageId = message.id || index;
-                const isStreaming = streamingMessageId === messageId;
-                return <Message key={index} message={message} isStreaming={isStreaming} />;
-              })
+              <>
+                {messages.map((message, index) => {
+                  const messageId = message.id || index;
+                  const isStreaming = streamingMessageId === messageId;
+                  return <Message key={messageId} message={message} isStreaming={isStreaming} />;
+                })}
+                {messages[messages.length - 1]?.role === "user" && <SkeletonMessage />}
+              </>
             ) : (
               <SkeletonMessage />
             )}
