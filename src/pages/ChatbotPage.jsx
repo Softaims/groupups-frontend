@@ -5,7 +5,7 @@ import { ResizablePanelGroup, ResizableHandle, ResizablePanel } from "../compone
 export const ChatbotPage = () => {
   return (
     <div className="flex flex-col h-screen bg-[#041018]">
-      <div className="hidden lg:block flex-1 overflow-hidden">
+      <div className="block flex-1 overflow-hidden">
         <ResizablePanelGroup direction="horizontal" className="h-full">
           <ResizablePanel defaultSize={60} minSize={30}>
             <ChatInterface />
