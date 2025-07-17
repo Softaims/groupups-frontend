@@ -2,6 +2,7 @@ const UserChatmessageHistory = ({ messagesHistory }) => {
   if (!Array.isArray(messagesHistory) || messagesHistory.length === 0) {
     return null;
   }
+  
   return (
     <div className="mt-4 p-4 bg-[#0f1216] border border-[#1a1e24] shadow rounded-lg">
       <h2 className="text-lg font-semibold mb-4 text-white">
