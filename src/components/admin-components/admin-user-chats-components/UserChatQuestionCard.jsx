@@ -34,7 +34,6 @@ const UserChatQuestionCard = ({ question }) => {
   };
 
   const renderAnswer = (question) => {
-    console.log("answer", question);
     switch (question?.question?.question_type) {
       case "file_upload":
         return (

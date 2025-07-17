@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Edit, Trash2, Cpu, Building2, Eye, EyeOff, GripVertical } from "lucide-react";
 
-const EquipmentTable = ({ equipment, onEdit, onDelete, onToggleVisibility, industries, onReorder, industryId }) => {
+const EquipmentTable = ({ equipment, onEdit, onDelete, onToggleVisibility, industries, onReorder}) => {
   const [items, setItems] = useState([]);
   const [draggedItem, setDraggedItem] = useState(null);
   const [draggedOverItem, setDraggedOverItem] = useState(null);

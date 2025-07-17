@@ -1,13 +1,15 @@
 import { Navigate } from "react-router-dom";
 import UserChatQuestionsList from "./UserChatQuestionsList";
 import useAdminChatDetails from "../../../hooks/useAdminChatDetails";
+
 import UserChatDetailHeader from "./UserChatDetailHeader";
 import SkeletonUserChatDetailHeader from "./SkeletonUserChatDetailHeader";
 import SkeletonUserChatQuestionCard from "./SkeletonUserChatQuestionCard";
+import UserChatMessagesHistory from "./UserChatMessagesHistory";
 
 const AdminUserChatDetailsMain = () => {
   const { interactionDetailS, isLoading } = useAdminChatDetails();
-  console.log("interaction", interactionDetailS);
+  console.log("interactionDetailS", interactionDetailS);
   return (
     <main className="flex-1 p-4 md:p-6 md:ml-64 w-full transition-all duration-300 pt-16 md:pt-6">
       <div className="space-y-6">
@@ -27,6 +29,9 @@ const AdminUserChatDetailsMain = () => {
               time={interactionDetailS?.created_at}
             />
             <UserChatQuestionsList responses={interactionDetailS?.responses} />
+            <UserChatMessagesHistory
+              messagesHistory={interactionDetailS?.messagesHistory}
+            />
           </>
         ) : (
           <Navigate to={"/404"} />
