@@ -20,7 +20,7 @@ const AdminEquipmentMain = () => {
     showEditModal,
     formData,
     formErrors,
-
+    handleToggleProductVisibility,
     handleDelete,
     handleToggleVisibility,
     confirmDelete,
@@ -32,12 +32,17 @@ const AdminEquipmentMain = () => {
     handleAddNew,
     handleReorder,
   } = useEquipments();
-  const [selectedIndustry, setSelectedIndustry] = useState(() => (industries && industries.length > 0 ? industries[0].id : ""));
+  const [selectedIndustry, setSelectedIndustry] = useState(() =>
+    industries && industries.length > 0 ? industries[0].id : ""
+  );
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     if (industries && industries.length > 0) {
-      if (!selectedIndustry || !industries.some((ind) => ind.id === selectedIndustry)) {
+      if (
+        !selectedIndustry ||
+        !industries.some((ind) => ind.id === selectedIndustry)
+      ) {
         setSelectedIndustry(industries[0].id);
       }
     }
@@ -45,14 +50,19 @@ const AdminEquipmentMain = () => {
 
   const filteredEquipment = equipment?.filter((item) => {
     const matchesIndustry = item.industry_id === selectedIndustry;
-    const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch = item.name
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
     return matchesIndustry && matchesSearch;
   });
 
   return (
     <main className="flex-1 p-4 md:p-6 md:ml-64 w-full transition-all duration-300 pt-16 md:pt-6">
       <div className="space-y-6">
-        <AdminEquipmentHeader handleAddNew={handleAddNew} industriesLength={industries?.length || 0} />
+        <AdminEquipmentHeader
+          handleAddNew={handleAddNew}
+          industriesLength={industries?.length || 0}
+        />
 
         {!industriesLoading && industries?.length === 0 ? (
           <div className="bg-[#1a1e24] rounded-lg border border-[#2a2e34] p-4">
@@ -77,21 +87,28 @@ const AdminEquipmentMain = () => {
                 onEdit={handleEdit}
                 onDelete={handleDelete}
                 onToggleVisibility={handleToggleVisibility}
+                onToggleProductVisibility={handleToggleProductVisibility}
                 industries={industries}
                 onReorder={handleReorder}
                 industryId={selectedIndustry}
               />
             ) : searchQuery ? (
               <div className="text-center py-10">
-                <p className="text-gray-400">No equipment found matching "{searchQuery}"</p>
-                <button onClick={() => setSearchQuery("")} className="mt-2 text-[#3CBFAE] hover:underline">
+                <p className="text-gray-400">
+                  No equipment found matching "{searchQuery}"
+                </p>
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="mt-2 text-[#3CBFAE] hover:underline"
+                >
                   Clear search
                 </button>
               </div>
             ) : (
               <div className="text-center py-10">
                 <p className="text-gray-400">
-                  No equipment available under this Industry. Click the "Add Equipment" button to get started.
+                  No equipment available under this Industry. Click the "Add
+                  Equipment" button to get started.
                 </p>
               </div>
             )}

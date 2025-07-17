@@ -33,7 +33,9 @@ export const useProducts = () => {
     }
     try {
       setIsLoading(true);
-      const response = await api.get(`/products/get-by-equipment/${selectedEquipment.id}`);
+      const response = await api.get(
+        `/products/get-by-equipment/${selectedEquipment.id}`
+      );
       setProducts(response.data || []);
     } catch {
       toast.error("Something went wrong");
@@ -85,8 +87,11 @@ export const useProducts = () => {
   };
 
   const handleAddClick = () => {
-    if (products?.length >= 3) {
-      toast.warning("You cannot add more than 3 products for an equipment");
+    const maxProducts = selectedEquipment?.maxProducts ?? 3;
+    if (products?.length >= maxProducts) {
+      toast.warning(
+        `You cannot add more than ${maxProducts} products for the selected equipment`
+      );
       return;
     }
     setSelectedProduct(null);
@@ -147,12 +152,18 @@ export const useProducts = () => {
       });
       let response;
       if (selectedProduct) {
-        response = await api.put(`/products/update-product/${selectedProduct.id}`, formDataToSend, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        });
-        setProducts((prev) => prev.map((p) => (p.id === selectedProduct.id ? response.data : p)));
+        response = await api.put(
+          `/products/update-product/${selectedProduct.id}`,
+          formDataToSend,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+        setProducts((prev) =>
+          prev.map((p) => (p.id === selectedProduct.id ? response.data : p))
+        );
         toast.success("Product updated successfully");
       } else {
         response = await api.post("/products/create-product", formDataToSend, {
@@ -166,7 +177,9 @@ export const useProducts = () => {
 
       handleCloseModal();
     } catch (error) {
-      toast.error(selectedProduct ? "Failed to update product" : "Failed to add product");
+      toast.error(
+        selectedProduct ? "Failed to update product" : "Failed to add product"
+      );
       console.error("Error saving product:", error);
     } finally {
       setIsLoading(false);

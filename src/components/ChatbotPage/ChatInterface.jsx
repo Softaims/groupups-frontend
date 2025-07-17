@@ -1,39 +1,21 @@
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect } from "react";
 import Message from "./Message";
 import SendMessageForm from "./SendMessageForm";
 import HeaderMd from "../global/HeaderMd";
 import { useChatStore } from "../../store/chatStore";
 import { useSocketStore } from "../../store/socketStore";
 import SkeletonMessage from "./SkeletonMessage";
-import { Navigate, useParams } from "react-router-dom";
-import api from "../../utils/apiClient";
 import { useChatSocket } from "../../hooks/useChatSocket";
 
-const ChatInterface = () => {
+const ChatInterface = ({ equipment }) => {
   const messages = useChatStore((state) => state.messages);
   const streamingMessageId = useChatStore((state) => state.streamingMessageId);
-  const setStreamingMessageId = useChatStore((state) => state.setStreamingMessageId);
+  const setStreamingMessageId = useChatStore(
+    (state) => state.setStreamingMessageId
+  );
   const isConnected = useSocketStore((state) => state.isConnected);
   const connectionStatus = useSocketStore((state) => state.connectionStatus);
-  const [equipment, setEquipment] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const { industryName, equipmentName } = useParams();
   const chatScrollRef = useRef(null);
-
-  useEffect(() => {
-    const fetchEquipments = async () => {
-      try {
-        const response = await api.get(`/industry-equipment/check-equipment?industry=${industryName}&equipment=${equipmentName}`);
-        setEquipment(response.data);
-      } catch (err) {
-        console.log("Failed to fetch equipment", err);
-        setEquipment(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchEquipments();
-  }, [industryName, equipmentName]);
 
   useEffect(() => {
     chatScrollRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -53,10 +35,6 @@ const ChatInterface = () => {
   }, [messages, setStreamingMessageId]);
 
   useChatSocket(equipment);
-
-  if (!loading && !equipment) {
-    return <Navigate to={"/404"} />;
-  }
   return (
     <div className="w-full flex flex-col h-full border-r border-[#024544]/30">
       <HeaderMd />
@@ -73,9 +51,17 @@ const ChatInterface = () => {
                 {messages.map((message, index) => {
                   const messageId = message.id || index;
                   const isStreaming = streamingMessageId === messageId;
-                  return <Message key={messageId} message={message} isStreaming={isStreaming} />;
+                  return (
+                    <Message
+                      key={messageId}
+                      message={message}
+                      isStreaming={isStreaming}
+                    />
+                  );
                 })}
-                {messages[messages.length - 1]?.role === "user" && <SkeletonMessage />}
+                {messages[messages.length - 1]?.role === "user" && (
+                  <SkeletonMessage />
+                )}
               </>
             ) : (
               <SkeletonMessage />

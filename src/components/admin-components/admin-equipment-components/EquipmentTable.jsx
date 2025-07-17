@@ -1,7 +1,23 @@
 import { useState, useEffect } from "react";
-import { Edit, Trash2, Cpu, Building2, Eye, EyeOff, GripVertical } from "lucide-react";
+import {
+  Edit,
+  Trash2,
+  Cpu,
+  Building2,
+  Eye,
+  EyeOff,
+  GripVertical,
+} from "lucide-react";
 
-const EquipmentTable = ({ equipment, onEdit, onDelete, onToggleVisibility, industries, onReorder}) => {
+const EquipmentTable = ({
+  equipment,
+  onEdit,
+  onDelete,
+  onToggleVisibility,
+  onToggleProductVisibility,
+  industries,
+  onReorder,
+}) => {
   const [items, setItems] = useState([]);
   const [draggedItem, setDraggedItem] = useState(null);
   const [draggedOverItem, setDraggedOverItem] = useState(null);
@@ -49,7 +65,11 @@ const EquipmentTable = ({ equipment, onEdit, onDelete, onToggleVisibility, indus
   };
 
   if (equipment.length === 0) {
-    return <div className="text-center py-8 text-gray-400">No equipment found. Try adjusting your filters or add new equipment.</div>;
+    return (
+      <div className="text-center py-8 text-gray-400">
+        No equipment found. Try adjusting your filters or add new equipment.
+      </div>
+    );
   }
   return (
     <div className="overflow-x-auto">
@@ -66,6 +86,9 @@ const EquipmentTable = ({ equipment, onEdit, onDelete, onToggleVisibility, indus
             <th scope="col" className="px-6 py-3">
               Status
             </th>
+            <th scope="col" className="px-6 py-3">
+              Product Visibility
+            </th>
             <th scope="col" className="px-6 py-3 text-right">
               Actions
             </th>
@@ -73,11 +96,17 @@ const EquipmentTable = ({ equipment, onEdit, onDelete, onToggleVisibility, indus
         </thead>
         <tbody>
           {items.map((item, index) => {
-            const industry = industries.find((ind) => ind.id === item.industry_id);
+            const industry = industries.find(
+              (ind) => ind.id === item.industry_id
+            );
             return (
               <tr
                 key={item._id}
-                className={`border-b border-[#2a2e34] hover:bg-[#0c0f12] ${draggedOverItem?.item.id === item.id ? "border-[#3CBFAE] border-dashed" : ""}`}
+                className={`border-b border-[#2a2e34] hover:bg-[#0c0f12] ${
+                  draggedOverItem?.item.id === item.id
+                    ? "border-[#3CBFAE] border-dashed"
+                    : ""
+                }`}
                 draggable
                 onDragStart={(e) => handleDragStart(e, item, index)}
                 onDragEnd={handleDragEnd}
@@ -85,7 +114,10 @@ const EquipmentTable = ({ equipment, onEdit, onDelete, onToggleVisibility, indus
                 onDrop={(e) => handleDrop(e, item, index)}
               >
                 <td className="px-2 py-4 cursor-move text-center align-middle">
-                  <GripVertical className="h-5 w-5 text-gray-400 mx-auto" title="Drag to reorder" />
+                  <GripVertical
+                    className="h-5 w-5 text-gray-400 mx-auto"
+                    title="Drag to reorder"
+                  />
                 </td>
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-2">
@@ -107,7 +139,11 @@ const EquipmentTable = ({ equipment, onEdit, onDelete, onToggleVisibility, indus
                         ? "bg-green-500/10 text-green-500 hover:bg-green-500/20"
                         : "bg-gray-500/10 text-gray-500 hover:bg-gray-500/20"
                     } transition-colors`}
-                    title={item.visibility ? "Click to hide from users" : "Click to show to users"}
+                    title={
+                      item.visibility
+                        ? "Click to hide from users"
+                        : "Click to show to users"
+                    }
                   >
                     {item.visibility ? (
                       <>
@@ -121,6 +157,42 @@ const EquipmentTable = ({ equipment, onEdit, onDelete, onToggleVisibility, indus
                       </>
                     )}
                   </button>
+                </td>
+                <td className="px-6 py-4">
+                  {(() => {
+                    // Default to true if field is missing
+                    const visible =
+                      typeof item.productsVisibility === "boolean"
+                        ? item.productsVisibility
+                        : true;
+                    return (
+                      <button
+                        onClick={() => onToggleProductVisibility(item)}
+                        className={`cursor-pointer flex items-center gap-2 px-3 py-1 rounded-full text-sm ${
+                          visible
+                            ? "bg-green-500/10 text-green-500 hover:bg-green-500/20"
+                            : "bg-gray-500/10 text-gray-500 hover:bg-gray-500/20"
+                        } transition-colors`}
+                        title={
+                          visible
+                            ? "Click to hide product from users"
+                            : "Click to show product to users"
+                        }
+                      >
+                        {visible ? (
+                          <>
+                            <Eye className="h-4 w-4" />
+                            <span>Visible</span>
+                          </>
+                        ) : (
+                          <>
+                            <EyeOff className="h-4 w-4" />
+                            <span>Hidden</span>
+                          </>
+                        )}
+                      </button>
+                    );
+                  })()}
                 </td>
                 <td className="px-6 py-4 text-right">
                   <div className="flex justify-end gap-2">

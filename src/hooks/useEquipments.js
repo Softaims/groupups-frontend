@@ -6,8 +6,15 @@ import api from "../utils/apiClient";
 import { useIndustryEquipmentStore } from "../store/industryEquipmentStore";
 
 export const useEquipments = () => {
-  const { equipment, equipmentLoading, addEquipment, updateEquipment, deleteEquipment, toggleEquipmentVisibility } =
-    useIndustryEquipmentStore();
+  const {
+    equipment,
+    equipmentLoading,
+    addEquipment,
+    updateEquipment,
+    deleteEquipment,
+    toggleEquipmentVisibility,
+    toggleProductVisibility, // add this to your store for best results
+  } = useIndustryEquipmentStore();
   const [selectedEquipment, setSelectedEquipment] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
@@ -16,6 +23,7 @@ export const useEquipments = () => {
     name: "",
     industry_id: "",
     visibility: true,
+    maxProducts: undefined,
   });
   const [formErrors, setFormErrors] = useState({});
 
@@ -24,6 +32,7 @@ export const useEquipments = () => {
       name: "",
       industry_id: "",
       visibility: true,
+      maxProducts: undefined,
     });
     setFormErrors({});
     setShowAddModal(true);
@@ -35,6 +44,7 @@ export const useEquipments = () => {
       name: equipment.name,
       industry_id: equipment.industry_id,
       visibility: equipment.visibility ?? true,
+      maxProducts: equipment.maxProducts,
     });
     setShowEditModal(true);
     setFormErrors({});
@@ -51,15 +61,35 @@ export const useEquipments = () => {
         visibility: !equipment.visibility,
       });
       toggleEquipmentVisibility(equipment.id, !equipment.visibility);
-      toast.success(`Equipment ${equipment.visibility ? "hidden from" : "made visible to"} users`);
+      toast.success(
+        `Equipment ${
+          equipment.visibility ? "hidden from" : "made visible to"
+        } users`
+      );
     } catch {
       toast.error("Unable to update visibility at the moment");
     }
   };
-
+  const handleToggleProductVisibility = async (equipment) => {
+    try {
+      await api.patch(`/industry-equipment/equipments/${equipment.id}`, {
+        productsVisibility: !equipment.productsVisibility,
+      });
+      toggleProductVisibility(equipment.id, !equipment.productsVisibility);
+      toast.success(
+        `Product visibility ${
+          equipment.productsVisibility ? "disabled" : "enabled"
+        }`
+      );
+    } catch {
+      toast.error("Unable to update product visibility at the moment");
+    }
+  };
   const confirmDelete = async () => {
     try {
-      await api.delete(`/industry-equipment/equipments/${selectedEquipment.id}`);
+      await api.delete(
+        `/industry-equipment/equipments/${selectedEquipment.id}`
+      );
       deleteEquipment(selectedEquipment.id);
       setShowDeleteModal(false);
       setSelectedEquipment(null);
@@ -73,7 +103,14 @@ export const useEquipments = () => {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : value,
+      [name]:
+        type === "checkbox"
+          ? checked
+          : name === "maxProducts"
+          ? value === ""
+            ? undefined
+            : Number(value)
+          : value,
     }));
     if (formErrors[name]) {
       setFormErrors((prev) => ({ ...prev, [name]: "" }));
@@ -90,20 +127,45 @@ export const useEquipments = () => {
       return;
     }
 
+    // Only send maxProducts if user provided a value
+    const payload = { ...formData };
+    if (payload.maxProducts === undefined || payload.maxProducts === "") {
+      delete payload.maxProducts;
+    }
+
     try {
       if (showAddModal) {
-        const response = await api.post("/industry-equipment/create-equipment", formData);
+        const response = await api.post(
+          "/industry-equipment/create-equipment",
+          payload
+        );
         addEquipment(response.data);
         toast.success("Equipment added successfully");
       } else {
-        const response = await api.patch(`/industry-equipment/equipments/${selectedEquipment.id}`, formData);
+        const response = await api.patch(
+          `/industry-equipment/equipments/${selectedEquipment.id}`,
+          payload
+        );
         updateEquipment(response.data);
         toast.success("Equipment updated successfully");
       }
       handleCloseModal();
     } catch (error) {
       console.log("error", error);
-      toast.error(showAddModal ? "Failed to add equipment" : "Failed to update equipment");
+      // Try to show a specific error message if available
+      let errorMsg = showAddModal
+        ? "Failed to add equipment"
+        : "Failed to update equipment";
+      if (error?.response?.data?.error) {
+        errorMsg = error.response.data.error;
+      } else if (error?.message) {
+        errorMsg = error.message;
+      } else if (typeof error?.error === "string") {
+        errorMsg = error.error;
+      } else if (typeof error === "string") {
+        errorMsg = error;
+      }
+      toast.error(errorMsg);
     }
   };
 
@@ -115,6 +177,7 @@ export const useEquipments = () => {
       name: "",
       industry_id: "",
       visibility: true,
+      maxProducts: undefined,
     });
     setFormErrors({});
   };
@@ -141,9 +204,9 @@ export const useEquipments = () => {
     showEditModal,
     formData,
     formErrors,
-
     handleDelete,
     handleToggleVisibility,
+    handleToggleProductVisibility,
     confirmDelete,
     handleEdit,
     handleFormChange,

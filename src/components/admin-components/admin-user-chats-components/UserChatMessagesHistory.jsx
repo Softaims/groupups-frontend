@@ -27,7 +27,7 @@ const UserChatmessageHistory = ({ messagesHistory }) => {
               >
                 <span
                   className={`block text-xs font-semibold mb-[1px] ${
-                    isUser ? "text-[#e0f7fa]" : "text-[#8ab4f8]"
+                    isUser ? "text-cyan-200" : "text-[#8ab4f8]"
                   }`}
                 >
                   {isUser ? "User" : "Assistant"}

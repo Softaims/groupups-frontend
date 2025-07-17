@@ -14,7 +14,9 @@ export const useIndustryEquipmentStore = create((set) => ({
 
   updateIndustry: (updatedIndustry) =>
     set((state) => ({
-      industries: state.industries.map((item) => (item.id === updatedIndustry.id ? updatedIndustry : item)),
+      industries: state.industries.map((item) =>
+        item.id === updatedIndustry.id ? updatedIndustry : item
+      ),
     })),
 
   deleteIndustry: (industryId) =>
@@ -24,7 +26,9 @@ export const useIndustryEquipmentStore = create((set) => ({
 
   toggleIndustryVisibility: (industryId, visibility) =>
     set((state) => ({
-      industries: state.industries.map((item) => (item.id === industryId ? { ...item, visibility } : item)),
+      industries: state.industries.map((item) =>
+        item.id === industryId ? { ...item, visibility } : item
+      ),
     })),
 
   addEquipment: (equipment) =>
@@ -34,7 +38,9 @@ export const useIndustryEquipmentStore = create((set) => ({
 
   updateEquipment: (updatedEquipment) =>
     set((state) => ({
-      equipment: state.equipment.map((item) => (item.id === updatedEquipment.id ? updatedEquipment : item)),
+      equipment: state.equipment.map((item) =>
+        item.id === updatedEquipment.id ? updatedEquipment : item
+      ),
     })),
 
   deleteEquipment: (equipmentId) =>
@@ -44,7 +50,17 @@ export const useIndustryEquipmentStore = create((set) => ({
 
   toggleEquipmentVisibility: (equipmentId, visibility) =>
     set((state) => ({
-      equipment: state.equipment.map((item) => (item.id === equipmentId ? { ...item, visibility } : item)),
+      equipment: state.equipment.map((item) =>
+        item.id === equipmentId ? { ...item, visibility } : item
+      ),
+    })),
+
+  // Toggle product visibility for a specific equipment
+  toggleProductVisibility: (equipmentId, productsVisibility) =>
+    set((state) => ({
+      equipment: state.equipment.map((item) =>
+        item.id === equipmentId ? { ...item, productsVisibility } : item
+      ),
     })),
 
   fetchIndustries: async () => {
