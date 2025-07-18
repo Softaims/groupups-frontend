@@ -6,11 +6,16 @@ import EquipmentSelector from "./EquipmentSelector";
 import EmptyState from "./EmptyState";
 import EquipmentEmptyState from "../admin-questions-components/EquipmentEmptyState";
 import AdminAISnippetsHeader from "./AdminAISnippetsHeader";
+import { useEffect } from "react";
+import { toast } from "react-toastify";
+import api from "../../../utils/apiClient";
+import EditableMessageBlock from "./EditableMessageBlock";
 import { useAISnippets } from "../../../hooks/useAISnippets";
 import { useIndustryEquipmentStore } from "../../../store/industryEquipmentStore";
 
 const AdminAISnippetsMain = () => {
   const { equipmentLoading, equipment } = useIndustryEquipmentStore();
+
   const {
     selectedIndustry,
     selectedEquipment,
@@ -35,12 +40,49 @@ const AdminAISnippetsMain = () => {
     handleCloseDeleteModal,
     handleReorderSnippets,
     setSearchQuery,
+    endingMessage,
+    setEndingMessage,
+    tone,
+    setTone,
   } = useAISnippets();
+
+  useEffect(() => {
+    console.log("Updated endingMessage:", endingMessage);
+  }, [endingMessage]);
+
+  // PATCH handler for updating equipment fields
+  const handleUpdateEquipmentField = async (field, value) => {
+    if (!selectedEquipment?.id) return;
+    try {
+      const payload = { [field]: value };
+      await api.patch(
+        `/industry-equipment/equipments/${selectedEquipment.id}`,
+        payload
+      );
+      if (field === "endingMessage") setEndingMessage(value);
+      if (field === "tone") setTone(value);
+      toast.success(
+        field === "endingMessage"
+          ? "Chat closing message updated successfully."
+          : "Response tone updated successfully."
+      );
+    } catch {
+      toast.error(
+        field === "endingMessage"
+          ? "Failed to update chat closing message."
+          : "Failed to update response tone."
+      );
+    }
+  };
 
   return (
     <main className="flex-1 p-4 md:p-6 md:ml-64 w-full transition-all duration-300 pt-16 md:pt-6">
       <div className="space-y-6">
-        <AdminAISnippetsHeader selectedEquipment={selectedEquipment} onAddClick={handleAddClick} isLoading={isLoading} />
+        <AdminAISnippetsHeader
+          selectedEquipment={selectedEquipment}
+          onAddClick={handleAddClick}
+          isLoading={isLoading}
+        />
 
         {!equipmentLoading && equipment?.length === 0 ? (
           <div className="bg-[#1a1e24] rounded-lg border border-[#2a2e34] p-4">
@@ -63,10 +105,32 @@ const AdminAISnippetsMain = () => {
                   <div className="flex items-center gap-3 p-3 bg-[#0c0f12] border border-[#2a2e34] rounded-md">
                     <Cpu className="h-5 w-5 text-[#3CBFAE]" />
                     <div>
-                      <h3 className="font-medium text-white">{selectedEquipment.name}</h3>
-                      <p className="text-sm text-gray-400">{selectedEquipment.industryName}</p>
+                      <h3 className="font-medium text-white">
+                        {selectedEquipment.name}
+                      </h3>
+                      <p className="text-sm text-gray-400">
+                        {selectedEquipment.industryName}
+                      </p>
                     </div>
                   </div>
+                </div>
+
+                {/* Chat Closing Message and Tone as separate components */}
+                <div className="flex flex-col gap-3 mb-6">
+                  <EditableMessageBlock
+                    label="Chat Closing Message"
+                    value={endingMessage}
+                    placeholder="Chat closing message..."
+                    onSave={(val) =>
+                      handleUpdateEquipmentField("endingMessage", val)
+                    }
+                  />
+                  <EditableMessageBlock
+                    label="Response Tone"
+                    value={tone}
+                    placeholder="Response tone..."
+                    onSave={(val) => handleUpdateEquipmentField("tone", val)}
+                  />
                 </div>
 
                 <div className="relative mb-6">
@@ -87,7 +151,10 @@ const AdminAISnippetsMain = () => {
                 ) : snippets?.length > 0 ? (
                   <div className="mb-2">
                     <h3 className="text-white font-medium mb-3">
-                      AI Snippets ({snippets.length})<span className="text-sm font-normal text-gray-400 ml-2">Drag to reorder</span>
+                      AI Snippets ({snippets.length})
+                      <span className="text-sm font-normal text-gray-400 ml-2">
+                        Drag to reorder
+                      </span>
                     </h3>
                     <AISnippetsList
                       snippets={snippets}
@@ -99,8 +166,13 @@ const AdminAISnippetsMain = () => {
                   </div>
                 ) : searchQuery ? (
                   <div className="text-center py-10">
-                    <p className="text-gray-400">No AI snippets found matching "{searchQuery}"</p>
-                    <button onClick={() => setSearchQuery("")} className="mt-2 text-[#3CBFAE] hover:underline">
+                    <p className="text-gray-400">
+                      No AI snippets found matching "{searchQuery}"
+                    </p>
+                    <button
+                      onClick={() => setSearchQuery("")}
+                      className="mt-2 text-[#3CBFAE] hover:underline"
+                    >
                       Clear search
                     </button>
                   </div>
@@ -143,4 +215,4 @@ const AdminAISnippetsMain = () => {
   );
 };
 
-export default AdminAISnippetsMain; 
+export default AdminAISnippetsMain;

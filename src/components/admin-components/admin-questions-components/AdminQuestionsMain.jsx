@@ -42,12 +42,19 @@ const AdminQuestionsMain = () => {
     addContextItem,
     removeContextItem,
     updateContextItem,
+    handleImageChange,
+    previewImage,
+    handleRemoveImage,
   } = useQuestions();
-
+  console.log("questins", questions);
   return (
     <main className="flex-1 p-4 md:p-6 md:ml-64 w-full transition-all duration-300 pt-16 md:pt-6">
       <div className="space-y-6">
-        <AdminQuestionsHeader selectedEquipment={selectedEquipment} onAddClick={handleAddClick} isLoading={isLoading} />
+        <AdminQuestionsHeader
+          selectedEquipment={selectedEquipment}
+          onAddClick={handleAddClick}
+          isLoading={isLoading}
+        />
 
         {!equipmentLoading && equipment?.length === 0 ? (
           <div className="bg-[#1a1e24] rounded-lg border border-[#2a2e34] p-4">
@@ -70,8 +77,12 @@ const AdminQuestionsMain = () => {
                   <div className="flex items-center gap-3 p-3 bg-[#0c0f12] border border-[#2a2e34] rounded-md">
                     <Cpu className="h-5 w-5 text-[#3CBFAE]" />
                     <div>
-                      <h3 className="font-medium text-white">{selectedEquipment.name}</h3>
-                      <p className="text-sm text-gray-400">{selectedEquipment.industryName}</p>
+                      <h3 className="font-medium text-white">
+                        {selectedEquipment.name}
+                      </h3>
+                      <p className="text-sm text-gray-400">
+                        {selectedEquipment.industryName}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -94,7 +105,10 @@ const AdminQuestionsMain = () => {
                 ) : questions?.length > 0 ? (
                   <div className="mb-2">
                     <h3 className="text-white font-medium mb-3">
-                      Questions ({questions.length})<span className="text-sm font-normal text-gray-400 ml-2">Drag to reorder</span>
+                      Questions ({questions.length})
+                      <span className="text-sm font-normal text-gray-400 ml-2">
+                        Drag to reorder
+                      </span>
                     </h3>
                     <QuestionsList
                       questions={questions}
@@ -106,8 +120,13 @@ const AdminQuestionsMain = () => {
                   </div>
                 ) : searchQuery ? (
                   <div className="text-center py-10">
-                    <p className="text-gray-400">No questions found matching "{searchQuery}"</p>
-                    <button onClick={() => setSearchQuery("")} className="mt-2 text-[#3CBFAE] hover:underline">
+                    <p className="text-gray-400">
+                      No questions found matching "{searchQuery}"
+                    </p>
+                    <button
+                      onClick={() => setSearchQuery("")}
+                      className="mt-2 text-[#3CBFAE] hover:underline"
+                    >
                       Clear search
                     </button>
                   </div>
@@ -138,6 +157,9 @@ const AdminQuestionsMain = () => {
           addContextItem={addContextItem}
           removeContextItem={removeContextItem}
           updateContextItem={updateContextItem}
+          onImageChange={handleImageChange}
+          previewImage={previewImage}
+          onRemoveImage={handleRemoveImage}
         />
       )}
 

@@ -20,6 +20,29 @@ export const useAISnippets = () => {
     equipment_id: null,
   });
   const [formErrors, setFormErrors] = useState({});
+  const [endingMessage, setEndingMessage] = useState("");
+  const [tone, setTone] = useState("");
+
+  // Fetch ending message and tone for equipment
+  const fetchEndingMessageAndTone = async (equipmentId) => {
+    if (!equipmentId) {
+      setEndingMessage("");
+      setTone("");
+      return;
+    }
+    try {
+      const res = await api.get(
+        `/industry-equipment/equipments/${equipmentId}/ending-message-tone`
+      );
+
+      setEndingMessage(res.data.endingMessage || "");
+
+      setTone(res.data.tone || "");
+    } catch {
+      setEndingMessage("");
+      setTone("");
+    }
+  };
 
   const fetchSnippets = async (selectedEquipment) => {
     if (!selectedEquipment?.id) {
@@ -28,7 +51,9 @@ export const useAISnippets = () => {
     }
     try {
       setIsLoading(true);
-      const response = await api.get(`/train-ai/snippets/${selectedEquipment.id}`);
+      const response = await api.get(
+        `/train-ai/snippets/${selectedEquipment.id}`
+      );
       setSnippets(response.data || []);
     } catch {
       toast.error("Something went wrong");
@@ -44,9 +69,10 @@ export const useAISnippets = () => {
   };
 
   const handleEquipmentSelect = (equipment) => {
-    if (selectedEquipment?.id != equipment.id) {
+    if (selectedEquipment?.id !== equipment.id) {
       setSelectedEquipment(equipment);
       fetchSnippets(equipment);
+      fetchEndingMessageAndTone(equipment.id);
     }
   };
 
@@ -101,19 +127,31 @@ export const useAISnippets = () => {
     }
     try {
       if (selectedSnippet) {
-        const response = await api.patch(`/train-ai/snippet/${selectedSnippet.id}`, validationData);
-        const updatedSnippets = snippets.map((s) => (s.id === selectedSnippet.id ? response.data : s));
+        const response = await api.patch(
+          `/train-ai/snippet/${selectedSnippet.id}`,
+          validationData
+        );
+        const updatedSnippets = snippets.map((s) =>
+          s.id === selectedSnippet.id ? response.data : s
+        );
         handleReorderSnippets(updatedSnippets);
         toast.success("AI snippet updated successfully");
       } else {
-        const response = await api.post("/train-ai/create-snippet", validationData);
+        const response = await api.post(
+          "/train-ai/create-snippet",
+          validationData
+        );
         const updatedSnippets = [...snippets, response.data];
         handleReorderSnippets(updatedSnippets);
         toast.success("AI snippet added successfully");
       }
       handleCloseModal();
     } catch (error) {
-      toast.error(selectedSnippet ? "Failed to update AI snippet" : "Failed to save AI snippet");
+      toast.error(
+        selectedSnippet
+          ? "Failed to update AI snippet"
+          : "Failed to save AI snippet"
+      );
       console.error("Error saving AI snippet:", error);
     }
   };
@@ -189,5 +227,9 @@ export const useAISnippets = () => {
     handleCloseDeleteModal,
     handleReorderSnippets,
     setSearchQuery,
+    endingMessage,
+    setEndingMessage,
+    tone,
+    setTone,
   };
 };

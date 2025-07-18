@@ -27,7 +27,6 @@ export const useChatSocket = (selectedEquipment) => {
     const handleReceiveMessage = (message) => {
       const parsedMessage = JSON.parse(message.content);
       if (!isLLMLoading) return;
-      console.log("parsed", parsedMessage);
       addMessage(message);
       setIsLLMLoading(false);
       setIsChatCompleted(parsedMessage.content?.isQuestionsCompleted);

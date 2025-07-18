@@ -1,5 +1,5 @@
 import React from "react";
-import { X, Plus, Trash2, Youtube } from "lucide-react";
+import { X, Plus, Trash2, Youtube, Upload } from "lucide-react";
 
 const QuestionForm = ({
   isOpen,
@@ -18,14 +18,19 @@ const QuestionForm = ({
   addContextItem,
   removeContextItem,
   updateContextItem,
+  onImageChange,
+  previewImage,
+  onRemoveImage,
 }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm  bg-opacity-50 overflow-y-auto">
       <div className="bg-[#1a1e24] rounded-lg border border-[#2a2e34] p-6 w-full max-w-2xl my-8 mx-4 max-h-[90vh] flex flex-col">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold text-white">{isEditMode ? "Edit Question" : "Add New Question"}</h2>
+          <h2 className="text-xl font-bold text-white">
+            {isEditMode ? "Edit Question" : "Add New Question"}
+          </h2>
           <button onClick={onClose} className="text-gray-400 hover:text-white">
             <X className="h-5 w-5" />
           </button>
@@ -39,7 +44,10 @@ const QuestionForm = ({
 
         <form onSubmit={onSubmit} className="flex-1 overflow-y-auto pr-2">
           <div className="mb-4">
-            <label htmlFor="question_type" className="block mb-2 text-sm font-medium text-gray-300">
+            <label
+              htmlFor="question_type"
+              className="block mb-2 text-sm font-medium text-gray-300"
+            >
               Question Type
             </label>
             <select
@@ -53,14 +61,23 @@ const QuestionForm = ({
             >
               <option value="open_ended">Open-ended Question</option>
               <option value="multiple_choice">Multiple Choice</option>
-              <option value="statement">Statement (Acknowledge to Continue)</option>
+              <option value="statement">
+                Statement (Acknowledge to Continue)
+              </option>
               <option value="file_upload">File Upload</option>
             </select>
-            {errors?.question_type && <p className="mt-1 text-sm text-red-500">{errors.question_type}</p>}
+            {errors?.question_type && (
+              <p className="mt-1 text-sm text-red-500">
+                {errors.question_type}
+              </p>
+            )}
           </div>
 
           <div className="mb-4">
-            <label htmlFor="question_text" className="block mb-2 text-sm font-medium text-gray-300">
+            <label
+              htmlFor="question_text"
+              className="block mb-2 text-sm font-medium text-gray-300"
+            >
               Question Text
             </label>
             <textarea
@@ -73,14 +90,24 @@ const QuestionForm = ({
               value={formData.question_text}
               onChange={(e) => onFormChange("question_text", e.target.value)}
             />
-            {errors?.question_text && <p className="mt-1 text-sm text-red-500">{errors.question_text}</p>}
+            {errors?.question_text && (
+              <p className="mt-1 text-sm text-red-500">
+                {errors.question_text}
+              </p>
+            )}
           </div>
 
           {formData.question_type === "multiple_choice" && (
             <div className="mb-4">
               <div className="flex justify-between items-center mb-2">
-                <label className="text-sm font-medium text-gray-300">Options</label>
-                <button type="button" onClick={addOption} className="text-xs flex items-center gap-1 text-[#3CBFAE] hover:underline">
+                <label className="text-sm font-medium text-gray-300">
+                  Options
+                </label>
+                <button
+                  type="button"
+                  onClick={addOption}
+                  className="text-xs flex items-center gap-1 text-[#3CBFAE] hover:underline"
+                >
                   <Plus className="h-3 w-3" /> Add Option
                 </button>
               </div>
@@ -108,7 +135,9 @@ const QuestionForm = ({
                   </div>
                 ))}
               </div>
-              {errors?.options && <p className="mt-1 text-sm text-red-500">{errors.options}</p>}
+              {errors?.options && (
+                <p className="mt-1 text-sm text-red-500">{errors.options}</p>
+              )}
 
               <div className="mt-3">
                 <label className="inline-flex items-center">
@@ -116,9 +145,13 @@ const QuestionForm = ({
                     type="checkbox"
                     className="form-checkbox h-4 w-4 text-[#3CBFAE] border-[#2a2e34] rounded focus:ring-[#3CBFAE] bg-[#0c0f12]"
                     checked={formData.allowMultipleSelection}
-                    onChange={(e) => onFormChange("allowMultipleSelection", e.target.checked)}
+                    onChange={(e) =>
+                      onFormChange("allowMultipleSelection", e.target.checked)
+                    }
                   />
-                  <span className="ml-2 text-sm text-gray-300">Allow multiple selections</span>
+                  <span className="ml-2 text-sm text-gray-300">
+                    Allow multiple selections
+                  </span>
                 </label>
               </div>
             </div>
@@ -126,11 +159,18 @@ const QuestionForm = ({
 
           <div className="mb-4">
             <div className="flex items-center justify-between mb-2">
-              <label htmlFor="youtube_link" className="text-sm font-medium text-gray-300">
+              <label
+                htmlFor="youtube_link"
+                className="text-sm font-medium text-gray-300"
+              >
                 YouTube Video URL (Optional)
               </label>
               {formData.youtube_link && (
-                <button type="button" onClick={() => onFormChange("youtube_link", "")} className="text-xs text-gray-400 hover:text-red-500">
+                <button
+                  type="button"
+                  onClick={() => onFormChange("youtube_link", "")}
+                  className="text-xs text-gray-400 hover:text-red-500"
+                >
                   Clear
                 </button>
               )}
@@ -148,8 +188,12 @@ const QuestionForm = ({
                 onChange={(e) => onFormChange("youtube_link", e.target.value)}
               />
             </div>
-            {errors?.youtube_link && <p className="mt-1 text-sm text-red-500">{errors.youtube_link}</p>}
-            <p className="mt-1 text-xs text-gray-400">Add a YouTube video that will be shown with this question</p>
+            {errors?.youtube_link && (
+              <p className="mt-1 text-sm text-red-500">{errors.youtube_link}</p>
+            )}
+            <p className="mt-1 text-xs text-gray-400">
+              Add a YouTube video that will be shown with this question
+            </p>
           </div>
 
           <div className="mb-6">
@@ -160,10 +204,67 @@ const QuestionForm = ({
                 checked={formData.required}
                 onChange={(e) => onFormChange("required", e.target.checked)}
               />
-              <span className="ml-2 text-sm text-gray-300">Mark as required</span>
+              <span className="ml-2 text-sm text-gray-300">
+                Mark as required
+              </span>
             </label>
           </div>
-
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-300 mb-1">
+              Question Image
+            </label>
+            <div
+              className={`mt-1 flex justify-center px-6 pt-5 pb-6 border-2 ${
+                errors?.image ? "border-red-500" : "border-[#2a2e34]"
+              } border-dashed rounded-md cursor-pointer`}
+            >
+              <div className="space-y-1 text-center">
+                {previewImage ? (
+                  <div className="relative">
+                    <img
+                      src={previewImage}
+                      alt="Preview"
+                      className="mx-auto h-32 w-32 object-cover rounded-md"
+                    />
+                    <button
+                      type="button"
+                      onClick={onRemoveImage}
+                      className="absolute -top-2 -right-2 p-1 bg-red-500 rounded-full hover:bg-red-600 cursor-pointer"
+                    >
+                      <Trash2 size={16} className="text-white" />
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <Upload className="mx-auto h-12 w-12 text-gray-400" />
+                    <div className="flex text-sm text-gray-400">
+                      <label
+                        htmlFor="image-upload"
+                        className="relative cursor-pointer rounded-md font-medium text-[#3CBFAE] hover:text-[#35a99a] focus-within:outline-none"
+                      >
+                        <span>Upload a file</span>
+                        <input
+                          id="image-upload"
+                          name="image"
+                          type="file"
+                          accept="image/*"
+                          className="sr-only"
+                          onChange={onImageChange}
+                        />
+                      </label>
+                      <p className="pl-1">or drag and drop</p>
+                    </div>
+                    <p className="text-xs text-gray-400">
+                      PNG, JPG, JPEG up to 2MB
+                    </p>
+                  </>
+                )}
+              </div>
+            </div>
+            {errors?.image && (
+              <p className="mt-1 text-sm text-red-500">{errors.image}</p>
+            )}
+          </div>
           {/* Context Items */}
           <div className="space-y-4 mb-6">
             <div className="flex items-center justify-between">
@@ -203,7 +304,8 @@ const QuestionForm = ({
               <p className="mt-1 text-sm text-red-500">{errors.context}</p>
             )}
             <p className="text-sm text-gray-400">
-              Add context items that will help the AI understand the question better.
+              Add context items that will help the AI understand the question
+              better.
             </p>
           </div>
 
@@ -221,7 +323,11 @@ const QuestionForm = ({
                 className="px-4 py-2 rounded-md bg-[#3CBFAE] text-white hover:bg-[#35a89a] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={isLoading}
               >
-                {isLoading ? "Saving..." : isEditMode ? "Save Changes" : "Add Question"}
+                {isLoading
+                  ? "Saving..."
+                  : isEditMode
+                  ? "Save Changes"
+                  : "Add Question"}
               </button>
             </div>
           </div>

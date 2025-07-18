@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { validateForm } from "../utils/validateForm";
-import { simpleQuestionSchema, multipleChoiceSchema } from "../validations/adminQuestionSchema";
+import {
+  simpleQuestionSchema,
+  multipleChoiceSchema,
+} from "../validations/adminQuestionSchema";
 import api from "../utils/apiClient";
 import { useIndustryEquipmentStore } from "../store/industryEquipmentStore";
 
@@ -24,7 +27,30 @@ export const useQuestions = () => {
     allowMultipleSelection: false,
     equipment_id: null,
     context: [],
+    image: null,
   });
+  const [previewImage, setPreviewImage] = useState(null);
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFormData((prev) => ({
+        ...prev,
+        image: file,
+      }));
+      setPreviewImage(URL.createObjectURL(file));
+      if (formErrors.image) {
+        setFormErrors((prev) => ({ ...prev, image: null }));
+      }
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setPreviewImage(null);
+    setFormData((prev) => ({ ...prev, image: null }));
+    if (formErrors.image) {
+      setFormErrors((prev) => ({ ...prev, image: null }));
+    }
+  };
   const [formErrors, setFormErrors] = useState({});
 
   const fetchQuestions = async (selectedEquipment) => {
@@ -34,7 +60,9 @@ export const useQuestions = () => {
     }
     try {
       setIsLoading(true);
-      const response = await api.get(`/questions/questions?equipmentId=${selectedEquipment.id}`);
+      const response = await api.get(
+        `/questions/questions?equipmentId=${selectedEquipment.id}`
+      );
       console.log("Fetched questions:", response.data);
       setQuestions(response.data || []);
     } catch {
@@ -70,7 +98,8 @@ export const useQuestions = () => {
                 { id: 2, text: "" },
               ]
           : [{ id: 1, text: "" }],
-      allowMultipleSelection: type === "multiple_choice" ? prev.allowMultipleSelection : false,
+      allowMultipleSelection:
+        type === "multiple_choice" ? prev.allowMultipleSelection : false,
     }));
     if (formErrors.question_type) {
       setFormErrors((prev) => ({ ...prev, question_type: "" }));
@@ -93,7 +122,10 @@ export const useQuestions = () => {
   const removeOption = (id) => {
     setFormData((prev) => {
       if (prev.options.length <= 2) {
-        setFormErrors((prev) => ({ ...prev, options: "Multiple choice questions require at least two options" }));
+        setFormErrors((prev) => ({
+          ...prev,
+          options: "Multiple choice questions require at least two options",
+        }));
         return prev;
       }
       return {
@@ -106,7 +138,9 @@ export const useQuestions = () => {
   const updateOption = (id, text) => {
     setFormData((prev) => ({
       ...prev,
-      options: prev.options.map((option) => (option.id === id ? { ...option, text } : option)),
+      options: prev.options.map((option) =>
+        option.id === id ? { ...option, text } : option
+      ),
     }));
     if (formErrors.options) {
       setFormErrors((prev) => ({ ...prev, options: "" }));
@@ -155,7 +189,9 @@ export const useQuestions = () => {
       allowMultipleSelection: false,
       equipment_id: selectedEquipment.id,
       context: [],
+      image: null,
     });
+    setPreviewImage(null);
     setFormErrors({});
     setIsFormModalOpen(true);
   };
@@ -168,11 +204,19 @@ export const useQuestions = () => {
       question_type: question.question_type || "open_ended",
       required: question.required || true,
       youtube_link: question.youtube_link || "",
-      options: question.question_type === "multiple_choice" ? [...(question.options || [])] : [{ id: 1, text: "" }],
-      allowMultipleSelection: question.question_type === "multiple_choice" ? question.allowMultipleSelection || false : false,
+      options:
+        question.question_type === "multiple_choice"
+          ? [...(question.options || [])]
+          : [{ id: 1, text: "" }],
+      allowMultipleSelection:
+        question.question_type === "multiple_choice"
+          ? question.allowMultipleSelection || false
+          : false,
       equipment_id: selectedEquipment.id,
       context: question.context || [],
+      image: question.image || null,
     });
+    setPreviewImage(question.image || null);
     setIsFormModalOpen(true);
   };
 
@@ -189,28 +233,67 @@ export const useQuestions = () => {
       ...formData,
       equipment_id: selectedEquipment.id,
     };
-    const schema = formData.question_type === "multiple_choice" ? multipleChoiceSchema : simpleQuestionSchema;
+    const schema =
+      formData.question_type === "multiple_choice"
+        ? multipleChoiceSchema
+        : simpleQuestionSchema;
     const validationErrors = validateForm(schema, validationData);
     if (Object.keys(validationErrors).length > 0) {
       setFormErrors(validationErrors);
       return;
     }
     try {
+      let response;
+      const formDataToSend = new FormData();
+      Object.keys(formData).forEach((key) => {
+        if (key === "image" && formData[key] instanceof File) {
+          formDataToSend.append(key, formData[key]);
+        } else if (key !== "image") {
+          if (key === "options" || key === "context") {
+            formDataToSend.append(key, JSON.stringify(formData[key]));
+          } else {
+            formDataToSend.append(key, formData[key]);
+          }
+        }
+      });
+      formDataToSend.append("equipment_id", selectedEquipment.id);
       if (selectedQuestion) {
-        const response = await api.patch(`/questions/question/${selectedQuestion.id}`, validationData);
-        const updatedQuestions = questions.map((q) => (q.id === selectedQuestion.id ? response.data : q));
+        response = await api.patch(
+          `/questions/question/${selectedQuestion.id}`,
+          formDataToSend,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+        const updatedQuestions = questions.map((q) =>
+          q.id === selectedQuestion.id ? response.data : q
+        );
         handleReorderQuestions(updatedQuestions);
         toast.success("Question updated successfully");
       } else {
-        const response = await api.post("/questions/create-question", validationData);
-        const updatedQuestions = [...questions, response.data];
+        response = await api.post(
+          "/questions/create-question",
+          formDataToSend,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+        const updatedQuestions = [...(questions || []), response.data];
         setQuestions(updatedQuestions);
         handleReorderQuestions(updatedQuestions);
         toast.success("Question added successfully");
       }
       handleCloseModal();
     } catch (error) {
-      toast.error(selectedQuestion ? "Failed to update question" : "Failed to add question");
+      toast.error(
+        selectedQuestion
+          ? "Failed to update question"
+          : "Failed to add question"
+      );
       console.error("Error saving question:", error);
     }
   };
@@ -240,7 +323,9 @@ export const useQuestions = () => {
       allowMultipleSelection: false,
       equipment_id: null,
       context: [],
+      image: null,
     });
+    setPreviewImage(null);
     setFormErrors({});
   };
 
@@ -280,6 +365,7 @@ export const useQuestions = () => {
     formData,
     formErrors,
     searchQuery,
+    previewImage,
 
     handleIndustrySelect,
     handleEquipmentSelect,
@@ -300,5 +386,7 @@ export const useQuestions = () => {
     addContextItem,
     removeContextItem,
     updateContextItem,
+    handleImageChange,
+    handleRemoveImage,
   };
 };
